@@ -1,0 +1,135 @@
+/* AI 效率助手 - Content Script 样式 */
+
+.ai-assistant-float-btn {
+  position: fixed;
+  z-index: 2147483647;
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s ease;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.ai-assistant-float-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+}
+
+.ai-assistant-float-btn:active {
+  transform: scale(0.95);
+}
+
+.ai-assistant-float-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.ai-assistant-float-btn.visible {
+  display: flex;
+}
+
+/* 快捷操作面板 */
+.ai-assistant-panel {
+  position: fixed;
+  z-index: 2147483647;
+  display: none;
+  min-width: 200px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.ai-assistant-panel.visible {
+  display: block;
+  animation: ai-panel-fade-in 0.15s ease-out;
+}
+
+@keyframes ai-panel-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-assistant-panel-header {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #9ca3af;
+  border-bottom: 1px solid #f3f4f6;
+  font-weight: 500;
+}
+
+.ai-assistant-panel-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  transition: background-color 0.15s ease;
+  text-align: left;
+}
+
+.ai-assistant-panel-item:hover {
+  background-color: #f3f4f6;
+}
+
+.ai-assistant-panel-item-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.ai-assistant-panel-item-icon.rewrite {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+
+.ai-assistant-panel-item-icon.expand {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.ai-assistant-panel-item-icon.translate {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.ai-assistant-panel-item-icon.summarize {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.ai-assistant-panel-item-label {
+  font-weight: 500;
+}
+
+.ai-assistant-panel-item-desc {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 1px;
+}

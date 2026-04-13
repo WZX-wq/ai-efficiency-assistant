@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/components/AiTextProcessor.tsx","./src/components/ApiKeySettings.tsx","./src/components/Footer.tsx","./src/components/Header.tsx","./src/hooks/useAi.ts","./src/pages/Home.tsx","./src/pages/Pricing.tsx","./src/pages/Workspace.tsx","./src/services/api.ts","./src/types/index.ts","./vite-env.d.ts"],"version":"5.6.3"}
