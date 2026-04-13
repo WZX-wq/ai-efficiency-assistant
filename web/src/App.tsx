@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Workspace from './pages/Workspace';
 import Pricing from './pages/Pricing';
+import Services from './pages/Services';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/workspace" element={<Workspace />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/services" element={<Services />} />
           </Routes>
         </main>
         <Footer />

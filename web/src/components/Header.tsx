@@ -7,6 +7,7 @@ export default function Header() {
 
   const navLinks = [
     { to: '/', label: '首页' },
+    { to: '/services', label: '服务' },
     { to: '/workspace', label: '工作台' },
     { to: '/pricing', label: '定价' },
   ];
