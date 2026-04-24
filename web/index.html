@@ -2,13 +2,42 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI效率助手 - 让AI成为你的超级写作搭档</title>
     <meta name="description" content="AI效率助手，提供智能改写、一键扩写、多语言翻译、内容总结等AI文案处理功能，让AI成为你的超级写作搭档。" />
+    <meta name="keywords" content="AI写作助手,智能改写,一键扩写,多语言翻译,内容总结,文案生成,SEO优化,品牌声音,AI效率工具" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AI效率助手 - 让AI成为你的超级写作搭档" />
+    <meta property="og:description" content="集成富文本编辑器、AI写作助手、命令面板——十四大核心工具 + 六大服务，全面提升内容创作与运营效率。" />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AI效率助手 - 让AI成为你的超级写作搭档" />
+    <meta name="twitter:description" content="集成富文本编辑器、AI写作助手、命令面板——十四大核心工具 + 六大服务，全面提升内容创作与运营效率。" />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <link rel="manifest" href="/manifest.json" />
   </head>
   <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // GitHub Pages SPA 路由修复：404.html 将路径转为查询参数
+      (function() {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect != window.location.href) {
+          window.history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
   </body>
 </html>

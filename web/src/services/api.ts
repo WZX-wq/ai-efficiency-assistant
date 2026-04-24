@@ -1,9 +1,35 @@
 import type { AiProcessRequest, AiProcessResponse } from '../types';
 
-const API_BASE_URL = '/api';
+/** 白山智算 API 地址（直连，国内可访问） */
+const DEFAULT_API_URL = 'https://api.edgefn.net/v1/chat/completions';
+/** 默认 API Key 从环境变量读取，不再硬编码 */
+const DEFAULT_API_KEY = import.meta.env.VITE_API_KEY || '';
+const DEFAULT_MODEL = import.meta.env.VITE_MODEL || 'DeepSeek-V3';
 
-/** 白山智算 API 地址 */
-const BAISHAN_API_URL = 'https://api.edgefn.net/v1/chat/completions';
+/** 多模型配置类型 */
+interface ModelConfig {
+  baseUrl: string;
+  apiKey: string;
+  model: string;
+}
+
+/**
+ * 从 localStorage 读取多模型配置，如果不存在则使用默认值
+ */
+export function getModelConfig(): ModelConfig {
+  try {
+    const stored = localStorage.getItem('ai-assistant-model-config');
+    if (stored) {
+      const config: ModelConfig = JSON.parse(stored);
+      return {
+        baseUrl: config.baseUrl || DEFAULT_API_URL,
+        apiKey: config.apiKey || DEFAULT_API_KEY,
+        model: config.model || DEFAULT_MODEL,
+      };
+    }
+  } catch { /* ignore */ }
+  return { baseUrl: DEFAULT_API_URL, apiKey: DEFAULT_API_KEY, model: DEFAULT_MODEL };
+}
 
 /** 各操作对应的 system prompt */
 const ACTION_PROMPTS: Record<string, string> = {
@@ -14,23 +40,17 @@ const ACTION_PROMPTS: Record<string, string> = {
 };
 
 /**
- * 直接调用白山智算 API（不依赖后端）
+ * 调用 AI API（直连白山智算）
  */
 export async function callBaishanDirect(
-  request: AiProcessRequest
+  request: AiProcessRequest,
+  signal?: AbortSignal
 ): Promise<AiProcessResponse> {
-  const stored = loadApiKey();
-  const apiKey = stored?.apiKey || '';
-  const model = stored?.model || 'DeepSeek-V3';
-
-  if (!apiKey) {
-    return { success: false, error: '请先在设置中配置 API Key' };
-  }
-
   const systemPrompt = ACTION_PROMPTS[request.action] || ACTION_PROMPTS.rewrite;
+  const { baseUrl, apiKey, model } = getModelConfig();
 
   try {
-    const response = await fetch(BAISHAN_API_URL, {
+    const response = await fetch(baseUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,9 +63,9 @@ export async function callBaishanDirect(
           { role: 'user', content: request.text },
         ],
         temperature: 0.7,
-        max_tokens: 2048,
-        stream: false,
+        max_tokens: 1024,
       }),
+      signal: signal || AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
@@ -65,82 +85,119 @@ export async function callBaishanDirect(
 
     return { success: true, result: content.trim() };
   } catch (err) {
-    return {
-      success: false,
-      error: err instanceof Error ? err.message : '网络请求失败，请检查网络连接',
-    };
+    const message = err instanceof DOMException && err.name === 'TimeoutError'
+      ? '请求超时，请稍后重试或缩短输入内容'
+      : err instanceof Error ? err.message : '网络请求失败，请检查网络连接';
+    return { success: false, error: message };
   }
 }
 
-/**
- * 调用 AI 处理接口（优先直连白山智算，失败后回退到后端代理）
- */
 export async function processAiText(
-  request: AiProcessRequest
+  request: AiProcessRequest,
+  signal?: AbortSignal
 ): Promise<AiProcessResponse> {
-  // 优先尝试直连白山智算
-  const stored = loadApiKey();
-  if (stored?.apiKey) {
-    return callBaishanDirect(request);
-  }
+  return callBaishanDirect(request, signal);
+}
 
-  // 回退到后端代理
+/** processAiTextStream 流式响应 */
+export interface AiProcessStreamResponse {
+  success: boolean;
+  error?: string;
+  stream: ReadableStream<string> | null;
+}
+
+/**
+ * 流式 AI 文本处理接口
+ */
+export async function processAiTextStream(
+  request: AiProcessRequest,
+  signal?: AbortSignal
+): Promise<AiProcessStreamResponse> {
+  const systemPrompt = ACTION_PROMPTS[request.action] || ACTION_PROMPTS.rewrite;
+  const { baseUrl, apiKey, model } = getModelConfig();
+
   try {
-    const response = await fetch(`${API_BASE_URL}/ai/process`, {
+    const response = await fetch(baseUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: request.text },
+        ],
+        temperature: 0.7,
+        max_tokens: 1024,
+        stream: true,
+      }),
+      signal: signal || AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      throw new Error(
-        errorData?.error || `请求失败，状态码: ${response.status}`
-      );
-    }
-
-    const data: AiProcessResponse = await response.json();
-    return data;
-  } catch (error) {
-    if (error instanceof Error) {
       return {
         success: false,
-        error: error.message,
+        stream: null,
+        error: errorData?.error?.message || `API 请求失败，状态码: ${response.status}`,
       };
     }
-    return {
-      success: false,
-      error: '发生未知错误，请稍后重试',
-    };
+
+    if (!response.body) {
+      return { success: false, stream: null, error: '响应体为空' };
+    }
+
+    const { readable, writable } = new TransformStream<string, string>();
+    const writer = writable.getWriter();
+    const decoder = new TextDecoder();
+
+    (async () => {
+      const reader = response.body!.getReader();
+      let buffer = '';
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith('data: ')) continue;
+            const data = trimmed.slice(6);
+            if (data === '[DONE]') break;
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) await writer.write(content);
+            } catch { /* ignore */ }
+          }
+        }
+      } catch (err) {
+        console.error('SSE 流读取错误:', err);
+      } finally {
+        await writer.close();
+      }
+    })();
+
+    return { success: true, stream: readable };
+  } catch (err) {
+    const message = err instanceof DOMException && err.name === 'TimeoutError'
+      ? '请求超时，请稍后重试'
+      : err instanceof Error ? err.message : '网络请求失败，请检查网络连接';
+    return { success: false, stream: null, error: message };
   }
 }
 
-/**
- * 检查 API 连通性
- */
 export async function checkApiHealth(): Promise<boolean> {
+  const { baseUrl, apiKey, model } = getModelConfig();
   try {
-    const stored = loadApiKey();
-    if (stored?.apiKey) {
-      // 直连模式：发一个简单请求测试
-      const response = await fetch(BAISHAN_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${stored.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: stored.model || 'DeepSeek-V3',
-          messages: [{ role: 'user', content: 'hi' }],
-          max_tokens: 5,
-        }),
-      });
-      return response.ok;
-    }
-    const response = await fetch(`${API_BASE_URL}/health`, {
-      method: 'GET',
+    const response = await fetch(baseUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({ model, messages: [{ role: 'user', content: 'hi' }], max_tokens: 5 }),
     });
     return response.ok;
   } catch {
@@ -148,39 +205,15 @@ export async function checkApiHealth(): Promise<boolean> {
   }
 }
 
-/**
- * 保存 API Key 到本地存储
- */
 export function saveApiKey(config: { apiKey: string; provider: string; baseUrl?: string; model?: string }): void {
-  try {
-    localStorage.setItem('ai-assistant-api-config', JSON.stringify(config));
-  } catch {
-    console.warn('无法保存 API Key 到本地存储');
-  }
+  try { localStorage.setItem('ai-assistant-api-config', JSON.stringify(config)); } catch { /* ignore */ }
 }
 
-/**
- * 从本地存储读取 API Key 配置
- */
 export function loadApiKey(): { apiKey: string; provider: string; baseUrl?: string; model?: string } | null {
-  try {
-    const stored = localStorage.getItem('ai-assistant-api-config');
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch {
-    console.warn('无法读取本地存储中的 API Key');
-  }
+  try { const stored = localStorage.getItem('ai-assistant-api-config'); if (stored) return JSON.parse(stored); } catch { /* ignore */ }
   return null;
 }
 
-/**
- * 清除本地存储的 API Key
- */
 export function clearApiKey(): void {
-  try {
-    localStorage.removeItem('ai-assistant-api-config');
-  } catch {
-    console.warn('无法清除本地存储中的 API Key');
-  }
+  try { localStorage.removeItem('ai-assistant-api-config'); } catch { /* ignore */ }
 }

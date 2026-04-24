@@ -1,5 +1,92 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useToast } from '../components/ToastProvider';
+import { useSeo, PAGE_SEO } from '../components/SeoHead';
+
+// ---------------------------------------------------------------------------
+// 联系表单提交记录类型
+// ---------------------------------------------------------------------------
+
+interface ContactSubmission {
+  id: string;
+  name: string;
+  phone: string;
+  business: string;
+  message: string;
+  createdAt: string;
+  status: 'pending' | 'received';
+}
+
+const STORAGE_KEY = 'ai-assistant-contact-submissions';
+
+function readSubmissions(): ContactSubmission[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed as ContactSubmission[];
+  } catch {
+    return [];
+  }
+}
+
+function writeSubmissions(data: ContactSubmission[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    console.warn('[contact] 写入 localStorage 失败');
+  }
+}
+
+function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+// ---------------------------------------------------------------------------
+// 表单验证
+// ---------------------------------------------------------------------------
+
+interface FormErrors {
+  name?: string;
+  phone?: string;
+  business?: string;
+  message?: string;
+}
+
+function validateForm(formData: { name: string; phone: string; business: string; message: string }): FormErrors {
+  const errors: FormErrors = {};
+  if (!formData.name.trim() || formData.name.trim().length < 2) {
+    errors.name = '姓名至少需要 2 个字符';
+  }
+  if (!/^1\d{10}$/.test(formData.phone.trim())) {
+    errors.phone = '请输入有效的 11 位手机号码（以 1 开头）';
+  }
+  if (!formData.business.trim()) {
+    errors.business = '请选择业务类型';
+  }
+  if (!formData.message.trim() || formData.message.trim().length < 10) {
+    errors.message = '需求描述至少需要 10 个字符';
+  }
+  return errors;
+}
+
+// ---------------------------------------------------------------------------
+// 业务类型标签映射
+// ---------------------------------------------------------------------------
+
+const businessLabels: Record<string, string> = {
+  restaurant: '餐饮美食',
+  beauty: '美容美发',
+  education: '教育培训',
+  retail: '零售商超',
+  health: '医疗健康',
+  other: '其他行业',
+};
+
+// ---------------------------------------------------------------------------
+// 静态数据（保持不变）
+// ---------------------------------------------------------------------------
 
 const services = [
   {
@@ -182,22 +269,111 @@ const caseMetrics = [
   { value: '4.9/5', label: '用户评分' },
 ];
 
+const serviceGuarantees = [
+  { icon: '✅', title: '效果保障', desc: '未达标免费优化' },
+  { icon: '🔒', title: '数据安全', desc: '严格保密协议' },
+  { icon: '💬', title: '专属对接', desc: '1对1项目经理' },
+  { icon: '📊', title: '数据透明', desc: '周报月报可查' },
+];
+
+const serviceFaqs = [
+  {
+    question: '服务流程是怎样的？',
+    answer: '从需求沟通到方案制定，通常3-5个工作日出方案，执行周期根据项目规模1-4周不等。全程有专属项目经理跟进。',
+  },
+  {
+    question: '可以只选择单项服务吗？',
+    answer: '当然可以。我们提供灵活的服务组合，你可以根据需求选择单项或多项服务，我们会为你定制专属方案。',
+  },
+  {
+    question: '服务效果如何保证？',
+    answer: '我们承诺数据可量化、效果可追踪。每个项目都有明确的KPI指标，未达标部分免费优化至达标。',
+  },
+  {
+    question: '如何收费？',
+    answer: '我们提供基础版、标准版、高级版三档套餐，也支持按需定制。具体费用根据项目规模和需求复杂度评估，详情请查看上方套餐或联系我们获取报价。',
+  },
+  {
+    question: '合作后多久能看到效果？',
+    answer: '根据服务类型不同，SEO优化通常1-3个月见效，内容运营1-2周即可看到数据变化，短视频运营首月即可产出成果。',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// 主组件
+// ---------------------------------------------------------------------------
+
 export default function Services() {
+  useSeo(PAGE_SEO.services);
+  const { toast } = useToast();
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     business: '',
     message: '',
   });
+  const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [lastSubmission, setLastSubmission] = useState<ContactSubmission | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [isYearly, setIsYearly] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  // 从 localStorage 读取历史提交
+  const submissions = useMemo(() => readSubmissions(), [submitted, showHistory]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validationErrors = validateForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      toast('请检查表单中的错误信息', 'error');
+      return;
+    }
+
+    setErrors({});
+
+    const newSubmission: ContactSubmission = {
+      id: generateId(),
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      business: formData.business.trim(),
+      message: formData.message.trim(),
+      createdAt: new Date().toISOString(),
+      status: 'pending',
+    };
+
+    const existing = readSubmissions();
+    existing.unshift(newSubmission);
+    writeSubmissions(existing);
+
+    setLastSubmission(newSubmission);
     setSubmitted(true);
+    toast('咨询提交成功！我们将尽快与您联系', 'success');
   };
 
+  const handleReset = () => {
+    setFormData({ name: '', phone: '', business: '', message: '' });
+    setErrors({});
+    setSubmitted(false);
+    setLastSubmission(null);
+  };
+
+  function formatDate(iso: string): string {
+    const d = new Date(iso);
+    return d.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
         {/* Background Decoration */}
@@ -216,7 +392,7 @@ export default function Services() {
             </div>
 
             {/* Main Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight animate-slide-up">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight animate-slide-up">
               AI 数字化代运营服务
               <br />
               <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 bg-clip-text text-transparent">
@@ -225,7 +401,7 @@ export default function Services() {
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-6 text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto animate-slide-up">
+            <p className="mt-6 text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto animate-slide-up">
               短视频制作、团购运营、私域搭建、AI 客服、数据分析 --
               全方位数字化运营解决方案，让 AI 赋能您的生意
             </p>
@@ -243,7 +419,7 @@ export default function Services() {
               </a>
               <a
                 href="#pricing"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-gray-700 text-base font-semibold rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-base font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:-translate-y-0.5"
               >
                 查看套餐报价
               </a>
@@ -256,19 +432,20 @@ export default function Services() {
       <section className="py-20 sm:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               六大核心服务
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               覆盖数字化运营全链路，AI 技术驱动，专业团队执行
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service) => (
-              <div
+              <Link
                 key={service.id}
-                className="group relative bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1 transition-all duration-300"
+                to={`/services/${service.id}`}
+                className="group relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
               >
                 {/* Icon */}
                 <div className={`w-14 h-14 ${service.bgColor} rounded-2xl flex items-center justify-center ${service.textColor} mb-5 group-hover:scale-110 transition-transform duration-300`}>
@@ -276,41 +453,82 @@ export default function Services() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {service.title}
                 </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                   {service.description}
                 </p>
 
+                {/* Arrow indicator */}
+                <div className={`mt-4 flex items-center gap-1 text-sm font-medium ${service.textColor} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
+                  了解详情
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </div>
+
                 {/* Hover gradient line */}
                 <div className={`absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r ${service.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 sm:py-28 bg-gray-50">
+      <section id="pricing" className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               透明灵活的定价
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               三档套餐满足不同需求，年付享 85 折优惠
             </p>
           </div>
 
+          {/* 月付/年付切换 */}
+          <div className="flex items-center justify-center gap-4 mb-10">
+            <span className={`text-sm font-medium transition-colors ${!isYearly ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}>
+              月付
+            </span>
+            <button
+              onClick={() => setIsYearly(!isYearly)}
+              className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 ${
+                isYearly ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
+              }`}
+              aria-label="切换月付/年付"
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-sm transition-transform duration-300 ${
+                  isYearly ? 'translate-x-7' : 'translate-x-0'
+                }`}
+              />
+            </button>
+            <span className={`text-sm font-medium transition-colors ${isYearly ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}>
+              年付
+            </span>
+            {isYearly && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 animate-fade-in">
+                年付省 15%
+              </span>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {plans.map((plan) => (
+            {plans.map((plan) => {
+              const monthlyPrice = parseInt(plan.price.replace(/,/g, ''), 10);
+              const displayPrice = isYearly ? Math.round(monthlyPrice * 0.85) : monthlyPrice;
+              const formattedPrice = displayPrice.toLocaleString();
+
+              return (
               <div
                 key={plan.id}
                 className={`relative rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 ${
                   plan.highlighted
                     ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-2xl shadow-primary-500/25 scale-105 z-10'
-                    : 'bg-white border border-gray-200 hover:shadow-xl hover:shadow-gray-200/50'
+                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:shadow-gray-200/50'
                 }`}
               >
                 {/* Tag */}
@@ -321,17 +539,22 @@ export default function Services() {
                 </div>
 
                 <div className="mb-6">
-                  <h3 className={`text-xl font-bold ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
+                  <h3 className={`text-xl font-bold ${plan.highlighted ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
                     {plan.name}
                   </h3>
                   <div className="mt-4 flex items-baseline gap-1">
-                    <span className={`text-4xl font-bold ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
-                      ¥{plan.price}
+                    <span className={`text-4xl font-bold ${plan.highlighted ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
+                      ¥{formattedPrice}
                     </span>
-                    <span className={`text-sm ${plan.highlighted ? 'text-primary-200' : 'text-gray-500'}`}>
+                    <span className={`text-sm ${plan.highlighted ? 'text-primary-200' : 'text-gray-500 dark:text-gray-400'}`}>
                       /{plan.period}
                     </span>
                   </div>
+                  {isYearly && (
+                    <p className={`mt-1 text-xs line-through ${plan.highlighted ? 'text-primary-300' : 'text-gray-400 dark:text-gray-500'}`}>
+                      原价 ¥{plan.price}/月
+                    </p>
+                  )}
                 </div>
 
                 <ul className="space-y-3 mb-8">
@@ -346,7 +569,7 @@ export default function Services() {
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
-                      <span className={`text-sm ${plan.highlighted ? 'text-primary-100' : 'text-gray-600'}`}>
+                      <span className={`text-sm ${plan.highlighted ? 'text-primary-100' : 'text-gray-600 dark:text-gray-300'}`}>
                         {feature}
                       </span>
                     </li>
@@ -364,7 +587,8 @@ export default function Services() {
                   {plan.ctaText}
                 </a>
               </div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>
@@ -373,10 +597,10 @@ export default function Services() {
       <section className="py-20 sm:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               成功案例
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               用实际成果说话
             </p>
           </div>
@@ -431,13 +655,13 @@ export default function Services() {
       </section>
 
       {/* Process Section */}
-      <section className="py-20 sm:py-28 bg-gray-50">
+      <section className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               服务流程
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               标准化服务流程，确保每个环节高效推进
             </p>
           </div>
@@ -456,8 +680,8 @@ export default function Services() {
                   </div>
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed max-w-xs mx-auto">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">{item.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs mx-auto">
                   {item.description}
                 </p>
 
@@ -475,16 +699,99 @@ export default function Services() {
         </div>
       </section>
 
+      {/* Service Guarantee Section */}
+      <section className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+              服务保障
+            </h2>
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+              四大承诺，让您合作无忧
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {serviceGuarantees.map((item) => (
+              <div
+                key={item.title}
+                className="flex flex-col items-center gap-3 py-8 px-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              >
+                <span className="text-4xl">{item.icon}</span>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">{item.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">
+            常见问题
+          </h2>
+          <div className="space-y-3">
+            {serviceFaqs.map((faq, index) => {
+              const isOpen = openFaqIndex === index;
+
+              return (
+                <div
+                  key={faq.question}
+                  className={`bg-white dark:bg-gray-800 rounded-xl border transition-all duration-300 ${
+                    isOpen
+                      ? 'border-primary-200 dark:border-primary-800 shadow-md'
+                      : 'border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                    className="w-full flex items-center justify-between px-6 py-4 text-left"
+                  >
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-white pr-4">
+                      {faq.question}
+                    </h3>
+                    <svg
+                      className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300 ${
+                        isOpen ? 'rotate-180' : 'rotate-0'
+                      }`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="px-6 pb-4">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Contact / CTA Section */}
       <section id="contact" className="py-20 sm:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Left: CTA Text */}
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 准备好让 AI 赋能您的生意了吗？
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-8">
+              <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
                 填写右侧表单，我们的运营顾问将在 24 小时内与您联系，
                 为您提供免费的运营诊断和定制方案。
               </p>
@@ -497,8 +804,8 @@ export default function Services() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">免费运营诊断</h4>
-                    <p className="text-sm text-gray-500">专业团队为您分析当前运营状况</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">免费运营诊断</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">专业团队为您分析当前运营状况</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -508,8 +815,8 @@ export default function Services() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">24 小时快速响应</h4>
-                    <p className="text-sm text-gray-500">提交后我们将在一天内与您联系</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">24 小时快速响应</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">提交后我们将在一天内与您联系</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -519,64 +826,175 @@ export default function Services() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">定制化方案</h4>
-                    <p className="text-sm text-gray-500">根据您的业务需求量身打造</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">定制化方案</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">根据您的业务需求量身打造</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Right: Contact Form */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-              {submitted ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-sm">
+              {submitted && lastSubmission ? (
+                <div className="text-center py-8">
+                  {/* 成功图标 */}
+                  <div className="w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">提交成功！</h3>
-                  <p className="text-gray-500">我们的运营顾问将在 24 小时内与您联系。</p>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">提交成功！</h3>
+                  <p className="text-gray-500 dark:text-gray-400 mb-6">我们的运营顾问将在 24 小时内与您联系。</p>
+
+                  {/* 提交详情 */}
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-left mb-6 space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-400 dark:text-gray-500 w-16 shrink-0">姓名：</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{lastSubmission.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-400 dark:text-gray-500 w-16 shrink-0">电话：</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{lastSubmission.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-400 dark:text-gray-500 w-16 shrink-0">业务：</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{businessLabels[lastSubmission.business] || lastSubmission.business}</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm">
+                      <span className="text-gray-400 dark:text-gray-500 w-16 shrink-0">需求：</span>
+                      <span className="text-gray-700 dark:text-gray-300">{lastSubmission.message}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-400 dark:text-gray-500 w-16 shrink-0">时间：</span>
+                      <span className="text-gray-700 dark:text-gray-300">{formatDate(lastSubmission.createdAt)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-400 dark:text-gray-500 w-16 shrink-0">状态：</span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                        待处理
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 提交计数 */}
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
+                    您已累计提交 {submissions.length} 次咨询
+                  </p>
+
+                  {/* 操作按钮 */}
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button
+                      onClick={handleReset}
+                      className="px-6 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-sm hover:shadow-md"
+                    >
+                      继续咨询
+                    </button>
+                    <button
+                      onClick={() => setShowHistory(!showHistory)}
+                      className="px-6 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
+                    >
+                      {showHistory ? '收起历史' : '查看历史提交'}
+                    </button>
+                  </div>
+
+                  {/* 历史提交列表 */}
+                  {showHistory && submissions.length > 0 && (
+                    <div className="mt-6 text-left">
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                        历史提交记录（共 {submissions.length} 条）
+                      </h4>
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {submissions.map((sub) => (
+                          <div
+                            key={sub.id}
+                            className="bg-white dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-xl p-3"
+                          >
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className="text-sm font-medium text-gray-900 dark:text-white">{sub.name}</span>
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                sub.status === 'pending'
+                                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
+                                  : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                              }`}>
+                                {sub.status === 'pending' ? '待处理' : '已收到'}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {businessLabels[sub.business] || sub.business} · {sub.phone} · {formatDate(sub.createdAt)}
+                            </p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 line-clamp-1">
+                              {sub.message}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                       您的姓名
                     </label>
                     <input
                       id="name"
                       type="text"
-                      required
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors"
-                      placeholder="请输入您的姓名"
+                      onChange={(e) => {
+                        setFormData({ ...formData, name: e.target.value });
+                        if (errors.name) setErrors({ ...errors, name: undefined });
+                      }}
+                      className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors dark:bg-gray-700 dark:text-gray-200 ${
+                        errors.name
+                          ? 'border-red-400 dark:border-red-500'
+                          : 'border-gray-200 dark:border-gray-600'
+                      }`}
+                      placeholder="请输入您的姓名（至少 2 个字符）"
                     />
+                    {errors.name && (
+                      <p className="mt-1 text-xs text-red-500 dark:text-red-400">{errors.name}</p>
+                    )}
                   </div>
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                       联系电话
                     </label>
                     <input
                       id="phone"
                       type="tel"
-                      required
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors"
-                      placeholder="请输入您的联系电话"
+                      onChange={(e) => {
+                        setFormData({ ...formData, phone: e.target.value });
+                        if (errors.phone) setErrors({ ...errors, phone: undefined });
+                      }}
+                      className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors dark:bg-gray-700 dark:text-gray-200 ${
+                        errors.phone
+                          ? 'border-red-400 dark:border-red-500'
+                          : 'border-gray-200 dark:border-gray-600'
+                      }`}
+                      placeholder="请输入 11 位手机号码"
                     />
+                    {errors.phone && (
+                      <p className="mt-1 text-xs text-red-500 dark:text-red-400">{errors.phone}</p>
+                    )}
                   </div>
                   <div>
-                    <label htmlFor="business" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label htmlFor="business" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                       业务类型
                     </label>
                     <select
                       id="business"
                       value={formData.business}
-                      onChange={(e) => setFormData({ ...formData, business: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors bg-white"
+                      onChange={(e) => {
+                        setFormData({ ...formData, business: e.target.value });
+                        if (errors.business) setErrors({ ...errors, business: undefined });
+                      }}
+                      className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors bg-white dark:bg-gray-700 dark:text-gray-200 ${
+                        errors.business
+                          ? 'border-red-400 dark:border-red-500'
+                          : 'border-gray-200 dark:border-gray-600'
+                      }`}
                     >
                       <option value="">请选择业务类型</option>
                       <option value="restaurant">餐饮美食</option>
@@ -586,19 +1004,32 @@ export default function Services() {
                       <option value="health">医疗健康</option>
                       <option value="other">其他行业</option>
                     </select>
+                    {errors.business && (
+                      <p className="mt-1 text-xs text-red-500 dark:text-red-400">{errors.business}</p>
+                    )}
                   </div>
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                       需求描述
                     </label>
                     <textarea
                       id="message"
                       rows={4}
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors resize-none"
-                      placeholder="请简要描述您的运营需求..."
+                      onChange={(e) => {
+                        setFormData({ ...formData, message: e.target.value });
+                        if (errors.message) setErrors({ ...errors, message: undefined });
+                      }}
+                      className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors resize-none dark:bg-gray-700 dark:text-gray-200 ${
+                        errors.message
+                          ? 'border-red-400 dark:border-red-500'
+                          : 'border-gray-200 dark:border-gray-600'
+                      }`}
+                      placeholder="请简要描述您的运营需求（至少 10 个字符）..."
                     />
+                    {errors.message && (
+                      <p className="mt-1 text-xs text-red-500 dark:text-red-400">{errors.message}</p>
+                    )}
                   </div>
                   <button
                     type="submit"
@@ -606,7 +1037,7 @@ export default function Services() {
                   >
                     提交咨询
                   </button>
-                  <p className="text-xs text-gray-400 text-center">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
                     提交即表示您同意我们的隐私政策，我们承诺保护您的个人信息安全。
                   </p>
                 </form>

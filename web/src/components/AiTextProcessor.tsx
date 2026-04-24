@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
 import { useAi } from '../hooks/useAi';
-import ApiKeySettings from './ApiKeySettings';
-import { loadApiKey } from '../services/api';
 import type { AiActionType } from '../types';
 import { ACTION_LABELS } from '../types';
+import { exportAsMarkdown } from '../utils/export';
+import { useAppStore } from '../store/appStore';
+import RichTextEditor from './RichTextEditor';
 
 const ACTIONS: { type: AiActionType; icon: JSX.Element; color: string; bgColor: string }[] = [
   {
@@ -50,29 +51,20 @@ const ACTIONS: { type: AiActionType; icon: JSX.Element; color: string; bgColor: 
 
 export default function AiTextProcessor() {
   const [inputText, setInputText] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeAction, setActiveAction] = useState<AiActionType | null>(null);
+  const [wordCount, setWordCount] = useState(0);
+  const { toggleAiPanel } = useAppStore();
 
-  const { processText, result, error, loading, clearResult } = useAi();
-
-  const hasApiKey = !!loadApiKey()?.apiKey;
+  const { processText, result, error, loading, clearResult, cancelRequest } = useAi();
 
   const handleProcess = useCallback(
     async (action: AiActionType) => {
       if (!inputText.trim()) return;
-
-      const config = loadApiKey();
-      if (!config?.apiKey) {
-        setShowSettings(true);
-        return;
-      }
-
       setActiveAction(action);
       await processText({
         text: inputText.trim(),
         action,
-        apiKey: config.apiKey,
       });
       setActiveAction(null);
     },
@@ -86,7 +78,6 @@ export default function AiTextProcessor() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // fallback
       const textarea = document.createElement('textarea');
       textarea.value = result;
       document.body.appendChild(textarea);
@@ -103,42 +94,47 @@ export default function AiTextProcessor() {
     clearResult();
   }, [clearResult]);
 
+  const handleExport = useCallback(() => {
+    if (!result) return;
+    exportAsMarkdown(result, `AI处理_${new Date().toISOString().slice(0, 10)}`);
+  }, [result]);
+
   return (
     <div className="flex flex-col h-full">
       {/* Top Bar */}
-      <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-100 rounded-t-2xl">
+      <div className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 rounded-t-2xl">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-slow" />
-          <span className="text-sm font-medium text-gray-600">
-            {hasApiKey ? '已连接' : '未配置 API Key'}
-          </span>
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">AI 就绪</span>
         </div>
         <button
-          onClick={() => setShowSettings(true)}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          onClick={toggleAiPanel}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary-600 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
           </svg>
-          API 设置
+          AI 助手
         </button>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 min-h-0">
-        {/* Input Area */}
+        {/* Input Area - Rich Text Editor */}
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">输入文本</label>
-            <span className="text-xs text-gray-400">{inputText.length} 字</span>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">输入文本</label>
+            <span className="text-xs text-gray-400 dark:text-gray-500">{wordCount} 字</span>
           </div>
-          <textarea
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="在此输入你想要处理的文本内容...&#10;&#10;支持智能改写、一键扩写、多语言翻译和内容总结。"
-            className="flex-1 w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-800 leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all placeholder:text-gray-400 bg-white"
-          />
+          <div className="flex-1 min-h-0">
+            <RichTextEditor
+              content={inputText}
+              onChange={setInputText}
+              onWordCount={setWordCount}
+              placeholder="在此输入你想要处理的文本内容...&#10;&#10;支持富文本编辑，可使用工具栏设置标题、加粗、列表等格式。&#10;支持智能改写、一键扩写、多语言翻译和内容总结。"
+              className="h-full [&_.tiptap]:min-h-full"
+            />
+          </div>
         </div>
 
         {/* Action Buttons (Middle) */}
@@ -169,12 +165,12 @@ export default function AiTextProcessor() {
         {/* Output Area */}
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">处理结果</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">处理结果</label>
             <div className="flex items-center gap-2">
               {result && (
                 <button
                   onClick={handleCopy}
-                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors"
+                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md transition-colors"
                 >
                   {copied ? (
                     <>
@@ -193,10 +189,21 @@ export default function AiTextProcessor() {
                   )}
                 </button>
               )}
+              {result && (
+                <button
+                  onClick={handleExport}
+                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md transition-colors"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                  </svg>
+                  导出
+                </button>
+              )}
               {(result || error) && (
                 <button
                   onClick={handleClear}
-                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-red-600 bg-gray-50 hover:bg-red-50 rounded-md transition-colors"
+                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:text-red-600 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -206,14 +213,20 @@ export default function AiTextProcessor() {
               )}
             </div>
           </div>
-          <div className="flex-1 w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-800 leading-relaxed bg-gray-50 overflow-auto">
-            {loading && (
+          <div className="flex-1 w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-800 dark:text-gray-200 leading-relaxed bg-gray-50 dark:bg-gray-700 overflow-auto flex flex-col">
+            {loading && !result && (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-400">
                 <svg className="w-8 h-8 animate-spin text-primary-500" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
                 <span className="text-sm">AI 正在处理中...</span>
+                <button
+                  onClick={cancelRequest}
+                  className="mt-1 px-4 py-1.5 text-xs font-medium text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                >
+                  取消生成
+                </button>
               </div>
             )}
             {error && !loading && (
@@ -224,16 +237,20 @@ export default function AiTextProcessor() {
                   </svg>
                 </div>
                 <p className="text-sm text-red-500 text-center">{error}</p>
-                <button
-                  onClick={() => setShowSettings(true)}
-                  className="text-xs text-primary-600 hover:text-primary-700 underline"
-                >
-                  检查 API 设置
-                </button>
               </div>
             )}
             {result && !loading && (
-              <div className="whitespace-pre-wrap animate-fade-in">{result}</div>
+              <>
+                <div className="whitespace-pre-wrap animate-fade-in flex-1">{result}</div>
+                <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    共 {result.length} 字 | 约 {Math.round(result.length / 1.5)} Tokens
+                  </span>
+                </div>
+              </>
+            )}
+            {result && loading && (
+              <div className="whitespace-pre-wrap">{result}<span className="inline-block w-1.5 h-4 bg-gray-400 animate-pulse ml-0.5 align-middle" /></div>
             )}
             {!result && !error && !loading && (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-400">
@@ -247,9 +264,6 @@ export default function AiTextProcessor() {
           </div>
         </div>
       </div>
-
-      {/* API Key Settings Modal */}
-      <ApiKeySettings isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </div>
   );
 }

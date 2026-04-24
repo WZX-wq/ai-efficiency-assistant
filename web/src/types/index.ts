@@ -44,7 +44,7 @@ export interface PricingPlan {
 
 /** 功能卡片 */
 export interface FeatureCard {
-  id: AiActionType;
+  id: string;
   title: string;
   description: string;
   icon: ReactNode;
@@ -55,11 +55,12 @@ export interface FeatureCard {
 
 /** useAi Hook 返回类型 */
 export interface UseAiReturn {
-  processText: (request: AiProcessRequest) => Promise<void>;
+  processText: (request: AiProcessRequest, maxRetries?: number) => Promise<void>;
   result: string | null;
   error: string | null;
   loading: boolean;
   clearResult: () => void;
+  cancelRequest: () => void;
 }
 
 /** AI 操作的中文标签映射 */
