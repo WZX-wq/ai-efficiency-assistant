@@ -711,6 +711,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 更新日志 */}
+      <section className="py-16 bg-gray-50 dark:bg-gray-900/50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <span className="inline-block px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-semibold rounded-full mb-3">持续更新</span>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">最近更新</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-2">我们持续优化产品体验，以下是最新的更新内容</p>
+          </div>
+          <div className="space-y-4">
+            {[
+              { version: 'v2.5', date: '2025-01', title: '富文本编辑器全面升级', desc: '新增 Slash 命令面板、表格编辑、待办事项、图片上传', tag: '新功能', tagColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+              { version: 'v2.4', date: '2025-01', title: 'AI 对话体验增强', desc: '预设提示词模板、消息重新生成、点赞反馈、对话导出', tag: '优化', tagColor: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+              { version: 'v2.3', date: '2024-12', title: '企业级安全与合规', desc: 'API Key 安全加固、SEO 优化、通知系统、数据备份恢复', tag: '安全', tagColor: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
+              { version: 'v2.2', date: '2024-12', title: '首页视觉全面升级', desc: '渐变动画背景、数字滚动计数器、AI 模型展示、FAQ 区块', tag: '设计', tagColor: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
+            ].map((item) => (
+              <div key={item.version} className="flex gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <div className="flex-shrink-0 w-16 text-center">
+                  <div className="text-sm font-bold text-primary-600 dark:text-primary-400">{item.version}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{item.date}</div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{item.title}</h3>
+                    <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${item.tagColor}`}>{item.tag}</span>
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section className="py-16 bg-white dark:bg-gray-950">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">

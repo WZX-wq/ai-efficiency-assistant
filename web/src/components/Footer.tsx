@@ -110,6 +110,28 @@ export default function Footer() {
               <li><Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors">帮助中心</Link></li>
             </ul>
           </div>
+
+          {/* Newsletter */}
+          <div className="col-span-1 md:col-span-2 lg:col-span-5">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">订阅更新</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">获取最新功能更新和使用技巧</p>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const email = (e.target as HTMLFormElement).querySelector('input')?.value;
+              if (email) {
+                const subs = JSON.parse(localStorage.getItem('ai-newsletter-subs') || '[]');
+                if (!subs.includes(email)) {
+                  subs.push(email);
+                  localStorage.setItem('ai-newsletter-subs', JSON.stringify(subs));
+                }
+                (e.target as HTMLFormElement).reset();
+                alert('订阅成功！');
+              }
+            }} className="flex gap-2">
+              <input type="email" placeholder="your@email.com" required className="flex-1 px-3 py-1.5 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
+              <button type="submit" className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors">订阅</button>
+            </form>
+          </div>
         </div>
 
         {/* Trust Badges */}
@@ -145,6 +167,18 @@ export default function Footer() {
             <span>京ICP备XXXXXXXX号-1</span>
             <span>·</span>
             <span>京公网安备XXXXXXXXXXXXXX号</span>
+            <span>·</span>
+            <button
+              onClick={() => {
+                const current = localStorage.getItem('ai-assistant-i18n') || 'zh';
+                const next = current === 'zh' ? 'en' : 'zh';
+                localStorage.setItem('ai-assistant-i18n', next);
+                window.location.reload();
+              }}
+              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              {localStorage.getItem('ai-assistant-i18n') === 'en' ? '中文' : 'English'}
+            </button>
           </div>
         </div>
       </div>

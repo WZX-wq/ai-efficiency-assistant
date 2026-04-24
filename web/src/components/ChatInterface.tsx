@@ -52,9 +52,15 @@ export default function ChatInterface({
   const [activePersona, setActivePersona] = useState(AI_PERSONAS[0]);
   const [personaOpen, setPersonaOpen] = useState(false);
   const [feedback, setFeedback] = useState<Record<number, 'up' | 'down'>>({});
+  const [images, setImages] = useState<string[]>([]);
+  const [customRoles, setCustomRoles] = useState<Array<{ id: string; name: string; systemPrompt: string }>>([]);
+  const [showCustomRoleForm, setShowCustomRoleForm] = useState(false);
+  const [customRoleName, setCustomRoleName] = useState('');
+  const [customRolePrompt, setCustomRolePrompt] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const personaRef = useRef<HTMLDivElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const { addWordsGenerated, incrementActions } = useAppStore();
 
   const {
@@ -114,10 +120,17 @@ export default function ChatInterface({
 
   const sendMessage = useCallback(
     async (content: string) => {
-      if (!content.trim() || loading) return;
+      if ((!content.trim() && images.length === 0) || loading) return;
+      // 拼接图片信息
+      let finalContent = content.trim();
+      if (images.length > 0) {
+        const imagePrefix = `[图片 x${images.length}]\n`;
+        finalContent = imagePrefix + finalContent;
+      }
       const sessionId = activeSessionId || createSession(activePersona.systemPrompt);
-      addMessage(sessionId, 'user', content.trim());
+      addMessage(sessionId, 'user', finalContent);
       setInput('');
+      setImages([]);
       setLoading(true);
       incrementActions();
 
@@ -329,6 +342,62 @@ export default function ChatInterface({
     });
   }, []);
 
+  // 图片上传处理
+  const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          setImages(prev => [...prev, reader.result as string]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+    // 重置 input 以便重复选择同一文件
+    e.target.value = '';
+  }, []);
+
+  const removeImage = useCallback((idx: number) => {
+    setImages(prev => prev.filter((_, i) => i !== idx));
+  }, []);
+
+  // 自定义角色 - 从 localStorage 加载
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ai-chat-custom-roles');
+      if (saved) {
+        setCustomRoles(JSON.parse(saved));
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const saveCustomRoles = useCallback((roles: Array<{ id: string; name: string; systemPrompt: string }>) => {
+    setCustomRoles(roles);
+    localStorage.setItem('ai-chat-custom-roles', JSON.stringify(roles));
+  }, []);
+
+  const handleCreateCustomRole = useCallback(() => {
+    if (!customRoleName.trim() || !customRolePrompt.trim()) return;
+    const newRole = {
+      id: `custom-${Date.now()}`,
+      name: customRoleName.trim(),
+      systemPrompt: customRolePrompt.trim(),
+    };
+    saveCustomRoles([...customRoles, newRole]);
+    setCustomRoleName('');
+    setCustomRolePrompt('');
+    setShowCustomRoleForm(false);
+  }, [customRoleName, customRolePrompt, customRoles, saveCustomRoles]);
+
+  const handleDeleteCustomRole = useCallback((roleId: string) => {
+    saveCustomRoles(customRoles.filter(r => r.id !== roleId));
+    if (activePersona.id === roleId) {
+      setActivePersona(AI_PERSONAS[0]);
+    }
+  }, [customRoles, saveCustomRoles, activePersona.id]);
+
   const handleExportConversation = useCallback(() => {
     if (!activeSession || messages.length === 0) return;
     const md = messages.map(msg => {
@@ -484,6 +553,7 @@ export default function ChatInterface({
                         onClick={() => {
                           setActivePersona(persona);
                           setPersonaOpen(false);
+                          setShowCustomRoleForm(false);
                           createSession(persona.systemPrompt);
                           setInput('');
                         }}
@@ -507,6 +577,100 @@ export default function ChatInterface({
                         </div>
                       </button>
                     ))}
+
+                    {/* 自定义角色 */}
+                    {customRoles.length > 0 && (
+                      <div className="border-t border-gray-100 dark:border-gray-700 my-1 mx-2" />
+                    )}
+                    {customRoles.map((role) => (
+                      <div
+                        key={role.id}
+                        className={`group flex items-start gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                          activePersona.id === role.id
+                            ? 'bg-primary-50 dark:bg-primary-900/20'
+                            : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                        }`}
+                      >
+                        <button
+                          onClick={() => {
+                            const personaObj = { id: role.id, name: role.name, emoji: '✨', systemPrompt: role.systemPrompt };
+                            setActivePersona(personaObj);
+                            setPersonaOpen(false);
+                            setShowCustomRoleForm(false);
+                            createSession(role.systemPrompt);
+                            setInput('');
+                          }}
+                          className="flex-1 flex items-start gap-3 text-left"
+                        >
+                          <span className="text-lg mt-0.5 shrink-0">✨</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-gray-900 dark:text-white">{role.name}</span>
+                              {activePersona.id === role.id && (
+                                <svg className="w-4 h-4 text-primary-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">{role.systemPrompt}</p>
+                          </div>
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDeleteCustomRole(role.id); }}
+                          className="shrink-0 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                          title="删除角色"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+
+                    {/* 自定义角色按钮 */}
+                    <div className="border-t border-gray-100 dark:border-gray-700 my-1 mx-2" />
+                    <button
+                      onClick={() => setShowCustomRoleForm(!showCustomRoleForm)}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-left text-sm text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                      自定义角色
+                    </button>
+                    {showCustomRoleForm && (
+                      <div className="px-3 py-2 space-y-2">
+                        <input
+                          type="text"
+                          value={customRoleName}
+                          onChange={(e) => setCustomRoleName(e.target.value)}
+                          placeholder="角色名称"
+                          className="w-full px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <textarea
+                          value={customRolePrompt}
+                          onChange={(e) => setCustomRolePrompt(e.target.value)}
+                          placeholder="系统提示词（描述角色的行为和能力）"
+                          rows={3}
+                          className="w-full px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={handleCreateCustomRole}
+                            disabled={!customRoleName.trim() || !customRolePrompt.trim()}
+                            className="flex-1 px-3 py-1.5 text-xs bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-40 transition-colors"
+                          >
+                            保存
+                          </button>
+                          <button
+                            onClick={() => { setShowCustomRoleForm(false); setCustomRoleName(''); setCustomRolePrompt(''); }}
+                            className="px-3 py-1.5 text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                          >
+                            取消
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -662,7 +826,41 @@ export default function ChatInterface({
 
         {/* 输入区域 */}
         <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 shrink-0">
+          {/* 图片缩略图预览 */}
+          {images.length > 0 && (
+            <div className="flex gap-2 mb-2 flex-wrap">
+              {images.map((img, idx) => (
+                <div key={idx} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                  <img src={img} alt={`上传图片 ${idx + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => removeImage(idx)}
+                    className="absolute top-0 right-0 w-5 h-5 bg-black/50 text-white rounded-bl-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs leading-none"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="flex items-end gap-2">
+            {/* 图片上传按钮 */}
+            <input
+              type="file"
+              ref={imageInputRef}
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+            <button
+              onClick={() => imageInputRef.current?.click()}
+              className="shrink-0 w-10 h-10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl flex items-center justify-center transition-colors"
+              title="上传图片"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+              </svg>
+            </button>
             <textarea
               ref={textareaRef}
               value={input}
@@ -674,7 +872,7 @@ export default function ChatInterface({
             />
             <button
               onClick={() => sendMessage(input)}
-              disabled={!input.trim() || loading}
+              disabled={(!input.trim() && images.length === 0) || loading}
               className="shrink-0 w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-40 hover:bg-primary-700 hover:shadow-md"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -443,16 +443,6 @@
   animation: slideDown 0.25s ease-out;
 }
 
-/* ─── CountUp number animation ────────────────────────────── */
-@keyframes countUp {
-  0% { opacity: 0; transform: translateY(12px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.animate-count-up {
-  animation: countUp 0.6s ease-out forwards;
-}
-
 /* ─── NProgress Brand Colors ─────────────────────────────── */
 #nprogress .bar {
   background: linear-gradient(to right, #2563eb, #7c3aed);
@@ -469,4 +459,44 @@ html.theme-transitioning *,
 html.theme-transitioning *::before,
 html.theme-transitioning *::after {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* 打字机效果 */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: currentColor; }
+}
+
+.animate-typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid currentColor;
+  animation: typewriter 2s steps(30, end), blink-caret 0.75s step-end infinite;
+}
+
+/* 按钮涟漪效果 */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+.ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+.ripple:active::after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
 }

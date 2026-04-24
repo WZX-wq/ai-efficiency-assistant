@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store/appStore';
 import { NotificationBell } from './NotificationCenter';
 
@@ -21,6 +22,7 @@ const toolLinks = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [toolboxSearch, setToolboxSearch] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
@@ -132,43 +134,71 @@ export default function Header() {
 
                 {toolsOpen && (
                   <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-2 animate-slide-down">
-                    <div className="px-3 py-1.5">
-                      <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">核心工具</p>
+                    <div className="p-2 border-b border-gray-100 dark:border-gray-700">
+                      <input
+                        type="text"
+                        value={toolboxSearch}
+                        onChange={(e) => setToolboxSearch(e.target.value)}
+                        placeholder="搜索工具..."
+                        className="w-full px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                      />
                     </div>
-                    {toolLinks.slice(0, 4).map((tool) => (
-                      <Link
-                        key={tool.to}
-                        to={tool.to}
-                        onClick={() => setToolsOpen(false)}
-                        className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                          isActive(tool.to)
-                            ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium'
-                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-                        }`}
-                      >
-                        <span className="text-base">{tool.icon}</span>
-                        {tool.label}
-                      </Link>
-                    ))}
-                    <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
-                    <div className="px-3 py-1.5">
-                      <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">创作工具</p>
-                    </div>
-                    {toolLinks.slice(4).map((tool) => (
-                      <Link
-                        key={tool.to}
-                        to={tool.to}
-                        onClick={() => setToolsOpen(false)}
-                        className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                          isActive(tool.to)
-                            ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium'
-                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-                        }`}
-                      >
-                        <span className="text-base">{tool.icon}</span>
-                        {tool.label}
-                      </Link>
-                    ))}
+                    {(() => {
+                      const coreTools = toolLinks.slice(0, 4).filter(t => t.label.includes(toolboxSearch));
+                      const creativeTools = toolLinks.slice(4).filter(t => t.label.includes(toolboxSearch));
+                      if (coreTools.length === 0 && creativeTools.length === 0) {
+                        return <div className="px-4 py-3 text-sm text-gray-400 dark:text-gray-500 text-center">未找到匹配工具</div>;
+                      }
+                      return (
+                        <>
+                          {coreTools.length > 0 && (
+                            <>
+                              <div className="px-3 py-1.5">
+                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">核心工具</p>
+                              </div>
+                              {coreTools.map((tool) => (
+                                <Link
+                                  key={tool.to}
+                                  to={tool.to}
+                                  onClick={() => setToolsOpen(false)}
+                                  className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                                    isActive(tool.to)
+                                      ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium'
+                                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+                                  }`}
+                                >
+                                  <span className="text-base">{tool.icon}</span>
+                                  {tool.label}
+                                </Link>
+                              ))}
+                            </>
+                          )}
+                          {creativeTools.length > 0 && (
+                            <>
+                              <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+                              <div className="px-3 py-1.5">
+                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">创作工具</p>
+                              </div>
+                              {creativeTools.map((tool) => (
+                                <Link
+                                  key={tool.to}
+                                  to={tool.to}
+                                  onClick={() => setToolsOpen(false)}
+                                  className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                                    isActive(tool.to)
+                                      ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium'
+                                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+                                  }`}
+                                >
+                                  <span className="text-base">{tool.icon}</span>
+                                  {tool.label}
+                                </Link>
+                              ))}
+                            </>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
               </div>
@@ -257,73 +287,81 @@ export default function Header() {
       </header>
 
       {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          {/* Menu Panel */}
-          <div className="absolute top-16 left-0 right-0 bottom-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 overflow-y-auto animate-slide-down">
-            <div className="px-4 py-3 space-y-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive(link.to)
-                      ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-
-              {/* Mobile 工具箱 */}
-              <div className="pt-2 mt-2 border-t border-gray-100 dark:border-gray-800">
-                <p className="px-4 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">工具箱</p>
-                {toolLinks.map((tool) => (
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-50 bg-white dark:bg-gray-900 lg:hidden"
+          >
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            {/* Menu Panel */}
+            <div className="absolute top-16 left-0 right-0 bottom-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 overflow-y-auto animate-slide-down">
+              <div className="px-4 py-3 space-y-1">
+                {navLinks.map((link) => (
                   <Link
-                    key={tool.to}
-                    to={tool.to}
+                    key={link.to}
+                    to={link.to}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors ${
-                      isActive(tool.to)
-                        ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 font-medium'
+                    className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      isActive(link.to)
+                        ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }`}
                   >
-                    <span className="text-base">{tool.icon}</span>
-                    {tool.label}
+                    {link.label}
                   </Link>
                 ))}
-              </div>
 
-              <div className="flex items-center gap-2 pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
-                <button
-                  onClick={() => { toggleAiPanel(); setMobileMenuOpen(false); }}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-primary-600 bg-primary-50 dark:bg-primary-900/20 rounded-lg"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
-                  </svg>
-                  AI 助手
-                </button>
-                <Link
-                  to="/workspace"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex-1 px-4 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg text-center hover:bg-primary-700 transition-colors"
-                >
-                  免费开始
-                </Link>
+                {/* Mobile 工具箱 */}
+                <div className="pt-2 mt-2 border-t border-gray-100 dark:border-gray-800">
+                  <p className="px-4 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">工具箱</p>
+                  {toolLinks.map((tool) => (
+                    <Link
+                      key={tool.to}
+                      to={tool.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors ${
+                        isActive(tool.to)
+                          ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 font-medium'
+                          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      }`}
+                    >
+                      <span className="text-base">{tool.icon}</span>
+                      {tool.label}
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-2 pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
+                  <button
+                    onClick={() => { toggleAiPanel(); setMobileMenuOpen(false); }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-primary-600 bg-primary-50 dark:bg-primary-900/20 rounded-lg"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
+                    </svg>
+                    AI 助手
+                  </button>
+                  <Link
+                    to="/workspace"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 px-4 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg text-center hover:bg-primary-700 transition-colors"
+                  >
+                    免费开始
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

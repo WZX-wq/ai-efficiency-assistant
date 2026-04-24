@@ -14,7 +14,8 @@ import { TaskList } from '@tiptap/extension-task-list';
 import { TaskItem } from '@tiptap/extension-task-item';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import type { Editor } from '@tiptap/react';
 
 interface RichTextEditorProps {
   content: string;
@@ -33,6 +34,40 @@ export default function RichTextEditor({
   editable = true,
   onWordCount,
 }: RichTextEditorProps) {
+  // Slash command state
+  const [showSlashMenu, setShowSlashMenu] = useState(false);
+  const [slashFilter, setSlashFilter] = useState('');
+  const [slashPosition, setSlashPosition] = useState({ top: 0, left: 0 });
+  const slashMenuRef = useRef<HTMLDivElement>(null);
+
+  // Link input state
+  const [linkUrl, setLinkUrl] = useState('');
+  const [showLinkInput, setShowLinkInput] = useState(false);
+
+  // Image input state
+  const [showImageInput, setShowImageInput] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const SLASH_COMMANDS = [
+    { title: '一级标题', icon: 'H1', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 1 }).run() },
+    { title: '二级标题', icon: 'H2', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 2 }).run() },
+    { title: '三级标题', icon: 'H3', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 3 }).run() },
+    { title: '四级标题', icon: 'H4', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 4 }).run() },
+    { title: '粗体', icon: 'B', action: (editor: Editor) => editor.chain().focus().toggleBold().run() },
+    { title: '斜体', icon: 'I', action: (editor: Editor) => editor.chain().focus().toggleItalic().run() },
+    { title: '下划线', icon: 'U', action: (editor: Editor) => editor.chain().focus().toggleUnderline().run() },
+    { title: '删除线', icon: 'S', action: (editor: Editor) => editor.chain().focus().toggleStrike().run() },
+    { title: '无序列表', icon: '•', action: (editor: Editor) => editor.chain().focus().toggleBulletList().run() },
+    { title: '有序列表', icon: '1.', action: (editor: Editor) => editor.chain().focus().toggleOrderedList().run() },
+    { title: '引用块', icon: '❝', action: (editor: Editor) => editor.chain().focus().toggleBlockquote().run() },
+    { title: '代码块', icon: '</>', action: (editor: Editor) => editor.chain().focus().toggleCodeBlock().run() },
+    { title: '分割线', icon: '—', action: (editor: Editor) => editor.chain().focus().setHorizontalRule().run() },
+    { title: '插入表格', icon: '⊞', action: (editor: Editor) => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
+    { title: '待办事项', icon: '☑', action: (editor: Editor) => editor.chain().focus().toggleTaskList().run() },
+    { title: '高亮', icon: '◐', action: (editor: Editor) => editor.chain().focus().toggleHighlight().run() },
+  ];
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -73,6 +108,18 @@ export default function RichTextEditor({
     content,
     editable,
     onUpdate: ({ editor }) => {
+      if (showSlashMenu) {
+        const { from } = editor.state.selection;
+        const textBefore = editor.state.doc.textBetween(
+          Math.max(0, from - 20), from, '\n'
+        );
+        const match = textBefore.match(/\/([^\s]*)$/);
+        if (match) {
+          setSlashFilter(match[1]);
+        } else {
+          setShowSlashMenu(false);
+        }
+      }
       const html = editor.getHTML();
       onChange(html);
       if (onWordCount) {
@@ -84,6 +131,27 @@ export default function RichTextEditor({
       attributes: {
         class:
           'prose prose-sm dark:prose-invert max-w-none focus:outline-none min-h-[200px] px-1 py-1',
+      },
+      handleKeyDown: (view, event) => {
+        if (event.key === '/' && !showSlashMenu) {
+          const { from } = view.state.selection;
+          const coords = view.coordsAtPos(from);
+          setSlashPosition({ top: coords.bottom + 8, left: coords.left });
+          setShowSlashMenu(true);
+          setSlashFilter('');
+          return true;
+        }
+        if (showSlashMenu) {
+          if (event.key === 'Escape') {
+            setShowSlashMenu(false);
+            return true;
+          }
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            return true;
+          }
+        }
+        return false;
       },
     },
   });
@@ -97,22 +165,14 @@ export default function RichTextEditor({
 
   const setLink = useCallback(() => {
     if (!editor) return;
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('输入链接地址:', previousUrl);
-    if (url === null) return;
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
-    }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    setShowLinkInput(prev => !prev);
+    setLinkUrl(editor.getAttributes('link').href || '');
   }, [editor]);
 
   const addImage = useCallback(() => {
     if (!editor) return;
-    const url = window.prompt('输入图片地址:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
+    setShowImageInput(prev => !prev);
+    setImageUrl('');
   }, [editor]);
 
   if (!editor) return null;
@@ -347,9 +407,105 @@ export default function RichTextEditor({
         </div>
       )}
 
+      {/* 链接输入栏 */}
+      {showLinkInput && (
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+          <input
+            type="url"
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+            placeholder="输入链接 URL..."
+            className="flex-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && linkUrl) {
+                editor.chain().focus().setLink({ href: linkUrl }).run();
+                setShowLinkInput(false);
+                setLinkUrl('');
+              }
+              if (e.key === 'Escape') {
+                setShowLinkInput(false);
+                setLinkUrl('');
+              }
+            }}
+            autoFocus
+          />
+          <button onClick={() => { editor.chain().focus().setLink({ href: linkUrl }).run(); setShowLinkInput(false); setLinkUrl(''); }} className="px-3 py-1.5 text-xs font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">确认</button>
+          <button onClick={() => { setShowLinkInput(false); setLinkUrl(''); }} className="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">取消</button>
+        </div>
+      )}
+
+      {/* 图片输入栏 */}
+      {showImageInput && (
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  editor.chain().focus().setImage({ src: reader.result as string }).run();
+                  setShowImageInput(false);
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+          />
+          <button onClick={() => fileInputRef.current?.click()} className="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">上传图片</button>
+          <span className="text-gray-400 text-xs">或</span>
+          <input
+            type="url"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="输入图片 URL..."
+            className="flex-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && imageUrl) {
+                editor.chain().focus().setImage({ src: imageUrl }).run();
+                setShowImageInput(false);
+                setImageUrl('');
+              }
+              if (e.key === 'Escape') { setShowImageInput(false); setImageUrl(''); }
+            }}
+          />
+          <button onClick={() => { if (imageUrl) { editor.chain().focus().setImage({ src: imageUrl }).run(); } setShowImageInput(false); setImageUrl(''); }} className="px-3 py-1.5 text-xs font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">插入</button>
+        </div>
+      )}
+
       {/* 编辑区域 */}
-      <div className="min-h-[300px] max-h-[600px] overflow-y-auto px-4 py-3 bg-white dark:bg-gray-700 rounded-b-xl border border-t-0 border-gray-200 dark:border-gray-600">
+      <div className="min-h-[300px] max-h-[600px] overflow-y-auto px-4 py-3 bg-white dark:bg-gray-700 rounded-b-xl border border-t-0 border-gray-200 dark:border-gray-600 relative">
         <EditorContent editor={editor} />
+        {/* 斜杠命令菜单 */}
+        {showSlashMenu && (
+          <>
+            <div className="fixed inset-0 z-10" onClick={() => setShowSlashMenu(false)} />
+            <div
+              ref={slashMenuRef}
+              className="absolute z-20 w-64 max-h-72 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-2"
+              style={{ top: slashPosition.top, left: slashPosition.left }}
+            >
+              <div className="px-3 py-1.5 text-xs text-gray-400 font-medium">命令</div>
+              {SLASH_COMMANDS
+                .filter(cmd => cmd.title.toLowerCase().includes(slashFilter.toLowerCase()))
+                .map((cmd, i) => (
+                  <button
+                    key={cmd.title}
+                    className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${i === 0 ? 'bg-gray-50 dark:bg-gray-750' : ''}`}
+                    onClick={() => {
+                      cmd.action(editor);
+                      setShowSlashMenu(false);
+                    }}
+                  >
+                    <span className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300">{cmd.icon}</span>
+                    <span className="text-gray-700 dark:text-gray-200">{cmd.title}</span>
+                  </button>
+                ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
