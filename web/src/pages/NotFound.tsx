@@ -16,9 +16,7 @@ export default function NotFound() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/workspace?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
+    navigate('/workspace');
   };
 
   return (

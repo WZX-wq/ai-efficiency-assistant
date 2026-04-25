@@ -39,6 +39,7 @@ export default function RichTextEditor({
   const [showSlashMenu, setShowSlashMenu] = useState(false);
   const [slashFilter, setSlashFilter] = useState('');
   const [slashPosition, setSlashPosition] = useState({ top: 0, left: 0 });
+  const [slashSelectedIndex, setSlashSelectedIndex] = useState(0);
   const slashMenuRef = useRef<HTMLDivElement>(null);
   const [aiLoading, setAiLoading] = useState(false);
 
@@ -133,6 +134,7 @@ export default function RichTextEditor({
         const match = textBefore.match(/\/([^\s]*)$/);
         if (match) {
           setSlashFilter(match[1]);
+          setSlashSelectedIndex(0);
         } else {
           setShowSlashMenu(false);
         }
@@ -156,6 +158,7 @@ export default function RichTextEditor({
           setSlashPosition({ top: coords.bottom + 8, left: coords.left });
           setShowSlashMenu(true);
           setSlashFilter('');
+          setSlashSelectedIndex(0);
           return true;
         }
         if (showSlashMenu) {
@@ -165,6 +168,30 @@ export default function RichTextEditor({
           }
           if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
             event.preventDefault();
+            const filtered = SLASH_COMMANDS.filter(cmd =>
+              cmd.title.toLowerCase().includes(slashFilter.toLowerCase())
+            );
+            if (event.key === 'ArrowDown') {
+              setSlashSelectedIndex(prev => Math.min(prev + 1, filtered.length - 1));
+            } else {
+              setSlashSelectedIndex(prev => Math.max(prev - 1, 0));
+            }
+            return true;
+          }
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            const filtered = SLASH_COMMANDS.filter(cmd =>
+              cmd.title.toLowerCase().includes(slashFilter.toLowerCase())
+            );
+            const cmd = filtered[slashSelectedIndex];
+            if (cmd) {
+              if (cmd.isAi && cmd.aiAction) {
+                handleAiCommand(cmd.aiAction);
+              } else if (cmd.action) {
+                cmd.action(editor!);
+              }
+              setShowSlashMenu(false);
+            }
             return true;
           }
         }
@@ -459,6 +486,76 @@ export default function RichTextEditor({
               </svg>
             </ToolbarButton>
           </ToolbarGroup>
+
+          <ToolbarDivider />
+
+          {/* 清除格式 */}
+          <ToolbarGroup>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
+              title="清除格式"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </ToolbarButton>
+          </ToolbarGroup>
+
+          <ToolbarDivider />
+
+          {/* 文字颜色 */}
+          <ToolbarGroup>
+            <div className="relative">
+              <ToolbarButton
+                onClick={() => {
+                  const el = document.getElementById('color-picker-dropdown');
+                  if (el) el.classList.toggle('hidden');
+                }}
+                title="文字颜色"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125V4.5M6.75 21h10.5A2.25 2.25 0 0 0 19.5 18.75V10.5m-9.75 0h9.75" />
+                </svg>
+              </ToolbarButton>
+              <div id="color-picker-dropdown" className="hidden absolute top-full left-0 mt-1 z-30 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg">
+                <div className="grid grid-cols-4 gap-1.5">
+                  {[
+                    { color: '#000000', label: '黑色' },
+                    { color: '#EF4444', label: '红色' },
+                    { color: '#F59E0B', label: '橙色' },
+                    { color: '#10B981', label: '绿色' },
+                    { color: '#3B82F6', label: '蓝色' },
+                    { color: '#8B5CF6', label: '紫色' },
+                    { color: '#EC4899', label: '粉色' },
+                    { color: '#6B7280', label: '灰色' },
+                  ].map(({ color, label }) => (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => {
+                        editor.chain().focus().setColor(color).run();
+                        document.getElementById('color-picker-dropdown')?.classList.add('hidden');
+                      }}
+                      title={label}
+                      aria-label={`设置文字颜色为${label}`}
+                      className="w-6 h-6 rounded-md border border-gray-200 dark:border-gray-600 hover:scale-110 transition-transform"
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().unsetColor().run();
+                    document.getElementById('color-picker-dropdown')?.classList.add('hidden');
+                  }}
+                  className="w-full mt-1.5 px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors text-center"
+                >
+                  重置颜色
+                </button>
+              </div>
+            </div>
+          </ToolbarGroup>
         </div>
       )}
 
@@ -585,7 +682,7 @@ export default function RichTextEditor({
                         </>
                       )}
                       <button
-                        className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${i === 0 ? 'bg-gray-50 dark:bg-gray-750' : ''}`}
+                        className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left transition-colors ${i === slashSelectedIndex ? 'bg-gray-100 dark:bg-gray-700' : 'hover:bg-gray-50 dark:hover:bg-gray-750'}`}
                         onClick={() => {
                           if (cmd.isAi && cmd.aiAction) {
                             handleAiCommand(cmd.aiAction);
@@ -594,6 +691,7 @@ export default function RichTextEditor({
                           }
                           setShowSlashMenu(false);
                         }}
+                        onMouseEnter={() => setSlashSelectedIndex(i)}
                       >
                         <span className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300">{cmd.icon}</span>
                         <div className="flex flex-col">
@@ -650,6 +748,7 @@ function ToolbarButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
+      aria-label={title}
       className={`w-7 h-7 flex items-center justify-center rounded-md text-xs font-medium transition-all ${
         active
           ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300'

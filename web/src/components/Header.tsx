@@ -98,7 +98,7 @@ export default function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1" aria-label="主导航">
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
@@ -117,6 +117,8 @@ export default function Header() {
               <div className="relative" ref={toolsRef}>
                 <button
                   onClick={() => setToolsOpen(!toolsOpen)}
+                  aria-expanded={toolsOpen}
+                  aria-haspopup="true"
                   className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isToolsActive
                       ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
@@ -147,6 +149,7 @@ export default function Header() {
                         value={toolboxSearch}
                         onChange={(e) => setToolboxSearch(e.target.value)}
                         placeholder="搜索工具..."
+                        aria-label="搜索工具"
                         className="w-full px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                       />
                     </div>
@@ -219,6 +222,7 @@ export default function Header() {
                 onClick={toggleAiPanel}
                 className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
                 title="AI 写作助手 (Ctrl+K)"
+                aria-label="AI 写作助手"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />

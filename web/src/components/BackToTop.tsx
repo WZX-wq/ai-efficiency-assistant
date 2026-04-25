@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 export default function BackToTop() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(() => window.scrollY > 300);
 
   const handleScroll = useCallback(() => {
     setVisible(window.scrollY > 300);
@@ -21,6 +21,8 @@ export default function BackToTop() {
     <button
       onClick={scrollToTop}
       aria-label="回到顶部"
+      aria-hidden={!visible}
+      tabIndex={visible ? 0 : -1}
       className={`
         fixed bottom-20 right-4 z-30
         md:bottom-8 md:right-6

@@ -93,7 +93,7 @@ export default function Onboarding() {
       onClick={(e) => e.target === e.currentTarget && close()}
     >
       <div
-        className={`w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800 transition-all duration-200 ${
+        className={`relative w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800 transition-all duration-200 ${
           animating ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
       >

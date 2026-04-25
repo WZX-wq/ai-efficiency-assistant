@@ -700,7 +700,7 @@ export default function ChatInterface({
         </div>
 
         {/* 消息列表 */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 min-h-0">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 min-h-0" role="log" aria-live="polite" aria-label="对话消息">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full gap-4 text-gray-400">
               <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-purple-100 dark:from-primary-900/30 dark:to-purple-900/30 rounded-2xl flex items-center justify-center">
@@ -907,6 +907,7 @@ export default function ChatInterface({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
+              aria-label="输入消息"
               onPaste={(e) => {
                 const items = Array.from(e.clipboardData.items).filter(item => item.type.startsWith('image/'));
                 if (items.length > 0) {
@@ -931,6 +932,7 @@ export default function ChatInterface({
               onClick={loading ? handleStopGeneration : () => sendMessage(input)}
               disabled={(!input.trim() && images.length === 0) || loading}
               title={loading ? '停止生成' : '发送'}
+              aria-label={loading ? '停止生成' : '发送消息'}
               className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:shadow-md ${
                 loading
                   ? 'bg-red-500 text-white hover:bg-red-600'

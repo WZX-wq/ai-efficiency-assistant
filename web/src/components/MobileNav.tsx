@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAppStore } from '../store/appStore';
 
 interface NavTab {
   to: string;
@@ -91,6 +92,13 @@ function Badge({ badge }: { badge?: number | boolean }) {
 
 export default function MobileNav() {
   const location = useLocation();
+  const { theme, setTheme } = useAppStore();
+
+  const darkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  const toggleDarkMode = () => {
+    setTheme(darkMode ? 'light' : 'dark');
+  };
 
   return (
     <nav
@@ -189,6 +197,25 @@ export default function MobileNav() {
             </Link>
           );
         })}
+        {/* 暗色模式切换按钮 */}
+        <button
+          onClick={toggleDarkMode}
+          aria-label={darkMode ? '切换到亮色模式' : '切换到暗色模式'}
+          className="relative flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 py-1.5 px-1 rounded-lg transition-colors duration-200 text-gray-400 dark:text-gray-500"
+        >
+          {darkMode ? (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          )}
+          <span className="text-[10px] leading-tight font-medium truncate w-full text-center">
+            {darkMode ? '亮色' : '暗色'}
+          </span>
+        </button>
       </div>
     </nav>
   );

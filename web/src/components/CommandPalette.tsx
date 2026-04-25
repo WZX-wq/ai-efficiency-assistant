@@ -234,6 +234,9 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
       <div
         className="w-full max-w-lg mx-4 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="命令面板"
       >
         {/* 搜索输入 */}
         <div className="flex items-center gap-3 px-4 border-b border-gray-200 dark:border-gray-700">
@@ -249,6 +252,10 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
               setActiveIndex(0);
             }}
             placeholder="搜索页面或工具..."
+            role="combobox"
+            aria-expanded={filtered.length > 0}
+            aria-controls="command-list"
+            aria-autocomplete="list"
             className="flex-1 py-4 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 outline-none text-base"
           />
           <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-xs text-gray-400 bg-gray-100 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600">
@@ -257,7 +264,7 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
         </div>
 
         {/* 命令列表 */}
-        <div ref={listRef} className="max-h-80 overflow-y-auto py-2">
+        <div ref={listRef} className="max-h-80 overflow-y-auto py-2" role="listbox" id="command-list">
           {allGroups.length === 0 && (
             <div className="px-4 py-8 text-center text-gray-400 dark:text-gray-500 text-sm">
               未找到匹配的结果
@@ -279,6 +286,8 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
                     data-active={isActive}
                     onClick={() => handleSelect(item)}
                     onMouseEnter={() => setActiveIndex(idx)}
+                    role="option"
+                    aria-selected={isActive}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors animate-fade-in"
                     style={{ animationDelay: `${delay}ms`, animationFillMode: 'both' }}
                   >

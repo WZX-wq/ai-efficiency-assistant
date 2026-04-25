@@ -229,7 +229,7 @@ export default function Workspace() {
       <section className="pb-20 sm:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Tab Bar */}
-          <div className="relative flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 w-fit">
+          <div className="relative flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 w-fit" role="tablist">
             <div
               className="absolute bottom-1 left-1 h-[calc(100%-8px)] bg-white dark:bg-gray-700 rounded-lg shadow-sm transition-all duration-300"
               style={tabIndicatorStyle}
@@ -237,8 +237,12 @@ export default function Workspace() {
             {TABS.map((tab, i) => (
               <button
                 key={tab.key}
+                id={`tab-${tab.key}`}
                 ref={(el) => { tabRefs.current[i] = el; }}
                 onClick={() => setActiveTab(tab.key)}
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                aria-controls={`panel-${tab.key}`}
                 className={`relative z-10 px-5 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === tab.key
                     ? 'text-violet-600 dark:text-violet-400'
@@ -264,6 +268,9 @@ export default function Workspace() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   className="h-full"
+                  role="tabpanel"
+                  id="panel-text"
+                  aria-labelledby="tab-text"
                 >
                   <AiTextProcessor />
                 </motion.div>
@@ -277,6 +284,9 @@ export default function Workspace() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   className="h-full"
+                  role="tabpanel"
+                  id="panel-chat"
+                  aria-labelledby="tab-chat"
                 >
                   <ChatInterface
                     systemPrompt={CHAT_SYSTEM_PROMPT}
@@ -294,6 +304,9 @@ export default function Workspace() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   className="flex flex-col h-full"
+                  role="tabpanel"
+                  id="panel-editor"
+                  aria-labelledby="tab-editor"
                 >
                 {/* Editor Toolbar */}
                 <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100 dark:border-gray-700">
