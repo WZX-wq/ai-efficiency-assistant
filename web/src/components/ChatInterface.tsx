@@ -53,6 +53,7 @@ export default function ChatInterface({
   const [personaOpen, setPersonaOpen] = useState(false);
   const [feedback, setFeedback] = useState<Record<number, 'up' | 'down'>>({});
   const [images, setImages] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const [customRoles, setCustomRoles] = useState<Array<{ id: string; name: string; systemPrompt: string }>>([]);
   const [showCustomRoleForm, setShowCustomRoleForm] = useState(false);
   const [customRoleName, setCustomRoleName] = useState('');
@@ -825,7 +826,30 @@ export default function ChatInterface({
         </div>
 
         {/* 输入区域 */}
-        <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 shrink-0">
+        <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 shrink-0 relative"
+          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragging(false);
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+            files.forEach(file => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                setImages(prev => [...prev, reader.result as string]);
+              };
+              reader.readAsDataURL(file);
+            });
+          }}
+        >
+          {isDragging && (
+            <div className="absolute inset-0 z-10 bg-primary-50 dark:bg-primary-900/20 border-2 border-dashed border-primary-400 rounded-xl flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-2xl mb-1">📎</div>
+                <div className="text-sm font-medium text-primary-600 dark:text-primary-400">释放以上传图片</div>
+              </div>
+            </div>
+          )}
           {/* 图片缩略图预览 */}
           {images.length > 0 && (
             <div className="flex gap-2 mb-2 flex-wrap">
@@ -866,6 +890,22 @@ export default function ChatInterface({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
+              onPaste={(e) => {
+                const items = Array.from(e.clipboardData.items).filter(item => item.type.startsWith('image/'));
+                if (items.length > 0) {
+                  e.preventDefault();
+                  items.forEach(item => {
+                    const file = item.getAsFile();
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = () => {
+                        setImages(prev => [...prev, reader.result as string]);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  });
+                }
+              }}
               placeholder={placeholder}
               rows={1}
               className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-800 dark:text-gray-200 leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all placeholder:text-gray-400 bg-gray-50 dark:bg-gray-700"

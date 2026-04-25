@@ -500,3 +500,19 @@ html.theme-transitioning *::after {
   opacity: 0.3;
   transition: 0s;
 }
+
+/* 渐变文字动画 */
+.animate-gradient-text {
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7, #6366f1);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-text-flow 4s ease infinite;
+}
+
+@keyframes gradient-text-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

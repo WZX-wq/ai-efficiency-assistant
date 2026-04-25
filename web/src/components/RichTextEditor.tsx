@@ -16,6 +16,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import type { Editor } from '@tiptap/react';
+import { chatWithAi } from '../services/aiChat';
 
 interface RichTextEditorProps {
   content: string;
@@ -39,6 +40,7 @@ export default function RichTextEditor({
   const [slashFilter, setSlashFilter] = useState('');
   const [slashPosition, setSlashPosition] = useState({ top: 0, left: 0 });
   const slashMenuRef = useRef<HTMLDivElement>(null);
+  const [aiLoading, setAiLoading] = useState(false);
 
   // Link input state
   const [linkUrl, setLinkUrl] = useState('');
@@ -49,7 +51,14 @@ export default function RichTextEditor({
   const [imageUrl, setImageUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const SLASH_COMMANDS = [
+  const SLASH_COMMANDS: Array<{
+    title: string;
+    icon: string;
+    action?: (editor: Editor) => void;
+    isAi?: boolean;
+    desc?: string;
+    aiAction?: string;
+  }> = [
     { title: '一级标题', icon: 'H1', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 1 }).run() },
     { title: '二级标题', icon: 'H2', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 2 }).run() },
     { title: '三级标题', icon: 'H3', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 3 }).run() },
@@ -66,6 +75,12 @@ export default function RichTextEditor({
     { title: '插入表格', icon: '⊞', action: (editor: Editor) => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
     { title: '待办事项', icon: '☑', action: (editor: Editor) => editor.chain().focus().toggleTaskList().run() },
     { title: '高亮', icon: '◐', action: (editor: Editor) => editor.chain().focus().toggleHighlight().run() },
+    { title: 'AI 润色', icon: '✨', desc: '优化文字表达', isAi: true, aiAction: 'polish' },
+    { title: 'AI 改写', icon: '🔄', desc: '重新表述内容', isAi: true, aiAction: 'rewrite' },
+    { title: 'AI 扩写', icon: '📝', desc: '扩展详细内容', isAi: true, aiAction: 'expand' },
+    { title: 'AI 缩写', icon: '✂️', desc: '精简提炼内容', isAi: true, aiAction: 'condense' },
+    { title: 'AI 翻译', icon: '🌐', desc: '翻译为英文', isAi: true, aiAction: 'translate' },
+    { title: 'AI 总结', icon: '📋', desc: '提取核心要点', isAi: true, aiAction: 'summarize' },
   ];
 
   const editor = useEditor({
@@ -173,6 +188,44 @@ export default function RichTextEditor({
     if (!editor) return;
     setShowImageInput(prev => !prev);
     setImageUrl('');
+  }, [editor]);
+
+  const handleAiCommand = useCallback(async (aiAction: string) => {
+    const { from, to } = editor.state.selection;
+    const selectedText = editor.state.doc.textBetween(from, to, '\n');
+
+    if (!selectedText.trim()) {
+      alert('请先选中需要处理的文本');
+      setShowSlashMenu(false);
+      return;
+    }
+
+    setAiLoading(true);
+    setShowSlashMenu(false);
+
+    const prompts: Record<string, string> = {
+      polish: `请润色以下文本，使其更加流畅优美，保持原意不变：\n\n${selectedText}`,
+      rewrite: `请改写以下文本，用不同的表达方式重新表述：\n\n${selectedText}`,
+      expand: `请扩写以下文本，添加更多细节和内容：\n\n${selectedText}`,
+      condense: `请精简以下文本，保留核心要点，缩短到原来的三分之一：\n\n${selectedText}`,
+      translate: `请将以下文本翻译为英文：\n\n${selectedText}`,
+      summarize: `请总结以下文本的核心要点，用简洁的列表形式呈现：\n\n${selectedText}`,
+    };
+
+    try {
+      const result = await chatWithAi({
+        messages: [{ role: 'user', content: prompts[aiAction] }],
+        systemPrompt: '你是一个专业的AI写作助手，请直接返回处理后的文本，不要添加任何解释或前缀。',
+      });
+
+      if (result.success && result.result) {
+        editor.chain().focus().deleteSelection().insertContent(result.result).run();
+      }
+    } catch (err) {
+      console.error('AI command failed:', err);
+    } finally {
+      setAiLoading(false);
+    }
   }, [editor]);
 
   if (!editor) return null;
@@ -476,7 +529,36 @@ export default function RichTextEditor({
       )}
 
       {/* 编辑区域 */}
-      <div className="min-h-[300px] max-h-[600px] overflow-y-auto px-4 py-3 bg-white dark:bg-gray-700 rounded-b-xl border border-t-0 border-gray-200 dark:border-gray-600 relative">
+      <div
+        className="min-h-[300px] max-h-[600px] overflow-y-auto px-4 py-3 bg-white dark:bg-gray-700 rounded-b-xl border border-t-0 border-gray-200 dark:border-gray-600 relative"
+        onDrop={(e) => {
+          e.preventDefault();
+          const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+          files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              editor.chain().focus().setImage({ src: reader.result as string }).run();
+            };
+            reader.readAsDataURL(file);
+          });
+        }}
+        onPaste={(e) => {
+          const items = Array.from(e.clipboardData.items).filter(item => item.type.startsWith('image/'));
+          if (items.length > 0) {
+            e.preventDefault();
+            items.forEach(item => {
+              const file = item.getAsFile();
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  editor.chain().focus().setImage({ src: reader.result as string }).run();
+                };
+                reader.readAsDataURL(file);
+              }
+            });
+          }
+        }}
+      >
         <EditorContent editor={editor} />
         {/* 斜杠命令菜单 */}
         {showSlashMenu && (
@@ -490,21 +572,46 @@ export default function RichTextEditor({
               <div className="px-3 py-1.5 text-xs text-gray-400 font-medium">命令</div>
               {SLASH_COMMANDS
                 .filter(cmd => cmd.title.toLowerCase().includes(slashFilter.toLowerCase()))
-                .map((cmd, i) => (
-                  <button
-                    key={cmd.title}
-                    className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${i === 0 ? 'bg-gray-50 dark:bg-gray-750' : ''}`}
-                    onClick={() => {
-                      cmd.action(editor);
-                      setShowSlashMenu(false);
-                    }}
-                  >
-                    <span className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300">{cmd.icon}</span>
-                    <span className="text-gray-700 dark:text-gray-200">{cmd.title}</span>
-                  </button>
-                ))}
+                .map((cmd, i) => {
+                  const isDivider = cmd.isAi && i > 0 && !SLASH_COMMANDS[i - 1].isAi;
+                  return (
+                    <div key={cmd.title}>
+                      {isDivider && (
+                        <>
+                          <div className="my-1 border-t border-gray-200 dark:border-gray-700" />
+                          <div className="px-3 py-1.5 text-xs text-gray-400 font-medium">AI 助手</div>
+                        </>
+                      )}
+                      <button
+                        className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${i === 0 ? 'bg-gray-50 dark:bg-gray-750' : ''}`}
+                        onClick={() => {
+                          if (cmd.isAi && cmd.aiAction) {
+                            handleAiCommand(cmd.aiAction);
+                          } else if (cmd.action) {
+                            cmd.action(editor);
+                          }
+                          setShowSlashMenu(false);
+                        }}
+                      >
+                        <span className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300">{cmd.icon}</span>
+                        <div className="flex flex-col">
+                          <span className="text-gray-700 dark:text-gray-200">{cmd.title}</span>
+                          {cmd.desc && <span className="text-xs text-gray-400">{cmd.desc}</span>}
+                        </div>
+                      </button>
+                    </div>
+                  );
+                })}
             </div>
           </>
+        )}
+        {aiLoading && (
+          <div className="absolute inset-0 z-30 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm flex items-center justify-center rounded-xl">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+              <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+              <span className="text-sm text-gray-700 dark:text-gray-300">AI 处理中...</span>
+            </div>
+          </div>
         )}
       </div>
     </div>

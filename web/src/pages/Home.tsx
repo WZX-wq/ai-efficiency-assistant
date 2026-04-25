@@ -376,7 +376,7 @@ export default function Home() {
               v2.1 企业级升级 · 富文本编辑器 · AI 写作助手
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight animate-slide-up">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight animate-slide-up animate-gradient-text">
               AI效率助手
               <br />
               <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 bg-clip-text text-transparent">
@@ -605,6 +605,83 @@ export default function Home() {
                 <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-20 bg-white dark:bg-gray-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-semibold rounded-full mb-3">灵活定价</span>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">选择适合你的方案</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-3 max-w-2xl mx-auto">从免费版开始，随时升级</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* 免费版 */}
+            <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">免费版</h3>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-gray-900 dark:text-white">¥0</span>
+                <span className="text-gray-500 dark:text-gray-400">/月</span>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">适合个人体验</p>
+              <ul className="mt-6 space-y-3">
+                {['每日 10 次 AI 调用', '基础 AI 文本处理', '3 种 AI 角色', '富文本编辑器', '社区支持'].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/workspace" className="mt-8 block w-full text-center px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                免费开始
+              </Link>
+            </div>
+            {/* 专业版 */}
+            <div className="relative p-6 rounded-2xl border-2 border-primary-500 dark:border-primary-400 shadow-xl shadow-primary-500/10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-primary-600 text-white text-xs font-semibold rounded-full">推荐</div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">专业版</h3>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-gray-900 dark:text-white">¥49</span>
+                <span className="text-gray-500 dark:text-gray-400">/月</span>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">适合内容创作者</p>
+              <ul className="mt-6 space-y-3">
+                {['无限 AI 调用', '全部 14+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <svg className="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/pricing" className="mt-8 block w-full text-center px-4 py-2.5 text-sm font-medium text-white bg-primary-600 rounded-xl hover:bg-primary-700 transition-colors shadow-sm">
+                立即升级
+              </Link>
+            </div>
+            {/* 团队版 */}
+            <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">团队版</h3>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-gray-900 dark:text-white">¥199</span>
+                <span className="text-gray-500 dark:text-gray-400">/月</span>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">适合团队协作</p>
+              <ul className="mt-6 space-y-3">
+                {['专业版全部功能', '最多 20 人协作', '团队数据看板', 'API 接口访问', '专属客户经理', 'SLA 保障'].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/services" className="mt-8 block w-full text-center px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                联系我们
+              </Link>
+            </div>
+          </div>
+          <div className="text-center mt-8">
+            <Link to="/pricing" className="text-sm text-primary-600 dark:text-primary-400 hover:underline">查看完整定价方案 →</Link>
           </div>
         </div>
       </section>
