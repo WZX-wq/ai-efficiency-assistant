@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const TIPS = ['"学术严谨"模式适合论文和正式文档', '"文学优美"模式适合散文和创意写作', '润色后可用人性化改写进一步增加自然感'];
 
@@ -29,6 +30,7 @@ const fields = [
 ];
 
 export default function PolishTool() {
+  useSeo('polish');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

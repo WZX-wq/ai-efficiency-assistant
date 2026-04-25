@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import ToastProvider from './components/ToastProvider';
 import Onboarding from './components/Onboarding';
 import RouteProgress from './components/RouteProgress';
+import ReadingProgress from './components/ReadingProgress';
 import AnnouncementBar from './components/AnnouncementBar';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import Header from './components/Header';
@@ -129,6 +130,7 @@ function AppContent() {
     <>
       <Onboarding />
       <RouteProgress />
+      <ReadingProgress />
       <AnnouncementBar />
       {/* 无障碍: 跳过导航链接 */}
       <a

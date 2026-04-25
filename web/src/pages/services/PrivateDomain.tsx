@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const FEATURES = ['社群搭建', '用户分层', '自动化营销', '裂变增长'];
 const CTA_TEXT = '立即生成私域方案';
@@ -35,6 +36,7 @@ const fields = [
 ];
 
 export default function PrivateDomain() {
+  useSeo('private-domain');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

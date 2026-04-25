@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const TIPS = ['详细描述核心卖点，AI 会据此生成更有说服力的话术', '选择具体的话术场景可获得更专业的输出', '生成后可用人性化改写工具进一步优化语气'];
 
@@ -43,6 +44,7 @@ const fields = [
 ];
 
 export default function ScriptLibrary() {
+  useSeo('scripts');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

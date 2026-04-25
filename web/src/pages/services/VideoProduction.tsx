@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const FEATURES = ['专业分镜脚本', '爆款标题生成', 'BGM推荐', '多平台适配'];
 const CTA_TEXT = '立即生成短视频脚本';
@@ -52,6 +53,7 @@ const fields = [
 ];
 
 export default function VideoProduction() {
+  useSeo('video');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

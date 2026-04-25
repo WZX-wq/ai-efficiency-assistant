@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const FEATURES = ['选品排品', '直播脚本', '话术模板', '场控流程'];
 const CTA_TEXT = '立即生成直播方案';
@@ -46,6 +47,7 @@ const fields = [
 ];
 
 export default function LiveStream() {
+  useSeo('live-stream');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

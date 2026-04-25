@@ -154,7 +154,12 @@ function restoreHead(prev: ReturnType<typeof snapshotHead>) {
  * - 设置 canonical 链接
  * - 组件卸载时自动还原
  */
-export function useSeo(options: SeoOptions): void {
+export function useSeo(optionsOrKey: SeoOptions | string): void {
+  const options: SeoOptions =
+    typeof optionsOrKey === 'string'
+      ? (PAGE_SEO as Record<string, SeoOptions>)[optionsOrKey] ?? {}
+      : optionsOrKey
+
   const applySeo = useCallback(() => {
     const {
       title,
@@ -304,4 +309,29 @@ export const PAGE_SEO = {
       'AI设置,API配置,偏好设置,账户管理,AI助手设置',
     canonicalUrl: '/settings',
   },
+
+  // 服务子页面
+  video: { title: '短视频制作 - AI效率助手', description: 'AI驱动的短视频脚本创作、分镜设计和内容优化工具，提升短视频制作效率' },
+  'group-buy': { title: '社区团购运营 - AI效率助手', description: 'AI智能团购文案生成、活动策划和社群运营工具' },
+  'private-domain': { title: '私域运营 - AI效率助手', description: 'AI赋能的私域流量运营工具，智能内容生成和用户管理' },
+  'ai-cs': { title: 'AI智能客服 - AI效率助手', description: '基于AI的智能客服系统，自动回复、知识库管理和客户服务优化' },
+  'data-analysis': { title: '数据分析 - AI效率助手', description: 'AI数据分析助手，智能报表生成、趋势预测和数据洞察' },
+  'live-stream': { title: '直播运营 - AI效率助手', description: 'AI直播脚本创作、话术优化和直播数据分析工具' },
+
+  // 工具子页面
+  creative: { title: '创意灵感 - AI效率助手', description: 'AI创意灵感生成器，激发无限创意，支持多场景内容创作' },
+  calendar: { title: '营销日历 - AI效率助手', description: 'AI智能营销日历，自动规划营销活动和内容排期' },
+  scripts: { title: 'AI话术库 - AI效率助手', description: 'AI智能话术库，多场景话术模板和个性化话术生成' },
+  copywriting: { title: '文案生成器 - AI效率助手', description: 'AI文案生成器，一键生成营销文案、广告语和推广内容' },
+  history: { title: '历史记录 - AI效率助手', description: '查看和管理您的AI创作历史记录' },
+  brand: { title: '品牌声音 - AI效率助手', description: '定义和管理品牌声音，确保AI生成内容符合品牌调性' },
+  seo: { title: 'SEO优化 - AI效率助手', description: 'AI SEO优化工具，智能关键词分析和内容优化建议' },
+  templates: { title: '模板库 - AI效率助手', description: '丰富的AI创作模板库，覆盖多种内容创作场景' },
+  humanize: { title: '人性化改写 - AI效率助手', description: 'AI人性化改写工具，让AI生成的内容更自然、更有温度' },
+  polish: { title: '文章润色 - AI效率助手', description: 'AI文章润色工具，智能优化文笔、修正语法和提升表达' },
+  summarizer: { title: '内容总结 - AI效率助手', description: 'AI内容总结工具，快速提取长文核心要点和关键信息' },
+
+  // 其他页面
+  privacy: { title: '隐私政策 - AI效率助手', description: '了解AI效率助手如何收集、使用和保护您的个人信息' },
+  terms: { title: '服务条款 - AI效率助手', description: 'AI效率助手的服务条款和使用协议' },
 } as const

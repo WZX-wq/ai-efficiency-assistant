@@ -5,14 +5,39 @@ interface ShortcutsModalProps {
   onClose: () => void;
 }
 
-const SHORTCUTS = [
-  { keys: ['Ctrl', 'K'], description: '打开命令面板' },
-  { keys: ['Ctrl', '/'], description: '聚焦搜索框' },
-  { keys: ['Ctrl', 'Shift', 'S'], description: '打开设置' },
-  { keys: ['Enter'], description: '发送消息' },
-  { keys: ['Shift', 'Enter'], description: '换行' },
-  { keys: ['Esc'], description: '关闭弹窗' },
-  { keys: ['?'], description: '显示快捷键帮助' },
+interface ShortcutGroup {
+  title: string;
+  shortcuts: { keys: string[]; description: string }[];
+}
+
+const SHORTCUT_GROUPS: ShortcutGroup[] = [
+  {
+    title: '导航',
+    shortcuts: [
+      { keys: ['Ctrl', 'K'], description: '命令面板' },
+      { keys: ['Ctrl', 'H'], description: '历史记录' },
+      { keys: ['Ctrl', ','], description: '设置' },
+    ],
+  },
+  {
+    title: '编辑',
+    shortcuts: [
+      { keys: ['Ctrl', 'Enter'], description: '生成内容' },
+    ],
+  },
+  {
+    title: '主题',
+    shortcuts: [
+      { keys: ['Ctrl', 'Shift', 'D'], description: '切换暗黑模式' },
+    ],
+  },
+  {
+    title: '其他',
+    shortcuts: [
+      { keys: ['?'], description: '快捷键帮助' },
+      { keys: ['Esc'], description: '关闭弹窗' },
+    ],
+  },
 ];
 
 function Kbd({ children }: { children: React.ReactNode }) {
@@ -77,24 +102,33 @@ export default function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
           </button>
         </div>
 
-        {/* Shortcuts grid */}
-        <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-          {SHORTCUTS.map((shortcut) => (
-            <div
-              key={shortcut.description}
-              className="flex items-center justify-between gap-2"
-            >
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {shortcut.description}
-              </span>
-              <div className="flex items-center gap-1">
-                {shortcut.keys.map((key, i) => (
-                  <span key={i} className="flex items-center gap-1">
-                    {i > 0 && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500">+</span>
-                    )}
-                    <Kbd>{key}</Kbd>
-                  </span>
+        {/* Shortcuts by group */}
+        <div className="space-y-5">
+          {SHORTCUT_GROUPS.map((group) => (
+            <div key={group.title}>
+              <h3 className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                {group.title}
+              </h3>
+              <div className="grid grid-cols-1 gap-y-2">
+                {group.shortcuts.map((shortcut) => (
+                  <div
+                    key={shortcut.description}
+                    className="flex items-center justify-between gap-2"
+                  >
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {shortcut.description}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {shortcut.keys.map((key, i) => (
+                        <span key={i} className="flex items-center gap-1">
+                          {i > 0 && (
+                            <span className="text-xs text-gray-400 dark:text-gray-500">+</span>
+                          )}
+                          <Kbd>{key}</Kbd>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

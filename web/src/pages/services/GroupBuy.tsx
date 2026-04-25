@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const FEATURES = ['选品分析', '定价策略', '活动方案', '推广话术'];
 const CTA_TEXT = '立即生成团购方案';
@@ -44,6 +45,7 @@ const fields = [
 ];
 
 export default function GroupBuy() {
+  useSeo('group-buy');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

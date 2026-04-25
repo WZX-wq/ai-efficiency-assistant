@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const TIPS = ['"核心要点"模式适合快速了解长文主旨', '"结构化"模式适合需要保留详细信息的场景', '原文越长，摘要效果越好'];
 
@@ -39,6 +40,7 @@ const fields = [
 ];
 
 export default function SummarizerTool() {
+  useSeo('summarizer');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

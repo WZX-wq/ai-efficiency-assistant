@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { FeatureCard } from '../types';
 import { ACTION_DESCRIPTIONS } from '../types';
 import { useSeo, JsonLd, PAGE_SEO } from '../components/SeoHead';
+import { APP_VERSION } from '../version';
 
 const features: FeatureCard[] = [
   {
@@ -373,7 +374,7 @@ export default function Home() {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-full text-sm text-primary-700 dark:text-primary-300 font-medium mb-8 animate-fade-in">
               <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
-              v2.1 企业级升级 · 富文本编辑器 · AI 写作助手
+              {APP_VERSION} 企业级升级 · 富文本编辑器 · AI 写作助手
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight animate-slide-up animate-gradient-text">

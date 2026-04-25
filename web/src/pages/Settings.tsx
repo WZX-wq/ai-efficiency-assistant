@@ -6,6 +6,7 @@ import { useAppStore } from '../store/appStore';
 import { useTranslation } from '../i18n';
 import UsageStats from '../components/UsageStats';
 import { useSeo, PAGE_SEO } from '../components/SeoHead';
+import { APP_VERSION, APP_VERSION_FULL } from '../version';
 
 interface ModelConfig {
   provider: string;
@@ -332,7 +333,7 @@ export default function Settings() {
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">使用工具数</div>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-amber-600">v2.1</div>
+                  <div className="text-2xl font-bold text-amber-600">{APP_VERSION}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">当前版本</div>
                 </div>
               </div>
@@ -586,7 +587,7 @@ export default function Settings() {
               <dl className="space-y-3 text-sm">
                 <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
                   <dt className="text-gray-500 dark:text-gray-400">版本号</dt>
-                  <dd className="text-gray-900 dark:text-white font-medium">v2.1.0 (Enterprise)</dd>
+                  <dd className="text-gray-900 dark:text-white font-medium">{APP_VERSION_FULL}</dd>
                 </div>
                 <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
                   <dt className="text-gray-500 dark:text-gray-400">技术栈</dt>

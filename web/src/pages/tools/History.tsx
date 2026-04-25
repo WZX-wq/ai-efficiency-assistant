@@ -4,6 +4,7 @@ import { useHistory } from '../../hooks/useHistory';
 import { exportAsMarkdown, exportAsText } from '../../utils/export';
 import MarkdownRenderer from '../../components/MarkdownRenderer';
 import { useToast } from '../../components/ToastProvider';
+import { useSeo } from '../../components/SeoHead';
 import type { HistoryRecord } from '../../services/history';
 
 // ---------------------------------------------------------------------------
@@ -80,6 +81,7 @@ function isToday(iso: string): boolean {
 // ---------------------------------------------------------------------------
 
 export default function History() {
+  useSeo('history');
   const { records, remove, clear, search } = useHistory();
   const { toast } = useToast();
 

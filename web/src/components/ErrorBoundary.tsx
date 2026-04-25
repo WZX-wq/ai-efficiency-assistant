@@ -1,4 +1,4 @@
-import { Component, ReactNode, ErrorInfo } from 'react';
+import { Component, Fragment, ReactNode, ErrorInfo } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -9,34 +9,58 @@ interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
   showDetails: boolean;
+  retryKey: number;
 }
+
+type ErrorCategory = '类型错误' | '网络错误' | '未知错误';
+
+function classifyError(error: Error): ErrorCategory {
+  if (error instanceof TypeError) return '类型错误';
+  const msg = error.message.toLowerCase();
+  if (msg.includes('fetch') || msg.includes('network')) return '网络错误';
+  return '未知错误';
+}
+
+const ERROR_SUGGESTIONS: Record<ErrorCategory, string> = {
+  '类型错误': '这通常是由于访问了未定义的属性或调用了非函数值导致的。请刷新页面或稍后重试。',
+  '网络错误': '网络连接异常，请检查网络设置后重试。如果问题持续存在，可能是服务端暂时不可用。',
+  '未知错误': '发生了意外错误，请尝试刷新页面或返回首页。',
+};
 
 export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, error: null, showDetails: false };
+    this.state = { hasError: false, error: null, showDetails: false, retryKey: 0 };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return { hasError: true, error, showDetails: false };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('[ErrorBoundary] 捕获到渲染错误:', error, info.componentStack);
+
+    // TODO: 在此集成 Sentry 等错误上报服务
+    // 例如: Sentry.captureException(error, { extra: { componentStack: info.componentStack } });
   }
 
   private handleGoHome = () => {
-    this.setState({ hasError: false, error: null, showDetails: false });
+    this.setState({ hasError: false, error: null, showDetails: false, retryKey: 0 });
     window.location.href = '/';
   };
 
   private handleReload = () => {
-    this.setState({ hasError: false, error: null, showDetails: false });
+    this.setState({ hasError: false, error: null, showDetails: false, retryKey: 0 });
     window.location.reload();
   };
 
   private handleRetry = () => {
-    this.setState({ hasError: false, error: null, showDetails: false });
+    this.setState((prev) => ({
+      hasError: false,
+      error: null,
+      showDetails: false,
+      retryKey: prev.retryKey + 1,
+    }));
   };
 
   private toggleDetails = () => {
@@ -46,6 +70,9 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
+
+      const category = this.state.error ? classifyError(this.state.error) : '未知错误';
+      const suggestion = ERROR_SUGGESTIONS[category];
 
       return (
         <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
@@ -72,9 +99,19 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
               页面加载出错
             </h2>
 
+            {/* 错误分类标签 */}
+            <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 mb-3">
+              {category}
+            </span>
+
             {/* 错误信息 */}
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 break-words">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 break-words">
               {this.state.error?.message || '发生了未知错误，请稍后重试。'}
+            </p>
+
+            {/* 恢复建议 */}
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {suggestion}
             </p>
 
             {/* 查看详情 toggle */}
@@ -120,6 +157,6 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
       );
     }
 
-    return this.props.children;
+    return <Fragment key={this.state.retryKey}>{this.props.children}</Fragment>;
   }
 }

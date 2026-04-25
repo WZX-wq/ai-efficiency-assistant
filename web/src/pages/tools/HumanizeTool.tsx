@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const TIPS = ['选择"自然口语"模式效果最接近真人写作', '改写后建议人工审核确保事实准确性', '可多次改写后挑选最自然的版本'];
 
@@ -41,6 +42,7 @@ const fields = [
 ];
 
 export default function HumanizeTool() {
+  useSeo('humanize');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

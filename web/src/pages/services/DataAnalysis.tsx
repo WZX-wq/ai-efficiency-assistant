@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const FEATURES = ['数据概览', '趋势分析', '问题诊断', '优化建议'];
 const CTA_TEXT = '立即生成分析报告';
@@ -16,6 +17,7 @@ const fields = [
 ];
 
 export default function DataAnalysis() {
+  useSeo('data-analysis');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

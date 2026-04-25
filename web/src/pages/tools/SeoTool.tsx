@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const TIPS = ['提供 3-5 个目标关键词效果最佳', '文章内容越长，优化建议越详细', '可多次运行对比不同关键词的优化效果'];
 
@@ -41,6 +42,7 @@ const fields = [
 ];
 
 export default function SeoTool() {
+  useSeo('seo');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore } from '../store/appStore';
 
 export function useKeyboardShortcuts(onCommandPaletteOpen: () => void) {
   const navigate = useNavigate();
+  const theme = useAppStore((s) => s.theme);
+  const setTheme = useAppStore((s) => s.setTheme);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -27,15 +30,36 @@ export function useKeyboardShortcuts(onCommandPaletteOpen: () => void) {
         return;
       }
 
-      // Ctrl+Shift+S → settings
-      if (e.key === 'S') {
+      // Ctrl+, → settings
+      if (e.key === ',') {
         e.preventDefault();
         navigate('/settings');
+        return;
+      }
+
+      // Ctrl+Shift+S → settings (legacy)
+      if (e.key === 'S' && !e.shiftKey) {
+        e.preventDefault();
+        navigate('/settings');
+        return;
+      }
+
+      // Ctrl+Shift+D → toggle dark mode
+      if (e.key === 'D') {
+        e.preventDefault();
+        setTheme(theme === 'dark' ? 'light' : 'dark');
+        return;
+      }
+
+      // Ctrl+H → history
+      if (e.key === 'h') {
+        e.preventDefault();
+        navigate('/workspace/history');
         return;
       }
     };
 
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [navigate, onCommandPaletteOpen]);
+  }, [navigate, onCommandPaletteOpen, theme, setTheme]);
 }

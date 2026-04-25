@@ -40,6 +40,13 @@ const BG_COLORS: Record<Toast['type'], string> = {
   warning: 'bg-yellow-500',
 };
 
+const DEFAULT_DURATIONS: Record<Toast['type'], number> = {
+  success: 2000,
+  error: 5000,
+  warning: 4000,
+  info: 3000,
+};
+
 function ToastIcon({ type }: { type: Toast['type'] }) {
   const cls = `w-5 h-5 ${ICON_COLORS[type]}`;
   switch (type) {
@@ -59,30 +66,58 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   const [exiting, setExiting] = useState(false);
   const [progress, setProgress] = useState(100);
   const startRef = useRef(Date.now());
+  const pausedAtRef = useRef(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    startRef.current = Date.now();
-    const interval = setInterval(() => {
+  const handleDismiss = useCallback(() => {
+    setExiting(true);
+    setTimeout(() => onRemove(toast.id), 300);
+  }, [onRemove, toast.id]);
+
+  const startTimer = useCallback(() => {
+    // 恢复时调整起始时间，扣除暂停期间的时间
+    if (pausedAtRef.current > 0) {
+      startRef.current += Date.now() - pausedAtRef.current;
+      pausedAtRef.current = 0;
+    }
+
+    intervalRef.current = setInterval(() => {
       const elapsed = Date.now() - startRef.current;
       const remaining = Math.max(0, 100 - (elapsed / toast.duration) * 100);
       setProgress(remaining);
       if (remaining <= 0) {
-        clearInterval(interval);
+        if (intervalRef.current) clearInterval(intervalRef.current);
         handleDismiss();
       }
     }, 50);
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast.duration]);
+  }, [toast.duration, handleDismiss]);
 
-  function handleDismiss() {
-    setExiting(true);
-    setTimeout(() => onRemove(toast.id), 300);
-  }
+  const stopTimer = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    pausedAtRef.current = Date.now();
+  }, []);
+
+  useEffect(() => {
+    startRef.current = Date.now();
+    pausedAtRef.current = 0;
+    startTimer();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [toast.duration, startTimer]);
 
   return (
     <div
-      className={`relative flex items-start gap-3 w-80 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 border-l-4 ${BORDER_COLORS[toast.type]} transition-all duration-300 ${exiting ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'}`}
+      className={`relative flex items-start gap-3 w-full md:w-80 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 border-l-4 ${BORDER_COLORS[toast.type]} transition-all duration-300 ${exiting ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'}`}
+      onMouseEnter={() => {
+        stopTimer();
+      }}
+      onMouseLeave={() => {
+        startTimer();
+      }}
     >
       <ToastIcon type={toast.type} />
       <p className="flex-1 text-sm text-gray-700 dark:text-gray-200 leading-snug">{toast.message}</p>
@@ -106,10 +141,11 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const toast = useCallback((message: string, type: Toast['type'] = 'info', duration = 3000) => {
+  const toast = useCallback((message: string, type: Toast['type'] = 'info', duration?: number) => {
     const id = `toast-${++counterRef.current}`;
+    const actualDuration = duration ?? DEFAULT_DURATIONS[type];
     setToasts((prev) => {
-      const next = [...prev, { id, type, message, duration }];
+      const next = [...prev, { id, type, message, duration: actualDuration }];
       return next.length > MAX_TOASTS ? next.slice(-MAX_TOASTS) : next;
     });
   }, []);
@@ -117,7 +153,7 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      <div className="fixed top-20 right-4 z-[100] flex flex-col gap-3">
+      <div className="fixed bottom-20 left-4 right-4 md:top-20 md:right-4 md:left-auto md:bottom-auto z-[100] flex flex-col gap-3">
         {toasts.map((t) => (
           <ToastItem key={t.id} toast={t} onRemove={removeToast} />
         ))}

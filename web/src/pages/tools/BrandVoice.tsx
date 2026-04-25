@@ -8,6 +8,7 @@ import {
   type BrandVoice,
 } from '../../services/brand';
 import { useToast } from '../../components/ToastProvider';
+import { useSeo } from '../../components/SeoHead';
 
 const EMPTY_FORM: BrandVoice = {
   brandName: '',
@@ -64,6 +65,7 @@ const DIMENSION_KEYS: (keyof BrandVoice)[] = [
 ];
 
 export default function BrandVoicePage() {
+  useSeo('brand');
   const [form, setForm] = useState<BrandVoice>(EMPTY_FORM);
   const { toast: showToast } = useToast();
 

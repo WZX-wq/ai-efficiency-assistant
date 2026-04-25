@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { APP_VERSION } from '../version';
 
 const STORAGE_KEY = 'ai-assistant-announcement-dismissed';
 
@@ -42,7 +43,7 @@ export default function AnnouncementBar() {
           <span className="flex items-center gap-2 text-primary-700 dark:text-primary-300">
             <span>🎉</span>
             <span>
-              AI效率助手 v2.1 企业级升级完成！新增富文本编辑器、AI写作助手、命令面板等核心功能
+              AI效率助手 {APP_VERSION} 企业级升级完成！新增富文本编辑器、AI写作助手、命令面板等核心功能
             </span>
             <Link
               to="/workspace"

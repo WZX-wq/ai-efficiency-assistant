@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const TIPS = ['选择较长的规划周期可获得更完整的排期表', '明确运营目标有助于 AI 生成针对性内容', '可结合品牌声音功能保持内容风格一致'];
 
@@ -46,6 +47,7 @@ const fields = [
 ];
 
 export default function MarketingCalendar() {
+  useSeo('calendar');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const TIPS = ['核心卖点越详细，生成的文案越有针对性', '可多次生成后挑选最佳方案组合使用', '结合 SEO 优化工具可同时提升搜索排名'];
 
@@ -48,6 +49,7 @@ const fields = [
 ];
 
 export default function CopywritingTool() {
+  useSeo('copywriting');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

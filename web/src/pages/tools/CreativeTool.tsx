@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
+import { useSeo } from '../../components/SeoHead';
 
 const TIPS = ['描述越具体，AI 生成的创意方案越精准', '可以指定目标受众年龄段和性别偏好', '多尝试不同行业品类获取跨界灵感'];
 
@@ -49,6 +50,7 @@ const fields = [
 ];
 
 export default function CreativeTool() {
+  useSeo('creative');
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Compact Hero */}

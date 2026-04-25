@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import PlanGenerator from '../../components/PlanGenerator';
 import { templates, categoryMeta, type Template } from '../../data/templates';
+import { useSeo } from '../../components/SeoHead';
 
 type CategoryFilter = Template['category'] | 'all';
 
@@ -14,6 +15,7 @@ const CATEGORIES: { key: CategoryFilter; label: string }[] = [
 ];
 
 export default function Templates() {
+  useSeo('templates');
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);

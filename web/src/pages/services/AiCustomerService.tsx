@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '../../components/ChatInterface';
+import { useSeo } from '../../components/SeoHead';
 
 const FEATURES = ['7×24在线', '多轮对话', '上下文理解', '即时响应'];
 const CTA_TEXT = '开始对话';
@@ -26,6 +27,7 @@ const QUICK_QUESTIONS = [
 // ---------------------------------------------------------------------------
 
 export default function AiCustomerService() {
+  useSeo('ai-cs');
   const [quickQuestion, setQuickQuestion] = useState<string | undefined>(undefined);
 
   // 处理快捷问题点击：直接发送到 ChatInterface

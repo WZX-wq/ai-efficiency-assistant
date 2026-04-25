@@ -44,6 +44,9 @@ const COMMANDS: CommandItem[] = [
   { id: 'pricing', title: '定价方案', icon: '💰', path: '/pricing', category: '其他' },
   { id: 'services', title: '服务总览', icon: '🛠️', path: '/services', category: '其他' },
   { id: 'settings', title: '设置', icon: '⚙️', path: '/settings', category: '其他' },
+  { id: 'privacy', title: '隐私政策', icon: '🛡️', path: '/privacy', category: '其他', description: '了解数据隐私保护政策' },
+  { id: 'terms', title: '服务条款', icon: '📄', path: '/terms', category: '其他', description: '查看服务使用条款' },
+  { id: 'new-writing', title: '新建写作', icon: '➕', path: '/workspace', category: '工具', description: '打开空白编辑器开始创作' },
 ];
 
 /** 动态操作命令（主题切换、AI面板等） */
