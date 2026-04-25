@@ -2,7 +2,7 @@ export interface Template {
   id: string;
   name: string;
   description: string;
-  category: 'marketing' | 'social' | 'ecommerce' | 'office';
+  category: 'marketing' | 'social' | 'ecommerce' | 'office' | 'education' | 'tech' | 'life' | 'creative' | 'seo';
   icon: string;
   systemPrompt: string;
   fields: {
@@ -12,6 +12,8 @@ export interface Template {
     placeholder?: string;
     options?: { label: string; value: string }[];
   }[];
+  tags?: string[];
+  popularity?: number; // 1-5, 默认 3
 }
 
 export const templates: Template[] = [
@@ -322,12 +324,698 @@ export const templates: Template[] = [
       { name: 'keyPoint', label: '核心观点', type: 'textarea', placeholder: '需要在演讲中传达的核心观点...' },
     ],
   },
+
+  // ─── 教育培训 (8) ─────────────────────────────────────────────────────────
+  {
+    id: 'course-outline',
+    name: '课程大纲生成',
+    description: '根据课程主题和目标生成完整课程大纲',
+    category: 'education',
+    icon: '📚',
+    tags: ['课程设计', '教学大纲', '在线教育', '知识体系'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个资深的教育课程设计专家。请根据用户提供的课程信息，生成完整的课程大纲。输出要求：## 📚 课程概述（课程名称、课程定位、适合人群、课程目标）\n## 🎯 学习目标（分为知识目标、技能目标、态度目标三个维度）\n## 📋 课程大纲（按章节/模块划分，每个模块包含：模块标题、核心知识点、学时建议、教学方式）\n## 📖 推荐教材与资源（教材、参考书、在线资源推荐）\n## ✅ 考核方式（平时作业、期中/期末考核、项目实践等）\n## 📊 课程亮点（3-5个课程特色和亮点）\n请用Markdown格式输出，大纲结构清晰、逻辑递进、实用性强。',
+    fields: [
+      { name: 'topic', label: '课程主题', type: 'text', placeholder: '例如：Python数据分析入门' },
+      { name: 'audience', label: '目标学员', type: 'text', placeholder: '例如：零基础转行人员' },
+      { name: 'goal', label: '课程目标', type: 'textarea', placeholder: '学员学完后能达到什么水平...' },
+      { name: 'duration', label: '课程总时长', type: 'select', options: [{ label: '1-2周', value: '1-2周' }, { label: '1个月', value: '1个月' }, { label: '2-3个月', value: '2-3个月' }, { label: '半年', value: '半年' }, { label: '一年', value: '一年' }] },
+    ],
+  },
+  {
+    id: 'lesson-plan',
+    name: '教案编写',
+    description: '根据学科、年级、课题生成教案',
+    category: 'education',
+    icon: '📝',
+    tags: ['教案', '课堂教学', '教学设计', '备课'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个经验丰富的教学设计专家。请根据用户提供的课程信息，生成完整的教案。输出要求：## 📋 教学基本信息（课题、学科、年级、课时、课型）\n## 🎯 教学目标（知识与技能、过程与方法、情感态度与价值观）\n## 🔑 教学重难点（重点内容、难点分析及突破策略）\n## 📖 教学过程（完整的课堂教学流程，包含：导入环节、新授环节、巩固练习、课堂小结、作业布置，每个环节标注时间分配和教师活动/学生活动）\n## 🛠️ 教学方法与手段（教学方法、教学工具、板书设计）\n## 📊 教学反思（预设可能出现的问题及应对方案）\n请用Markdown格式输出，教案专业规范、可操作性强。',
+    fields: [
+      { name: 'subject', label: '学科', type: 'text', placeholder: '例如：高中数学' },
+      { name: 'topic', label: '课题名称', type: 'text', placeholder: '例如：二次函数的图像与性质' },
+      { name: 'grade', label: '年级', type: 'select', options: [{ label: '小学', value: '小学' }, { label: '初中', value: '初中' }, { label: '高中', value: '高中' }, { label: '大学', value: '大学' }, { label: '成人教育', value: '成人教育' }] },
+      { name: 'duration', label: '课时长度', type: 'select', options: [{ label: '20分钟', value: '20分钟' }, { label: '40分钟', value: '40分钟' }, { label: '45分钟', value: '45分钟' }, { label: '90分钟', value: '90分钟' }] },
+    ],
+  },
+  {
+    id: 'exam-questions',
+    name: '考试题目生成',
+    description: '根据知识点生成选择题/填空题/简答题',
+    category: 'education',
+    icon: '✏️',
+    tags: ['试题生成', '考试', '题库', '知识点'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个专业的教育测评专家。请根据用户提供的知识点，生成高质量的考试题目。输出要求：## 📊 试卷结构（题目分布、分值分配、难度比例）\n## ✅ 单项选择题（10题，每题4个选项，附标准答案和解析）\n## 📝 填空题（5题，附标准答案）\n## 💡 简答题（3题，附参考答案和评分要点）\n## 🧩 综合应用题（2题，考察综合运用能力，附详细解题步骤）\n## 📋 参考答案与评分标准（所有题目的标准答案和评分细则）\n请用Markdown格式输出，题目难度适中、覆盖面广、有区分度。',
+    fields: [
+      { name: 'subject', label: '学科/课程', type: 'text', placeholder: '例如：大学物理' },
+      { name: 'knowledge', label: '知识点范围', type: 'textarea', placeholder: '列出需要考察的知识点...' },
+      { name: 'difficulty', label: '难度等级', type: 'select', options: [{ label: '基础', value: '基础' }, { label: '中等', value: '中等' }, { label: '较难', value: '较难' }, { label: '混合难度', value: '混合难度' }] },
+      { name: 'count', label: '题目数量', type: 'select', options: [{ label: '10题', value: '10题' }, { label: '20题', value: '20题' }, { label: '30题', value: '30题' }, { label: '50题', value: '50题' }] },
+    ],
+  },
+  {
+    id: 'study-plan',
+    name: '学习计划制定',
+    description: '根据考试目标和时间制定学习计划',
+    category: 'education',
+    icon: '📅',
+    tags: ['学习计划', '备考', '时间管理', '自学'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个专业的学习规划师。请根据用户提供的考试/学习目标，制定详细的学习计划。输出要求：## 🎯 目标分析（考试要求、目标分数、当前水平评估）\n## 📊 知识图谱（需要掌握的知识模块和优先级）\n## 📅 阶段性学习计划（分阶段安排：基础阶段、强化阶段、冲刺阶段，每周具体任务安排）\n## 📚 推荐学习资源（教材、网课、题库、笔记等）\n## ✅ 每日学习时间表（建议的每日学习安排，标注时间段和学习内容）\n## 📈 复习策略（艾宾浩斯遗忘曲线复习法、错题整理方法、模拟考试安排）\n## ⚠️ 注意事项（常见误区、心态调整建议）\n请用Markdown格式输出，计划具体可执行、张弛有度。',
+    fields: [
+      { name: 'exam', label: '考试/学习目标', type: 'text', placeholder: '例如：2026年12月大学英语六级' },
+      { name: 'currentLevel', label: '当前水平', type: 'text', placeholder: '例如：四级已过，基础一般' },
+      { name: 'targetDate', label: '目标日期', type: 'text', placeholder: '例如：2026年12月18日' },
+      { name: 'dailyHours', label: '每日可用学习时间', type: 'select', options: [{ label: '1-2小时', value: '1-2小时' }, { label: '2-4小时', value: '2-4小时' }, { label: '4-6小时', value: '4-6小时' }, { label: '6-8小时', value: '6-8小时' }] },
+    ],
+  },
+  {
+    id: 'paper-abstract',
+    name: '论文摘要生成',
+    description: '根据论文内容生成中英文摘要',
+    category: 'education',
+    icon: '📄',
+    tags: ['论文', '学术写作', '摘要', 'Abstract'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个学术论文写作专家。请根据用户提供的论文内容，生成专业的中英文摘要。输出要求：## 📄 中文摘要（300-500字，包含：研究背景与目的、研究方法、主要结果、结论与意义）\n## 🔑 中文关键词（3-5个，按重要程度排列）\n## 📄 English Abstract（200-300 words, following standard academic structure: Background, Methods, Results, Conclusion）\n## 🔑 Keywords（3-5 English keywords）\n## 💡 摘要优化建议（针对学术规范的改进建议）\n请用Markdown格式输出，摘要语言精炼、学术规范、信息完整。',
+    fields: [
+      { name: 'title', label: '论文标题', type: 'text', placeholder: '例如：基于深度学习的图像识别研究' },
+      { name: 'content', label: '论文核心内容', type: 'textarea', placeholder: '包括研究背景、方法、主要发现和结论...' },
+      { name: 'field', label: '学科领域', type: 'text', placeholder: '例如：计算机科学' },
+      { name: 'type', label: '论文类型', type: 'select', options: [{ label: '实证研究', value: '实证研究' }, { label: '综述', value: '综述' }, { label: '方法论文', value: '方法论文' }, { label: '案例研究', value: '案例研究' }] },
+    ],
+  },
+  {
+    id: 'knowledge-explain',
+    name: '知识点解释',
+    description: '用通俗易懂的方式解释专业概念',
+    category: 'education',
+    icon: '💡',
+    tags: ['知识科普', '概念解释', '通俗讲解', '学习辅助'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个擅长将复杂知识通俗化的教育专家。请根据用户提供的专业概念，用通俗易懂的方式进行解释。输出要求：## 🎯 一句话解释（用最简单的话概括这个概念，小学生也能听懂）\n## 📖 详细解释（200-300字，包含概念定义、核心原理、运作方式）\n## 🌍 生活类比（用日常生活中的例子来类比解释，让抽象概念变得具体）\n## 🔗 相关概念（列出3-5个相关联的概念及简要关系说明）\n## ❓ 常见误区（2-3个容易混淆或误解的地方）\n## 🧪 实际应用（这个概念在现实中有哪些应用场景）\n请用Markdown格式输出，解释生动有趣、深入浅出。',
+    fields: [
+      { name: 'concept', label: '需要解释的概念', type: 'text', placeholder: '例如：区块链' },
+      { name: 'audience', label: '目标受众', type: 'select', options: [{ label: '小学生', value: '小学生' }, { label: '中学生', value: '中学生' }, { label: '大学生', value: '大学生' }, { label: '职场人士', value: '职场人士' }, { label: '非专业人士', value: '非专业人士' }] },
+      { name: 'context', label: '相关背景（可选）', type: 'textarea', placeholder: '提供更多上下文信息...' },
+    ],
+  },
+  {
+    id: 'reading-notes',
+    name: '读书笔记生成',
+    description: '根据书名和章节生成结构化读书笔记',
+    category: 'education',
+    icon: '📖',
+    tags: ['读书笔记', '阅读', '知识管理', '书评'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个专业的读书笔记整理专家。请根据用户提供的书籍信息，生成结构化的读书笔记。输出要求：## 📚 书籍基本信息（书名、作者、出版信息、阅读难度）\n## 🎯 核心主题（本书的核心思想和主旨，200字以内）\n## 📋 章节摘要（按章节/部分梳理核心内容，每章3-5个要点）\n## 💡 精华摘录（5-8条书中最精华的观点或金句）\n## 🔍 深度思考（对书中观点的个人理解和延伸思考）\n## 📝 行动清单（从书中提炼的3-5个可执行的行动建议）\n## ⭐ 推荐指数与适合人群（评分和推荐理由）\n请用Markdown格式输出，笔记结构清晰、重点突出、有思考深度。',
+    fields: [
+      { name: 'book', label: '书名', type: 'text', placeholder: '例如：原子习惯' },
+      { name: 'author', label: '作者', type: 'text', placeholder: '例如：James Clear' },
+      { name: 'chapters', label: '已读章节/部分', type: 'textarea', placeholder: '列出已阅读的章节或部分...' },
+      { name: 'focus', label: '关注重点（可选）', type: 'text', placeholder: '例如：如何养成好习惯' },
+    ],
+  },
+  {
+    id: 'training-plan',
+    name: '培训方案设计',
+    description: '企业培训课程方案设计',
+    category: 'education',
+    icon: '🏢',
+    tags: ['企业培训', '培训方案', '员工发展', '课程设计'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个企业培训方案设计专家。请根据用户提供的培训需求，设计完整的企业培训方案。输出要求：## 📋 培训需求分析（培训背景、目标学员画像、能力差距分析）\n## 🎯 培训目标（知识目标、技能目标、行为改变目标）\n## 📚 培训课程体系（模块划分、每个模块的课程内容、课时安排）\n## 🛠️ 培训方式（线上/线下/混合、教学方法、互动设计）\n## 👨‍🏫 讲师安排（内部讲师/外部专家建议及资质要求）\n## 📊 培训效果评估（柯氏四级评估模型：反应层、学习层、行为层、结果层）\n## 💰 预算估算（场地、讲师、物料、平台等费用预估）\n请用Markdown格式输出，方案系统完整、落地性强。',
+    fields: [
+      { name: 'topic', label: '培训主题', type: 'text', placeholder: '例如：新员工入职培训' },
+      { name: 'audience', label: '培训对象', type: 'text', placeholder: '例如：2026年新入职员工' },
+      { name: 'goal', label: '培训目标', type: 'textarea', placeholder: '希望通过培训达到什么效果...' },
+      { name: 'scale', label: '培训规模', type: 'select', options: [{ label: '10人以内', value: '10人以内' }, { label: '10-30人', value: '10-30人' }, { label: '30-100人', value: '30-100人' }, { label: '100人以上', value: '100人以上' }] },
+    ],
+  },
+
+  // ─── 技术开发 (8) ─────────────────────────────────────────────────────────
+  {
+    id: 'code-comment',
+    name: '代码注释生成',
+    description: '为代码添加详细注释，提升代码可读性',
+    category: 'tech',
+    icon: '💻',
+    tags: ['代码注释', '代码规范', '文档', '可读性'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个资深软件开发工程师，擅长编写清晰规范的代码注释。请根据用户提供的代码，生成详细的注释。输出要求：## 📋 代码概述（简要说明代码的功能和用途）\n## 📝 带注释的完整代码（在原代码基础上添加：文件级注释、函数/方法级JSDoc注释、关键逻辑行内注释、复杂算法的解释注释）\n## 🔍 代码结构说明（模块划分、函数职责、数据流向）\n## ⚠️ 注意事项（潜在问题、性能考虑、边界条件）\n## 💡 优化建议（代码质量改进建议）\n请用Markdown格式输出，注释简洁准确、不冗余、符合编码规范。',
+    fields: [
+      { name: 'code', label: '需要注释的代码', type: 'textarea', placeholder: '粘贴需要添加注释的代码...' },
+      { name: 'language', label: '编程语言', type: 'select', options: [{ label: 'JavaScript/TypeScript', value: 'JavaScript/TypeScript' }, { label: 'Python', value: 'Python' }, { label: 'Java', value: 'Java' }, { label: 'Go', value: 'Go' }, { label: 'C/C++', value: 'C/C++' }, { label: 'Rust', value: 'Rust' }] },
+      { name: 'context', label: '代码上下文（可选）', type: 'textarea', placeholder: '这段代码的用途和背景...' },
+    ],
+  },
+  {
+    id: 'sql-generator',
+    name: 'SQL 查询生成',
+    description: '根据需求描述生成 SQL 查询语句',
+    category: 'tech',
+    icon: '🗄️',
+    tags: ['SQL', '数据库', '查询', '数据操作'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个数据库开发专家。请根据用户的需求描述，生成高质量的SQL查询语句。输出要求：## 📋 需求分析（对用户需求的理解和数据表设计建议）\n## 🗃️ 建表语句（如果需要，提供完整的CREATE TABLE语句，包含字段类型、约束、索引）\n## 📝 SQL查询语句（完整的SQL代码，包含多种实现方案：基础版、优化版、兼容版）\n## 📊 查询结果示例（预期输出的数据格式示例）\n## ⚡ 性能优化建议（索引建议、查询优化、执行计划分析）\n## ⚠️ 注意事项（SQL注入防护、兼容性问题、边界条件）\n请用Markdown格式输出，SQL代码使用代码块格式，附带详细注释。',
+    fields: [
+      { name: 'requirement', label: '需求描述', type: 'textarea', placeholder: '描述你需要查询的数据需求...' },
+      { name: 'database', label: '数据库类型', type: 'select', options: [{ label: 'MySQL', value: 'MySQL' }, { label: 'PostgreSQL', value: 'PostgreSQL' }, { label: 'SQLite', value: 'SQLite' }, { label: 'SQL Server', value: 'SQL Server' }, { label: 'Oracle', value: 'Oracle' }] },
+      { name: 'tables', label: '表结构描述（可选）', type: 'textarea', placeholder: '描述涉及的表和字段...' },
+    ],
+  },
+  {
+    id: 'api-documentation',
+    name: 'API 文档编写',
+    description: '根据接口描述生成标准的 API 文档',
+    category: 'tech',
+    icon: '🔌',
+    tags: ['API', '接口文档', 'RESTful', '后端开发'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个API文档编写专家。请根据用户提供的接口信息，生成标准的API文档。输出要求：## 📋 接口概述（接口名称、功能描述、版本信息）\n## 🔗 请求信息（HTTP方法、URL路径、请求头、Content-Type）\n## 📥 请求参数（Query参数、Path参数、Body参数，每个参数包含：参数名、类型、是否必填、描述、示例值）\n## 📤 响应格式（成功响应和错误响应的JSON结构，包含字段说明）\n## 📊 请求/响应示例（完整的cURL命令和JSON示例）\n## ⚠️ 错误码说明（常见错误码及含义）\n## 💡 调用示例（JavaScript/Python/cURL调用示例代码）\n请用Markdown格式输出，文档规范完整、可直接使用。',
+    fields: [
+      { name: 'endpoint', label: '接口名称/功能', type: 'text', placeholder: '例如：用户登录接口' },
+      { name: 'method', label: 'HTTP方法', type: 'select', options: [{ label: 'GET', value: 'GET' }, { label: 'POST', value: 'POST' }, { label: 'PUT', value: 'PUT' }, { label: 'DELETE', value: 'DELETE' }, { label: 'PATCH', value: 'PATCH' }] },
+      { name: 'params', label: '参数描述', type: 'textarea', placeholder: '描述接口的请求参数和响应数据...' },
+      { name: 'auth', label: '认证方式', type: 'select', options: [{ label: '无认证', value: '无认证' }, { label: 'Bearer Token', value: 'Bearer Token' }, { label: 'API Key', value: 'API Key' }, { label: 'OAuth 2.0', value: 'OAuth 2.0' }, { label: 'Basic Auth', value: 'Basic Auth' }] },
+    ],
+  },
+  {
+    id: 'regex-generator',
+    name: '正则表达式生成',
+    description: '根据需求生成正则表达式及详细说明',
+    category: 'tech',
+    icon: '🔍',
+    tags: ['正则表达式', 'Regex', '文本匹配', '数据验证'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个正则表达式专家。请根据用户的需求，生成精确的正则表达式。输出要求：## 🎯 正则表达式（完整的正则表达式代码）\n## 📖 规则详解（逐字符/逐段解释正则表达式的含义）\n## ✅ 匹配示例（5个以上匹配成功的示例）\n## ❌ 不匹配示例（5个以上匹配失败的示例）\n## 💻 代码使用示例（JavaScript、Python、Java三种语言的完整使用代码）\n## ⚡ 性能建议（正则优化建议和回溯风险提示）\n## 🔧 变体版本（宽松版和严格版两个版本）\n请用Markdown格式输出，正则表达式准确高效、有详细解释。',
+    fields: [
+      { name: 'requirement', label: '匹配需求', type: 'text', placeholder: '例如：匹配中国大陆手机号' },
+      { name: 'language', label: '使用语言', type: 'select', options: [{ label: 'JavaScript', value: 'JavaScript' }, { label: 'Python', value: 'Python' }, { label: 'Java', value: 'Java' }, { label: 'Go', value: 'Go' }, { label: '通用', value: '通用' }] },
+      { name: 'examples', label: '匹配示例（可选）', type: 'textarea', placeholder: '提供一些应该匹配和不匹配的示例...' },
+    ],
+  },
+  {
+    id: 'tech-review',
+    name: '技术方案评审',
+    description: '生成技术方案评审意见和改进建议',
+    category: 'tech',
+    icon: '🔎',
+    tags: ['技术评审', '架构设计', '代码审查', '最佳实践'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个资深技术架构师。请根据用户提供的技术方案，生成专业的评审意见。输出要求：## 📋 方案概述（对技术方案的理解和总结）\n## ✅ 优点分析（方案的优势和亮点，3-5点）\n## ⚠️ 风险与问题（潜在的技术风险、架构问题、性能瓶颈，3-5点）\n## 💡 改进建议（具体的优化建议，包含替代方案，3-5条）\n## 📊 可扩展性评估（方案在业务增长时的扩展能力）\n## 🔒 安全性评估（安全风险点和防护建议）\n## 📝 评审结论（通过/有条件通过/需修改，附总结性意见）\n请用Markdown格式输出，评审专业客观、有建设性。',
+    fields: [
+      { name: 'proposal', label: '技术方案内容', type: 'textarea', placeholder: '粘贴技术方案文档...' },
+      { name: 'domain', label: '技术领域', type: 'select', options: [{ label: '前端开发', value: '前端开发' }, { label: '后端开发', value: '后端开发' }, { label: '移动端开发', value: '移动端开发' }, { label: '系统架构', value: '系统架构' }, { label: '数据工程', value: '数据工程' }, { label: 'DevOps', value: 'DevOps' }] },
+      { name: 'focus', label: '评审重点（可选）', type: 'text', placeholder: '例如：性能、安全性、可维护性' },
+    ],
+  },
+  {
+    id: 'bug-report',
+    name: 'Bug 报告编写',
+    description: '根据问题描述生成标准 Bug 报告',
+    category: 'tech',
+    icon: '🐛',
+    tags: ['Bug报告', '缺陷管理', '软件测试', '问题追踪'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个软件测试工程师。请根据用户描述的问题，生成标准的Bug报告。输出要求：## 🐛 Bug标题（简洁准确，一句话描述问题）\n## 📋 Bug基本信息（严重程度、优先级、影响范围、发现环境）\n## 📝 问题描述（详细的问题复现步骤，每一步都具体明确）\n## 🔍 预期结果 vs 实际结果（对比展示）\n## 📸 复现环境（操作系统、浏览器/设备、版本号、网络环境）\n## 💡 根因分析（可能的原因分析）\n## 📎 附加信息（日志片段、截图描述、相关链接）\n请用Markdown格式输出，Bug报告标准规范、信息完整。',
+    fields: [
+      { name: 'issue', label: '问题描述', type: 'textarea', placeholder: '描述你发现的Bug...' },
+      { name: 'steps', label: '复现步骤', type: 'textarea', placeholder: '列出复现问题的步骤...' },
+      { name: 'environment', label: '运行环境', type: 'text', placeholder: '例如：Chrome 120, macOS, 生产环境' },
+      { name: 'severity', label: '严重程度', type: 'select', options: [{ label: '致命 - 系统崩溃/数据丢失', value: '致命' }, { label: '严重 - 核心功能不可用', value: '严重' }, { label: '一般 - 功能异常但有替代方案', value: '一般' }, { label: '轻微 - UI/体验问题', value: '轻微' }] },
+    ],
+  },
+  {
+    id: 'git-commit-msg',
+    name: 'Git Commit 信息',
+    description: '根据代码变更生成规范的 commit message',
+    category: 'tech',
+    icon: '📝',
+    tags: ['Git', '版本控制', 'Commit', '代码规范'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个Git工作流专家。请根据用户提供的代码变更信息，生成规范的commit message。输出要求：## 📝 Conventional Commits格式（符合Angular规范的commit message）\n## 📋 简短版本（50字以内的单行commit message）\n## 📖 详细版本（包含type、scope、subject、body、footer的完整格式）\n## 🔍 变更分析（分析代码变更的类型和影响范围）\n## 💡 Commit最佳实践建议（针对此次变更的提交建议）\n## 📊 Changelog建议（适合写入CHANGELOG的描述）\n请用Markdown格式输出，commit message规范、清晰、有意义。支持的type：feat/fix/docs/style/refactor/perf/test/chore/ci/build/revert',
+    fields: [
+      { name: 'changes', label: '代码变更描述', type: 'textarea', placeholder: '描述这次提交的代码变更内容...' },
+      { name: 'files', label: '涉及的文件/模块', type: 'text', placeholder: '例如：src/components/Button.tsx' },
+      { name: 'type', label: '变更类型', type: 'select', options: [{ label: 'feat - 新功能', value: 'feat' }, { label: 'fix - 修复Bug', value: 'fix' }, { label: 'docs - 文档更新', value: 'docs' }, { label: 'refactor - 重构', value: 'refactor' }, { label: 'perf - 性能优化', value: 'perf' }, { label: 'test - 测试', value: 'test' }, { label: 'chore - 构建/工具', value: 'chore' }] },
+    ],
+  },
+  {
+    id: 'tech-blog-outline',
+    name: '技术博客大纲',
+    description: '根据技术主题生成博客文章大纲',
+    category: 'tech',
+    icon: '✍️',
+    tags: ['技术博客', '文章大纲', '技术写作', '知识分享'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个技术内容创作者。请根据用户提供的技术主题，生成博客文章大纲。输出要求：## 📌 文章标题（5个版本，包含SEO友好标题和吸引读者标题）\n## 📋 文章大纲（详细的大纲结构，包含：引言、正文各章节、代码示例位置、总结，每个章节标注字数建议）\n## 💻 代码示例规划（需要包含的代码示例列表及说明）\n## 🖼️ 配图建议（需要配图的位置和内容建议，如架构图、流程图、效果截图）\n## 🎯 核心观点（文章要传达的3-5个核心观点）\n## 📊 SEO关键词建议（5-10个相关技术关键词）\n## 📚 参考资料推荐（官方文档、相关文章、GitHub项目）\n请用Markdown格式输出，大纲逻辑清晰、内容有深度。',
+    fields: [
+      { name: 'topic', label: '技术主题', type: 'text', placeholder: '例如：React Server Components实战' },
+      { name: 'tech', label: '相关技术栈', type: 'text', placeholder: '例如：React 19, Next.js 15' },
+      { name: 'audience', label: '目标读者', type: 'select', options: [{ label: '初学者', value: '初学者' }, { label: '中级开发者', value: '中级开发者' }, { label: '高级开发者', value: '高级开发者' }, { label: '全水平', value: '全水平' }] },
+      { name: 'length', label: '文章篇幅', type: 'select', options: [{ label: '1000-2000字', value: '1000-2000字' }, { label: '2000-4000字', value: '2000-4000字' }, { label: '4000-6000字', value: '4000-6000字' }, { label: '6000字以上', value: '6000字以上' }] },
+    ],
+  },
+
+  // ─── 生活日常 (8) ─────────────────────────────────────────────────────────
+  {
+    id: 'travel-guide',
+    name: '旅行攻略生成',
+    description: '根据目的地和天数生成详细旅行计划',
+    category: 'life',
+    icon: '✈️',
+    tags: ['旅行', '旅游攻略', '行程规划', '出行'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个资深旅行规划师。请根据用户提供的旅行信息，生成详细的旅行攻略。输出要求：## 🗺️ 行程概览（总天数、总预算估算、旅行主题）\n## 📅 每日行程安排（按天规划，每天包含：上午/下午/晚上的具体安排、景点推荐、交通方式、用餐建议、预计花费）\n## 🏨 住宿推荐（3-5个不同价位的住宿选择，包含位置优势和价格区间）\n## 🍜 美食推荐（当地必吃美食清单，10-15个推荐，标注人均消费）\n## 🚗 交通指南（到达方式、当地交通、交通卡/APP推荐）\n## 🎒 行李清单（分类整理的行李准备清单）\n## ⚠️ 注意事项（当地风俗、安全提示、天气建议、必备APP）\n## 💡 省钱小贴士（3-5个省钱技巧）\n请用Markdown格式输出，攻略详细实用、可直接执行。',
+    fields: [
+      { name: 'destination', label: '目的地', type: 'text', placeholder: '例如：日本京都' },
+      { name: 'days', label: '旅行天数', type: 'select', options: [{ label: '1天', value: '1天' }, { label: '2-3天', value: '2-3天' }, { label: '4-5天', value: '4-5天' }, { label: '6-7天', value: '6-7天' }, { label: '7天以上', value: '7天以上' }] },
+      { name: 'budget', label: '预算范围', type: 'select', options: [{ label: '穷游（<3000元）', value: '穷游' }, { label: '经济（3000-8000元）', value: '经济' }, { label: '舒适（8000-15000元）', value: '舒适' }, { label: '豪华（>15000元）', value: '豪华' }] },
+      { name: 'style', label: '旅行风格', type: 'select', options: [{ label: '文化历史', value: '文化历史' }, { label: '自然风光', value: '自然风光' }, { label: '美食探店', value: '美食探店' }, { label: '休闲度假', value: '休闲度假' }, { label: '深度体验', value: '深度体验' }] },
+    ],
+  },
+  {
+    id: 'fitness-plan',
+    name: '健身计划制定',
+    description: '根据目标和条件制定个性化健身计划',
+    category: 'life',
+    icon: '💪',
+    tags: ['健身', '运动计划', '减肥', '增肌'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个专业的健身教练。请根据用户提供的个人信息和目标，制定个性化的健身计划。输出要求：## 🎯 目标设定（基于用户信息的SMART目标设定）\n## 📅 每周训练计划（按周一到周日安排，每天包含：训练部位、具体动作、组数x次数、组间休息时间）\n## 🏋️ 动作详解（每个动作的标准做法、常见错误、注意事项）\n## 🍽️ 饮食建议（每日热量摄入建议、三大营养素比例、参考食谱）\n## 📈 进阶计划（每2-4周的强度递增方案）\n## ⚠️ 安全提示（热身拉伸、受伤预防、身体信号识别）\n## 📊 效果评估（如何判断训练效果，建议的评估周期）\n请用Markdown格式输出，计划科学合理、循序渐进。',
+    fields: [
+      { name: 'goal', label: '健身目标', type: 'select', options: [{ label: '减脂瘦身', value: '减脂瘦身' }, { label: '增肌塑形', value: '增肌塑形' }, { label: '提升体能', value: '提升体能' }, { label: '保持健康', value: '保持健康' }] },
+      { name: 'level', label: '运动基础', type: 'select', options: [{ label: '零基础', value: '零基础' }, { label: '初级', value: '初级' }, { label: '中级', value: '中级' }, { label: '高级', value: '高级' }] },
+      { name: 'condition', label: '身体条件/限制', type: 'textarea', placeholder: '身高体重、是否有伤病、可用器材等...' },
+      { name: 'frequency', label: '每周训练天数', type: 'select', options: [{ label: '2天', value: '2天' }, { label: '3天', value: '3天' }, { label: '4天', value: '4天' }, { label: '5-6天', value: '5-6天' }] },
+    ],
+  },
+  {
+    id: 'recipe-generator',
+    name: '菜谱生成',
+    description: '根据食材和口味生成详细菜谱',
+    category: 'life',
+    icon: '🍳',
+    tags: ['菜谱', '烹饪', '美食', '家常菜'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个专业厨师和美食博主。请根据用户提供的食材和口味偏好，生成详细的菜谱。输出要求：## 🍽️ 推荐菜品（3-5道菜，包含菜名、难度、预计用时）\n## 📋 食材清单（每道菜的详细食材用量，标注主料和辅料）\n## 👨‍🍳 详细步骤（逐步操作说明，每步标注时间和火候，新手也能看懂）\n## 💡 厨师小贴士（3-5个让菜品更好吃的关键技巧）\n## 🔄 食材替换建议（如果没有某食材的替代方案）\n## 📊 营养估算（每道菜的大致热量和营养成分）\n## 🍱 搭配建议（建议搭配的主食、汤品、饮品）\n请用Markdown格式输出，菜谱清晰易懂、可直接照做。',
+    fields: [
+      { name: 'ingredients', label: '可用食材', type: 'textarea', placeholder: '列出你手头有的食材...' },
+      { name: 'taste', label: '口味偏好', type: 'select', options: [{ label: '清淡', value: '清淡' }, { label: '家常', value: '家常' }, { label: '麻辣', value: '麻辣' }, { label: '酸甜', value: '酸甜' }, { label: '不限', value: '不限' }] },
+      { name: 'difficulty', label: '烹饪难度', type: 'select', options: [{ label: '新手友好', value: '新手友好' }, { label: '中等', value: '中等' }, { label: '有挑战', value: '有挑战' }] },
+      { name: 'people', label: '用餐人数', type: 'select', options: [{ label: '1人', value: '1人' }, { label: '2人', value: '2人' }, { label: '3-4人', value: '3-4人' }, { label: '5人以上', value: '5人以上' }] },
+    ],
+  },
+  {
+    id: 'resume-optimizer',
+    name: '简历优化',
+    description: '根据目标岗位优化简历内容，提升面试机会',
+    category: 'life',
+    icon: '📄',
+    tags: ['简历', '求职', '面试', '职业发展'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个资深HR和职业规划师。请根据用户提供的简历信息和目标岗位，优化简历内容。输出要求：## 📊 简历诊断（对当前简历的评分和主要问题分析）\n## ✨ 优化后的简历内容（包含：个人总结、工作经历（用STAR法则重写）、项目经验、技能亮点）\n## 🎯 关键词优化（针对目标岗位的ATS关键词建议）\n## 💡 成就量化建议（如何将描述转化为数据化成果）\n## 📝 自我评价优化（3个版本的专业自我评价）\n## ⚠️ 常见简历错误（指出并修正简历中的常见问题）\n## 📋 面试准备建议（基于简历可能被问到的问题）\n请用Markdown格式输出，简历专业精炼、有竞争力。',
+    fields: [
+      { name: 'resume', label: '当前简历内容', type: 'textarea', placeholder: '粘贴你当前的简历内容...' },
+      { name: 'position', label: '目标岗位', type: 'text', placeholder: '例如：高级前端开发工程师' },
+      { name: 'company', label: '目标公司（可选）', type: 'text', placeholder: '例如：字节跳动' },
+      { name: 'experience', label: '工作年限', type: 'select', options: [{ label: '应届生', value: '应届生' }, { label: '1-3年', value: '1-3年' }, { label: '3-5年', value: '3-5年' }, { label: '5-10年', value: '5-10年' }, { label: '10年以上', value: '10年以上' }] },
+    ],
+  },
+  {
+    id: 'interview-prep',
+    name: '面试问题准备',
+    description: '根据岗位生成面试问题和参考答案',
+    category: 'life',
+    icon: '🎯',
+    tags: ['面试', '求职', '面试题', 'HR面试'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个面试辅导专家。请根据用户提供的岗位信息，生成面试问题和参考答案。输出要求：## 📋 面试题库（分为：行为面试题5题、专业面试题5题、情景模拟题3题、HR面试题3题）\n## ✅ 参考答案（每道题的STAR法则参考回答框架，标注回答要点和避坑指南）\n## 🔄 反问面试官（5-8个高质量的反问问题）\n## 💡 面试技巧（针对该岗位的面试表现建议）\n## ⚠️ 高频踩坑题（3-5个容易答错的经典问题及正确回答思路）\n## 📊 面试评分维度（面试官可能的评分标准和关注点）\n请用Markdown格式输出，问题覆盖全面、答案实用有深度。',
+    fields: [
+      { name: 'position', label: '面试岗位', type: 'text', placeholder: '例如：产品经理' },
+      { name: 'company', label: '目标公司', type: 'text', placeholder: '例如：腾讯' },
+      { name: 'level', label: '岗位级别', type: 'select', options: [{ label: '实习生', value: '实习生' }, { label: '初级', value: '初级' }, { label: '中级', value: '中级' }, { label: '高级/资深', value: '高级/资深' }, { label: '管理层', value: '管理层' }] },
+      { name: 'round', label: '面试轮次', type: 'select', options: [{ label: 'HR面', value: 'HR面' }, { label: '技术面', value: '技术面' }, { label: '业务面', value: '业务面' }, { label: '终面/高管面', value: '终面/高管面' }, { label: '全部轮次', value: '全部轮次' }] },
+    ],
+  },
+  {
+    id: 'rental-contract-check',
+    name: '租房合同审查要点',
+    description: '生成租房合同注意事项和审查清单',
+    category: 'life',
+    icon: '🏠',
+    tags: ['租房', '合同', '法律', '注意事项'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个法律顾问和租房经验丰富的专家。请根据用户提供的租房信息，生成租房合同审查要点。输出要求：## 📋 合同必备条款清单（10-15项必须检查的合同条款，逐项说明）\n## ⚠️ 常见陷阱提醒（5-8个租房合同中常见的坑和套路）\n## 💰 费用明细（押金、租金、物业费、水电燃气、维修费用等费用归属）\n## 🔧 维修责任划分（哪些维修由房东负责、哪些由租客负责）\n## 📝 补充协议建议（建议添加的3-5条保护性条款）\n## 🚪 退租注意事项（退租流程、押金退还条件、违约责任）\n## ✅ 入住检查清单（入住时需要拍照留证的项目清单）\n请用Markdown格式输出，内容实用全面、保护租客权益。',
+    fields: [
+      { name: 'city', label: '租房城市', type: 'text', placeholder: '例如：北京' },
+      { name: 'type', label: '房源类型', type: 'select', options: [{ label: '整租公寓', value: '整租公寓' }, { label: '合租', value: '合租' }, { label: '品牌公寓', value: '品牌公寓' }, { label: '个人房源', value: '个人房源' }] },
+      { name: 'rent', label: '月租金范围', type: 'text', placeholder: '例如：3000-5000元' },
+      { name: 'concerns', label: '特别关注的问题（可选）', type: 'textarea', placeholder: '例如：提前退租、转租、宠物...' },
+    ],
+  },
+  {
+    id: 'event-planning',
+    name: '活动策划方案',
+    description: '生日/年会/团建等活动策划方案',
+    category: 'life',
+    icon: '🎊',
+    tags: ['活动策划', '团建', '年会', '生日派对'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个专业的活动策划师。请根据用户提供的信息，生成完整的活动策划方案。输出要求：## 🎊 活动主题（3-5个备选主题，包含主题名称和创意说明）\n## 📋 活动流程（详细的时间安排表，精确到分钟，包含每个环节的内容和负责人）\n## 🎨 场地布置方案（场地分区、装饰风格、氛围营造建议）\n## 🎮 互动环节设计（3-5个互动游戏/活动，包含规则说明和所需道具）\n## 🍽️ 餐饮方案（菜单建议、饮品搭配、特殊饮食需求处理）\n## 💰 预算明细（各项费用的详细预算表格）\n## 📝 物料清单（需要准备的物品清单，标注数量和采购渠道）\n## ⚠️ 应急预案（天气、设备故障、人员缺席等突发情况应对方案）\n请用Markdown格式输出，方案创意新颖、执行性强。',
+    fields: [
+      { name: 'type', label: '活动类型', type: 'select', options: [{ label: '生日派对', value: '生日派对' }, { label: '公司年会', value: '公司年会' }, { label: '团队建设', value: '团队建设' }, { label: '毕业典礼', value: '毕业典礼' }, { label: '节日庆祝', value: '节日庆祝' }] },
+      { name: 'people', label: '参与人数', type: 'text', placeholder: '例如：30人' },
+      { name: 'budget', label: '预算范围', type: 'text', placeholder: '例如：5000-10000元' },
+      { name: 'specialReq', label: '特殊要求（可选）', type: 'textarea', placeholder: '例如：有小朋友参加、户外场地...' },
+    ],
+  },
+  {
+    id: 'letter-generator',
+    name: '道歉信/感谢信',
+    description: '根据场景生成正式的道歉信或感谢信',
+    category: 'life',
+    icon: '✉️',
+    tags: ['信函', '道歉信', '感谢信', '正式文书'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个专业的商务文书撰写专家。请根据用户提供的场景信息，生成正式的信函。输出要求：## 📝 信函正文（完整的信函内容，包含：称呼、开头、正文、结尾、落款，语气得体、措辞恰当）\n## 🔄 修改版本（提供2个不同语气/角度的版本供选择）\n## 💡 写作要点（此类信函的写作注意事项和关键要素）\n## 📋 格式规范（信函的标准格式和排版建议）\n## ⚠️ 常见错误（此类信函中容易犯的错误和禁忌）\n请用Markdown格式输出，信函真诚得体、措辞考究、格式规范。',
+    fields: [
+      { name: 'type', label: '信函类型', type: 'select', options: [{ label: '道歉信', value: '道歉信' }, { label: '感谢信', value: '感谢信' }, { label: '慰问信', value: '慰问信' }, { label: '推荐信', value: '推荐信' }, { label: '邀请函', value: '邀请函' }] },
+      { name: 'recipient', label: '收信人', type: 'text', placeholder: '例如：客户张先生' },
+      { name: 'reason', label: '事由/背景', type: 'textarea', placeholder: '详细描述写信的原因和背景...' },
+      { name: 'tone', label: '语气风格', type: 'select', options: [{ label: '正式庄重', value: '正式庄重' }, { label: '真诚温暖', value: '真诚温暖' }, { label: '简洁高效', value: '简洁高效' }] },
+    ],
+  },
+
+  // ─── 创意灵感 (8) ─────────────────────────────────────────────────────────
+  {
+    id: 'brand-naming',
+    name: '品牌命名',
+    description: '根据行业和风格生成有创意的品牌名称',
+    category: 'creative',
+    icon: '💎',
+    tags: ['品牌命名', '取名', '品牌策划', '创意'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个品牌命名专家。请根据用户提供的行业和风格信息，生成有创意的品牌名称。输出要求：## 🏆 推荐品牌名（10-15个品牌名称，每个包含：名称、含义解读、适用场景）\n## 🌍 中英双语版本（每个名称提供中文和英文/拼音版本）\n## 📊 命名维度分析（从记忆度、传播性、行业契合度、情感联想四个维度评分）\n## 🔍 商标注册建议（商标查询注意事项和注册类别建议）\n## 🌐 域名和社交媒体建议（可用域名和社交账号命名建议）\n## 💡 命名方法论（解释这些名称背后的命名思路和创意逻辑）\n请用Markdown格式输出，名称独特易记、有品牌调性。',
+    fields: [
+      { name: 'industry', label: '所属行业', type: 'text', placeholder: '例如：新茶饮' },
+      { name: 'style', label: '品牌风格', type: 'select', options: [{ label: '年轻潮流', value: '年轻潮流' }, { label: '文艺清新', value: '文艺清新' }, { label: '高端大气', value: '高端大气' }, { label: '亲民温暖', value: '亲民温暖' }, { label: '科技未来', value: '科技未来' }] },
+      { name: 'values', label: '品牌理念/关键词', type: 'textarea', placeholder: '品牌想要传达的理念和感觉...' },
+      { name: 'target', label: '目标人群', type: 'text', placeholder: '例如：Z世代年轻人' },
+    ],
+  },
+  {
+    id: 'slogan-creative',
+    name: 'Slogan 创意',
+    description: '根据品牌和定位生成有记忆点的广告语',
+    category: 'creative',
+    icon: '✨',
+    tags: ['Slogan', '广告语', '品牌定位', '创意文案'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个顶级品牌策略师和文案创意人。请根据用户提供的品牌信息，生成有记忆点的广告语。输出要求：## 🏆 核心Slogan（5条，简短有力、过目不忘、8-12字以内）\n## 🎭 多风格版本（情感共鸣型5条、功能卖点型5条、态度宣言型5条、场景代入型5条）\n## 🌍 中英双语版（每条Slogan的英文翻译版本）\n## 📊 Slogan评估（从记忆度、传播性、差异化、品牌契合度四个维度评估）\n## 💡 创意解析（每条Slogan的创作思路和修辞手法说明）\n## 🔄 延伸应用（Slogan在不同场景的变体应用：包装、海报、视频、社交媒体）\n请用Markdown格式输出，Slogan有记忆点、有品牌灵魂。',
+    fields: [
+      { name: 'brand', label: '品牌名称', type: 'text', placeholder: '例如：理想汽车' },
+      { name: 'positioning', label: '品牌定位', type: 'text', placeholder: '例如：创造移动的家' },
+      { name: 'audience', label: '目标人群', type: 'text', placeholder: '例如：家庭用户' },
+      { name: 'tone', label: '品牌调性', type: 'select', options: [{ label: '温暖感性', value: '温暖感性' }, { label: '力量自信', value: '力量自信' }, { label: '幽默有趣', value: '幽默有趣' }, { label: '简约高级', value: '简约高级' }, { label: '年轻活力', value: '年轻活力' }] },
+    ],
+  },
+  {
+    id: 'short-video-script',
+    name: '短视频脚本',
+    description: '根据主题生成 30s/60s 短视频分镜脚本',
+    category: 'creative',
+    icon: '📱',
+    tags: ['短视频', '脚本', '分镜', '内容创作'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个短视频编导和脚本创作专家。请根据用户提供的主题，生成专业的短视频分镜脚本。输出要求：## 🎬 视频基本信息（时长、风格、平台、目标）\n## 📋 分镜脚本表格（按秒划分，每格包含：时间、画面描述、景别/运镜、口播台词/字幕、音效/BGM、道具/场景）\n## 🎬 开头钩子（3秒内抓住注意力的3种方案）\n## 🎵 BGM推荐（推荐3首适合的背景音乐及使用方式）\n## 📝 视频标题和描述（5个版本的标题和描述文案，带话题标签）\n## 💡 拍摄和剪辑建议（拍摄技巧、转场方式、字幕样式、调色风格）\n## 📊 数据优化建议（完播率、互动率提升技巧）\n请用Markdown格式输出，脚本专业详细、可直接拍摄。',
+    fields: [
+      { name: 'theme', label: '视频主题', type: 'text', placeholder: '例如：办公室搞笑日常' },
+      { name: 'duration', label: '视频时长', type: 'select', options: [{ label: '15秒', value: '15秒' }, { label: '30秒', value: '30秒' }, { label: '60秒', value: '60秒' }, { label: '90秒', value: '90秒' }] },
+      { name: 'style', label: '视频风格', type: 'select', options: [{ label: '搞笑幽默', value: '搞笑幽默' }, { label: '知识科普', value: '知识科普' }, { label: '情感共鸣', value: '情感共鸣' }, { label: '产品种草', value: '产品种草' }, { label: '剧情反转', value: '剧情反转' }] },
+      { name: 'platform', label: '发布平台', type: 'select', options: [{ label: '抖音', value: '抖音' }, { label: '快手', value: '快手' }, { label: '小红书', value: '小红书' }, { label: 'B站', value: 'B站' }, { label: '视频号', value: '视频号' }] },
+    ],
+  },
+  {
+    id: 'livestream-script',
+    name: '直播话术',
+    description: '根据产品生成直播带货话术和流程',
+    category: 'creative',
+    icon: '🎙️',
+    tags: ['直播', '带货', '话术', '电商直播'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个直播带货运营专家。请根据用户提供的产品信息，生成完整的直播话术。输出要求：## 📋 直播流程脚本（开场预热-产品介绍-互动答疑-逼单促单-收尾预告，每个环节标注时间分配和话术）\n## 🎯 产品介绍话术（3个版本：痛点引入型、场景代入型、对比展示型）\n## 💰 逼单话术（5个版本的促单话术：限时限量、价格对比、赠品加持、库存紧张、专属福利）\n## 💬 互动话术（欢迎话术、答疑话术、感谢话术、引导关注话术，各5条）\n## 🔄 应对话术（常见异议处理：太贵了、不需要、再考虑、别人家更便宜等，各3条应对）\n## 📊 直播节奏建议（流量高峰时段安排、产品出场顺序、氛围调动技巧）\n请用Markdown格式输出，话术有感染力、有转化力。',
+    fields: [
+      { name: 'product', label: '产品名称', type: 'text', placeholder: '例如：某品牌防晒霜' },
+      { name: 'price', label: '直播价格', type: 'text', placeholder: '例如：直播间价89元，原价199元' },
+      { name: 'features', label: '产品卖点', type: 'textarea', placeholder: '列出产品的核心卖点和优势...' },
+      { name: 'audience', label: '目标观众', type: 'text', placeholder: '例如：25-35岁女性' },
+    ],
+  },
+  {
+    id: 'story-creation',
+    name: '故事创作',
+    description: '根据主题和风格生成创意短篇故事',
+    category: 'creative',
+    icon: '📖',
+    tags: ['故事', '创作', '小说', '文学'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个富有创造力的故事作家。请根据用户提供的主题和风格，创作一篇短篇故事。输出要求：## 📖 故事正文（800-1500字的完整故事，包含：引人入胜的开头、跌宕起伏的发展、出人意料的转折、余韵悠长的结尾）\n## 🎭 人物设定（主要人物的性格特点和背景设定）\n## 🌍 世界观设定（故事发生的时间、地点、背景环境）\n## 💡 创作手记（创作思路、主题立意、灵感来源）\n## 🔄 续写方向（2-3个可能的续写方向或系列化建议）\n请用Markdown格式输出，故事有文学性、有感染力、有深度。',
+    fields: [
+      { name: 'theme', label: '故事主题', type: 'text', placeholder: '例如：时间旅行者的遗憾' },
+      { name: 'genre', label: '故事类型', type: 'select', options: [{ label: '科幻', value: '科幻' }, { label: '悬疑', value: '悬疑' }, { label: '爱情', value: '爱情' }, { label: '奇幻', value: '奇幻' }, { label: '现实', value: '现实' }, { label: '恐怖', value: '恐怖' }] },
+      { name: 'style', label: '写作风格', type: 'select', options: [{ label: '文艺抒情', value: '文艺抒情' }, { label: '简洁有力', value: '简洁有力' }, { label: '幽默诙谐', value: '幽默诙谐' }, { label: '细腻写实', value: '细腻写实' }] },
+      { name: 'length', label: '故事篇幅', type: 'select', options: [{ label: '微小说（<500字）', value: '微小说' }, { label: '短篇（500-1500字）', value: '短篇' }, { label: '中篇（1500-3000字）', value: '中篇' }] },
+    ],
+  },
+  {
+    id: 'lyrics-creation',
+    name: '歌词创作',
+    description: '根据主题和风格生成原创歌词',
+    category: 'creative',
+    icon: '🎵',
+    tags: ['歌词', '音乐创作', '歌曲', '原创'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个专业的词作人。请根据用户提供的主题和风格，创作原创歌词。输出要求：## 🎵 完整歌词（包含：主歌Verse 1-2、副歌Chorus、桥段Bridge、尾奏Outro，标注段落结构）\n## 🎼 歌曲结构建议（建议的曲式结构、节奏、BPM范围）\n## 🎤 演唱建议（适合的声线类型、情感表达要点）\n## 🔄 备选段落（2-3个可替换的副歌版本）\n## 💡 创作解析（歌词的意象、修辞手法和情感层次分析）\n## 🎨 编曲方向建议（适合的音乐风格、乐器编排、氛围营造）\n请用Markdown格式输出，歌词有诗意、有韵律感、有情感共鸣。',
+    fields: [
+      { name: 'theme', label: '歌曲主题', type: 'text', placeholder: '例如：告别青春' },
+      { name: 'genre', label: '音乐风格', type: 'select', options: [{ label: '流行', value: '流行' }, { label: '民谣', value: '民谣' }, { label: '摇滚', value: '摇滚' }, { label: 'R&B', value: 'R&B' }, { label: '说唱', value: '说唱' }, { label: '古风', value: '古风' }] },
+      { name: 'mood', label: '情感基调', type: 'select', options: [{ label: '欢快', value: '欢快' }, { label: '忧伤', value: '忧伤' }, { label: '励志', value: '励志' }, { label: '浪漫', value: '浪漫' }, { label: '怀旧', value: '怀旧' }] },
+      { name: 'reference', label: '参考歌手/歌曲（可选）', type: 'text', placeholder: '例如：类似陈奕迅的风格' },
+    ],
+  },
+  {
+    id: 'poster-copy',
+    name: '海报文案',
+    description: '根据活动类型生成海报主标题和副标题',
+    category: 'creative',
+    icon: '🖼️',
+    tags: ['海报', '文案', '视觉设计', '活动宣传'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个资深广告创意总监。请根据用户提供的活动信息，生成海报文案。输出要求：## 🏆 主标题（5个版本，简短有力，适合大字号展示）\n## 📝 副标题（每个主标题配2个副标题版本）\n## 💬 辅助文案（时间、地点、参与方式等信息的文案化表达）\n## 🎨 视觉建议（配色方案、字体风格、排版布局建议）\n## 📐 不同尺寸适配（横版、竖版、方形三个尺寸的文案调整建议）\n## 💡 创意方向（3个不同的创意方向和视觉概念）\n## 📱 社交媒体适配版（适合朋友圈、小红书等平台分享的文案版本）\n请用Markdown格式输出，文案视觉冲击力强、信息传达精准。',
+    fields: [
+      { name: 'event', label: '活动/产品名称', type: 'text', placeholder: '例如：2026夏季音乐节' },
+      { name: 'type', label: '海报类型', type: 'select', options: [{ label: '活动宣传', value: '活动宣传' }, { label: '产品发布', value: '产品发布' }, { label: '节日促销', value: '节日促销' }, { label: '品牌形象', value: '品牌形象' }, { label: '招聘海报', value: '招聘海报' }] },
+      { name: 'keyInfo', label: '关键信息', type: 'textarea', placeholder: '时间、地点、亮点、参与方式...' },
+      { name: 'style', label: '设计风格', type: 'select', options: [{ label: '简约现代', value: '简约现代' }, { label: '复古怀旧', value: '复古怀旧' }, { label: '科技未来', value: '科技未来' }, { label: '国潮中国风', value: '国潮中国风' }, { label: '手绘插画风', value: '手绘插画风' }] },
+    ],
+  },
+  {
+    id: 'email-subject-optimizer',
+    name: '邮件标题优化',
+    description: '提升邮件打开率的标题优化方案',
+    category: 'creative',
+    icon: '📩',
+    tags: ['邮件标题', '打开率', 'A/B测试', '邮件营销'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个邮件营销优化专家。请根据用户提供的邮件信息，生成高打开率的邮件标题。输出要求：## 📊 原标题分析（对原标题的评分和问题诊断）\n## 🏆 优化标题（10个版本，涵盖以下策略：紧迫感型、好奇心型、个性化型、利益驱动型、提问型、数字型、社交证明型、故事型）\n## 📈 预期效果评估（每个标题的预估打开率区间和适用场景）\n## 🧪 A/B测试方案（推荐的测试组合和测试周期）\n## ⚠️ 标题禁忌（需要避免的标题写法和垃圾邮件触发词）\n## 💡 最佳实践（提升邮件打开率的通用技巧和行业数据）\n请用Markdown格式输出，标题有吸引力、不标题党、符合品牌调性。',
+    fields: [
+      { name: 'subject', label: '当前邮件标题', type: 'text', placeholder: '例如：新品上市通知' },
+      { name: 'purpose', label: '邮件目的', type: 'select', options: [{ label: '产品推广', value: '产品推广' }, { label: '活动邀请', value: '活动邀请' }, { label: '内容分享', value: '内容分享' }, { label: '客户关怀', value: '客户关怀' }, { label: '通知提醒', value: '通知提醒' }] },
+      { name: 'audience', label: '收件人群', type: 'text', placeholder: '例如：VIP客户、新注册用户' },
+      { name: 'brand', label: '品牌名称（可选）', type: 'text', placeholder: '例如：XX品牌' },
+    ],
+  },
+
+  // ─── SEO优化 (8) ─────────────────────────────────────────────────────────
+  {
+    id: 'keyword-planning',
+    name: '关键词规划',
+    description: '根据行业生成系统化的关键词矩阵',
+    category: 'seo',
+    icon: '🔑',
+    tags: ['关键词', 'SEO', '搜索优化', '内容策略'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个SEO策略专家。请根据用户提供的行业信息，生成系统化的关键词规划。输出要求：## 🎯 核心关键词（5-10个高搜索量、高商业价值的核心关键词）\n## 📊 关键词矩阵（按搜索意图分类：信息型、导航型、交易型、商业调查型，每类10-15个关键词）\n## 📈 长尾关键词（20-30个低竞争、高转化的长尾关键词）\n## 🗺️ 主题聚类（将关键词按主题分组，形成内容支柱结构）\n## 📋 关键词优先级（按搜索量、竞争度、商业价值综合排序）\n## 💡 内容映射建议（每个核心关键词对应的内容类型和格式建议）\n## 📊 竞争度分析（关键词难度评估和抢占策略）\n请用Markdown格式输出，关键词覆盖全面、有策略性。',
+    fields: [
+      { name: 'industry', label: '行业/领域', type: 'text', placeholder: '例如：在线教育' },
+      { name: 'product', label: '核心产品/服务', type: 'textarea', placeholder: '描述你的核心产品或服务...' },
+      { name: 'target', label: '目标市场', type: 'select', options: [{ label: '国内市场（百度）', value: '国内市场' }, { label: '海外市场（Google）', value: '海外市场' }, { label: '双市场并行', value: '双市场并行' }] },
+      { name: 'scope', label: '关键词范围', type: 'select', options: [{ label: '广泛覆盖', value: '广泛覆盖' }, { label: '精准聚焦', value: '精准聚焦' }, { label: '竞品对标', value: '竞品对标' }] },
+    ],
+  },
+  {
+    id: 'meta-description-gen',
+    name: 'Meta 描述生成',
+    description: '根据页面内容生成 SEO 友好的 meta 描述',
+    category: 'seo',
+    icon: '📋',
+    tags: ['Meta描述', 'SEO', '搜索结果', '点击率'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个SEO文案专家。请根据用户提供的页面信息，生成SEO友好的meta描述。输出要求：## 🏆 推荐Meta描述（5个版本，每个120-160字符，包含核心关键词和行动号召）\n## 📊 描述评分（对每个描述从以下维度评分：关键词包含、吸引力、点击驱动、品牌一致性）\n## 🔍 关键词布局（描述中关键词的位置和密度分析）\n## 💡 优化建议（Meta描述编写的最佳实践和注意事项）\n## 📱 社交分享描述（适配社交媒体分享的Open Graph描述，3个版本）\n## ⚠️ 常见错误（Meta描述中需要避免的问题）\n请用Markdown格式输出，描述精准、有吸引力、符合搜索引擎规范。',
+    fields: [
+      { name: 'pageTitle', label: '页面标题', type: 'text', placeholder: '例如：如何选择适合自己的跑步鞋' },
+      { name: 'content', label: '页面核心内容', type: 'textarea', placeholder: '简要描述页面的主要内容...' },
+      { name: 'keyword', label: '目标关键词', type: 'text', placeholder: '例如：跑步鞋推荐、跑鞋选购指南' },
+      { name: 'cta', label: '期望用户行为', type: 'select', options: [{ label: '阅读文章', value: '阅读文章' }, { label: '购买产品', value: '购买产品' }, { label: '注册/咨询', value: '注册/咨询' }, { label: '了解更多', value: '了解更多' }] },
+    ],
+  },
+  {
+    id: 'article-seo-optimize',
+    name: '文章 SEO 优化',
+    description: '对现有文章进行 SEO 优化建议和修改',
+    category: 'seo',
+    icon: '📝',
+    tags: ['SEO优化', '内容优化', '文章', '搜索排名'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个内容SEO优化专家。请根据用户提供的文章内容，生成SEO优化方案。输出要求：## 📊 SEO评分（对文章当前SEO状况的综合评分，满分100分）\n## 🔍 关键词分析（目标关键词的布局检查：标题、H1、H2、正文、图片alt、URL中的分布）\n## 📝 标题优化（5个SEO友好的标题建议）\n## 📋 结构优化建议（H标签层级、段落结构、内链建议、列表使用等）\n## ✍️ 内容优化（关键词密度调整、语义相关词补充、内容长度建议、可读性优化）\n## 🖼️ 多媒体优化（图片alt文本建议、视频嵌入建议）\n## 📊 技术SEO检查（Meta标签、Schema标记、页面速度优化建议）\n## 📈 排名提升策略（3-5个具体的排名提升行动项）\n请用Markdown格式输出，建议具体可执行、有数据支撑。',
+    fields: [
+      { name: 'article', label: '文章内容', type: 'textarea', placeholder: '粘贴需要优化的文章...' },
+      { name: 'keyword', label: '目标关键词', type: 'text', placeholder: '例如：Python教程' },
+      { name: 'url', label: '文章URL（可选）', type: 'text', placeholder: '例如：https://example.com/python-tutorial' },
+      { name: 'platform', label: '发布平台', type: 'select', options: [{ label: '自有网站', value: '自有网站' }, { label: '知乎', value: '知乎' }, { label: 'CSDN', value: 'CSDN' }, { label: '微信公众号', value: '微信公众号' }, { label: '掘金/思否', value: '掘金/思否' }] },
+    ],
+  },
+  {
+    id: 'url-structure-optimize',
+    name: 'URL 结构优化',
+    description: '生成 SEO 友好的 URL 结构建议',
+    category: 'seo',
+    icon: '🔗',
+    tags: ['URL优化', 'SEO', '网站架构', '链接结构'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个技术SEO专家。请根据用户提供的网站信息，生成URL结构优化方案。输出要求：## 📊 当前URL结构分析（诊断现有URL结构的问题）\n## 🏆 推荐URL结构（3套URL结构方案，包含层级设计和命名规范）\n## 📋 URL命名规则（分类页、详情页、专题页等不同类型页面的URL模板）\n## 🔄 301重定向方案（URL变更时的重定向策略）\n## 🌐 多语言URL方案（如有需要，多语言版本的URL结构建议）\n## ⚡ URL优化检查清单（10项URL优化检查要点）\n## 💡 最佳实践（URL长度、参数处理、静态化、面包屑等建议）\n请用Markdown格式输出，URL结构清晰、语义化、有利于搜索引擎抓取。',
+    fields: [
+      { name: 'website', label: '网站类型', type: 'select', options: [{ label: '电商网站', value: '电商网站' }, { label: '博客/资讯站', value: '博客/资讯站' }, { label: '企业官网', value: '企业官网' }, { label: 'SaaS产品', value: 'SaaS产品' }, { label: '论坛/社区', value: '论坛/社区' }] },
+      { name: 'currentUrl', label: '当前URL示例', type: 'textarea', placeholder: '列出几个现有的URL示例...' },
+      { name: 'pages', label: '主要页面类型', type: 'textarea', placeholder: '例如：产品页、分类页、文章页...' },
+    ],
+  },
+  {
+    id: 'internal-linking',
+    name: '内链策略',
+    description: '生成网站内链优化方案，提升页面权重',
+    category: 'seo',
+    icon: '🕸️',
+    tags: ['内链', 'SEO', '网站权重', '页面优化'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个SEO内链策略专家。请根据用户提供的网站信息，生成内链优化方案。输出要求：## 📊 内链现状分析（当前内链结构的问题诊断）\n## 🗺️ 内链架构设计（网站的内链层级结构和页面关系图建议）\n## 🔗 关键页面内链策略（首页、分类页、产品页、文章页的内链建设方案）\n## 📝 锚文本策略（不同类型链接的锚文本使用规范和多样化建议）\n## 📈 权重传递方案（如何通过内链将权重传递给重要页面）\n## 🛠️ 自动化内链方案（相关文章推荐、标签聚合、面包屑导航等技术方案）\n## ✅ 内链检查清单（10项内链优化检查要点）\n请用Markdown格式输出，方案系统完整、可落地执行。',
+    fields: [
+      { name: 'website', label: '网站类型', type: 'select', options: [{ label: '电商网站', value: '电商网站' }, { label: '博客/资讯站', value: '博客/资讯站' }, { label: '企业官网', value: '企业官网' }, { label: '知识库/文档站', value: '知识库/文档站' }] },
+      { name: 'pages', label: '核心页面列表', type: 'textarea', placeholder: '列出网站的核心页面和URL...' },
+      { name: 'goal', label: '优化目标', type: 'select', options: [{ label: '提升整站权重', value: '提升整站权重' }, { label: '提升特定页面排名', value: '提升特定页面排名' }, { label: '改善爬虫抓取', value: '改善爬虫抓取' }, { label: '提升用户体验', value: '提升用户体验' }] },
+    ],
+  },
+  {
+    id: 'competitor-seo-analysis',
+    name: '竞争对手分析',
+    description: '分析竞争对手的 SEO 策略并给出建议',
+    category: 'seo',
+    icon: '🔎',
+    tags: ['竞品分析', 'SEO', '竞争策略', '市场分析'],
+    popularity: 4,
+    systemPrompt:
+      '你是一个SEO竞争分析专家。请根据用户提供的竞争对手信息，生成竞品SEO分析报告。输出要求：## 📊 竞品概览（竞争对手网站的基本SEO指标分析）\n## 🔍 关键词差距分析（竞品排名但你未覆盖的关键词，以及你覆盖但竞品未覆盖的关键词）\n## 📋 内容差距分析（竞品有你缺少的内容主题和内容类型）\n## 🔗 外链对比（竞品的外链来源、锚文本分布、外链质量分析）\n## 🛠️ 技术SEO对比（网站速度、移动端适配、结构化数据等技术指标对比）\n## 📈 超越策略（3-5个具体的超越竞品的SEO策略建议）\n## 📅 行动计划（按优先级排列的30天/60天/90天行动计划）\n请用Markdown格式输出，分析深入、建议可执行。',
+    fields: [
+      { name: 'mySite', label: '我的网站/业务', type: 'text', placeholder: '例如：我的在线英语学习平台' },
+      { name: 'competitors', label: '竞争对手网站', type: 'textarea', placeholder: '列出2-3个主要竞争对手的网站...' },
+      { name: 'keywords', label: '核心关键词', type: 'text', placeholder: '例如：英语在线学习、雅思培训' },
+      { name: 'focus', label: '分析重点', type: 'select', options: [{ label: '全面分析', value: '全面分析' }, { label: '关键词策略', value: '关键词策略' }, { label: '内容策略', value: '内容策略' }, { label: '外链策略', value: '外链策略' }, { label: '技术SEO', value: '技术SEO' }] },
+    ],
+  },
+  {
+    id: 'schema-markup',
+    name: '结构化数据建议',
+    description: '生成 Schema.org 结构化数据实施建议',
+    category: 'seo',
+    icon: '🏗️',
+    tags: ['结构化数据', 'Schema', '富文本摘要', '技术SEO'],
+    popularity: 3,
+    systemPrompt:
+      '你是一个技术SEO和结构化数据专家。请根据用户提供的网站类型，生成结构化数据实施建议。输出要求：## 📋 推荐Schema类型（根据网站类型推荐需要实施的Schema类型及优先级）\n## 💻 JSON-LD代码示例（每个推荐类型的完整JSON-LD代码，可直接使用）\n## 📝 字段说明（每个Schema类型的必填字段和推荐字段详解）\n## 🔍 富文本摘要预览（实施后在搜索结果中的展示效果描述）\n## 🛠️ 实施指南（技术实施步骤、测试工具使用、常见问题）\n## ⚠️ 常见错误（结构化数据实施中的常见错误和避免方法）\n## 📊 效果评估（如何衡量结构化数据的实施效果）\n请用Markdown格式输出，代码完整可用、说明清晰。',
+    fields: [
+      { name: 'website', label: '网站类型', type: 'select', options: [{ label: '电商网站', value: '电商网站' }, { label: '博客/文章站', value: '博客/文章站' }, { label: '本地商家', value: '本地商家' }, { label: 'SaaS产品', value: 'SaaS产品' }, { label: '问答/论坛', value: '问答/论坛' }, { label: '在线课程', value: '在线课程' }] },
+      { name: 'pages', label: '主要页面类型', type: 'textarea', placeholder: '例如：产品页、文章页、FAQ页...' },
+      { name: 'currentSchema', label: '已实施的Schema（可选）', type: 'textarea', placeholder: '描述已经实施的结构化数据...' },
+    ],
+  },
+  {
+    id: 'seo-diagnosis',
+    name: 'SEO 诊断报告',
+    description: '根据网站信息生成全面的 SEO 诊断报告',
+    category: 'seo',
+    icon: '🩺',
+    tags: ['SEO诊断', '网站审计', 'SEO报告', '网站优化'],
+    popularity: 5,
+    systemPrompt:
+      '你是一个资深SEO顾问。请根据用户提供的网站信息，生成全面的SEO诊断报告。输出要求：## 📊 综合SEO评分（总分100分，按各维度加权评分）\n## 🔍 技术SEO检查（网站速度、移动端适配、HTTPS、XML Sitemap、Robots.txt、爬虫预算等）\n## 📝 内容SEO分析（内容质量、关键词覆盖、内容更新频率、重复内容检查）\n## 🔗 外链分析（外链数量、质量、锚文本多样性、有害外链检查）\n## 📱 用户体验评估（Core Web Vitals、移动端体验、页面结构、导航清晰度）\n## 🏗️ 网站架构评估（URL结构、内链架构、页面层级、抓取效率）\n## 📈 优先级改进清单（按影响程度排序的改进项，标注预期效果和实施难度）\n## 📅 90天优化路线图（分阶段的SEO优化计划和里程碑）\n请用Markdown格式输出，诊断全面专业、建议具体可执行。',
+    fields: [
+      { name: 'url', label: '网站URL', type: 'text', placeholder: '例如：https://www.example.com' },
+      { name: 'type', label: '网站类型', type: 'select', options: [{ label: '电商网站', value: '电商网站' }, { label: '企业官网', value: '企业官网' }, { label: '博客/资讯站', value: '博客/资讯站' }, { label: 'SaaS产品', value: 'SaaS产品' }, { label: '本地服务', value: '本地服务' }] },
+      { name: 'issues', label: '已知问题（可选）', type: 'textarea', placeholder: '描述你已知的SEO问题...' },
+      { name: 'goal', label: '优化目标', type: 'select', options: [{ label: '提升搜索排名', value: '提升搜索排名' }, { label: '增加自然流量', value: '增加自然流量' }, { label: '提升转化率', value: '提升转化率' }, { label: '全面优化', value: '全面优化' }] },
+    ],
+  },
 ];
 
 /** 分类元数据 */
 export const categoryMeta: Record<Template['category'], { label: string; color: string }> = {
-  marketing: { label: '营销文案', color: 'bg-purple-100 text-purple-700' },
-  social: { label: '社交媒体', color: 'bg-pink-100 text-pink-700' },
-  ecommerce: { label: '电商运营', color: 'bg-amber-100 text-amber-700' },
-  office: { label: '办公效率', color: 'bg-blue-100 text-blue-700' },
+  marketing: { label: '营销文案', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
+  social: { label: '社交媒体', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' },
+  ecommerce: { label: '电商运营', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
+  office: { label: '办公效率', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+  education: { label: '教育培训', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
+  tech: { label: '技术开发', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
+  life: { label: '生活日常', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' },
+  creative: { label: '创意灵感', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
+  seo: { label: 'SEO优化', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
 };

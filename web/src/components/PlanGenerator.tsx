@@ -13,6 +13,13 @@ interface Field {
   required?: boolean;
 }
 
+interface HistoryItem {
+  id: number;
+  result: string;
+  timestamp: Date;
+  formSummary: string;
+}
+
 interface PlanGeneratorProps {
   title: string;
   description: string;
@@ -20,6 +27,16 @@ interface PlanGeneratorProps {
   systemPrompt: string;
   fields: Field[];
 }
+
+type OutputLength = 'short' | 'medium' | 'long';
+
+const OUTPUT_LENGTH_OPTIONS: { value: OutputLength; label: string; tokens: number; desc: string }[] = [
+  { value: 'short', label: '简短', tokens: 512, desc: '适合标题、口号等' },
+  { value: 'medium', label: '标准', tokens: 2048, desc: '适合一般文案' },
+  { value: 'long', label: '详细', tokens: 4096, desc: '适合长文、方案等' },
+];
+
+const MAX_HISTORY = 5;
 
 export default function PlanGenerator({
   title,
@@ -35,10 +52,14 @@ export default function PlanGenerator({
   const [copied, setCopied] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [toast, setToast] = useState('');
+  const [outputLength, setOutputLength] = useState<OutputLength>('medium');
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [activeHistoryId, setActiveHistoryId] = useState<number | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const exportDropdownRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const historyIdCounterRef = useRef(0);
   const { addWordsGenerated, incrementActions, addRecentTool } = useAppStore();
 
   useEffect(() => {
@@ -96,7 +117,13 @@ export default function PlanGenerator({
     setLoading(true);
     setError('');
     setResult('');
+    setActiveHistoryId(null);
     incrementActions();
+
+    // 记录表单摘要用于历史记录
+    const formSummary = fields
+      .map(f => `${f.label}: ${formData[f.name]?.slice(0, 20) || '未提供'}${(formData[f.name]?.length || 0) > 20 ? '...' : ''}`)
+      .join(' | ');
 
     try {
       // 构建用户输入
@@ -104,7 +131,10 @@ export default function PlanGenerator({
         .map(f => `${f.label}：${formData[f.name] || '未提供'}`)
         .join('\n');
 
-      const fullPrompt = `${systemPrompt}\n\n用户输入：\n${userContent}`;
+      // 构建消息：使用模板的 systemPrompt 作为 system role，用户数据作为 user role
+      const systemMessage = systemPrompt || '你是一个专业的AI内容创作助手。请用中文回答，输出格式清晰，使用Markdown格式。';
+
+      const maxTokens = OUTPUT_LENGTH_OPTIONS.find(o => o.value === outputLength)?.tokens ?? 2048;
 
       const { baseUrl, apiKey, model } = getModelConfig();
 
@@ -114,11 +144,11 @@ export default function PlanGenerator({
         body: JSON.stringify({
           model,
           messages: [
-            { role: 'system', content: '你是一个专业的AI内容创作助手。请用中文回答，输出格式清晰，使用Markdown格式。' },
-            { role: 'user', content: fullPrompt },
+            { role: 'system', content: systemMessage },
+            { role: 'user', content: userContent },
           ],
           stream: true,
-          max_tokens: 2048,
+          max_tokens: maxTokens,
         }),
         signal: controller.signal,
       });
@@ -158,10 +188,10 @@ export default function PlanGenerator({
           body: JSON.stringify({
             model,
             messages: [
-              { role: 'system', content: '你是一个专业的AI内容创作助手。请用中文回答，输出格式清晰，使用Markdown格式。' },
-              { role: 'user', content: fullPrompt },
+              { role: 'system', content: systemMessage },
+              { role: 'user', content: userContent },
             ],
-            max_tokens: 2048,
+            max_tokens: maxTokens,
           }),
           signal: controller.signal,
         });
@@ -171,6 +201,23 @@ export default function PlanGenerator({
       }
 
       addWordsGenerated(accumulated.length);
+
+      // 生成成功后添加到历史记录
+      if (accumulated) {
+        historyIdCounterRef.current += 1;
+        const newId = historyIdCounterRef.current;
+        const newItem: HistoryItem = {
+          id: newId,
+          result: accumulated,
+          timestamp: new Date(),
+          formSummary,
+        };
+        setHistory(prev => {
+          const updated = [...prev, newItem];
+          return updated.length > MAX_HISTORY ? updated.slice(updated.length - MAX_HISTORY) : updated;
+        });
+        setActiveHistoryId(newId);
+      }
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') {
         // 用户主动取消，不设置错误
@@ -181,7 +228,13 @@ export default function PlanGenerator({
       setLoading(false);
       abortControllerRef.current = null;
     }
-  }, [formData, fields, systemPrompt, addWordsGenerated, incrementActions]);
+  }, [formData, fields, systemPrompt, outputLength, addWordsGenerated, incrementActions]);
+
+  // 切换历史版本
+  const handleSwitchHistory = useCallback((item: HistoryItem) => {
+    setActiveHistoryId(item.id);
+    setResult(item.result);
+  }, []);
 
   // Ctrl+Enter / Cmd+Enter 快捷键
   useEffect(() => {
@@ -273,13 +326,18 @@ export default function PlanGenerator({
               {field.required && <span className="text-red-400 ml-0.5">*</span>}
             </label>
             {field.type === 'textarea' ? (
-              <textarea
-                value={formData[field.name] || ''}
-                onChange={(e) => updateField(field.name, e.target.value)}
-                placeholder={field.placeholder}
-                rows={3}
-                className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-800 dark:text-gray-200 leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all placeholder:text-gray-400 bg-gray-50 dark:bg-gray-700"
-              />
+              <div>
+                <textarea
+                  value={formData[field.name] || ''}
+                  onChange={(e) => updateField(field.name, e.target.value)}
+                  placeholder={field.placeholder}
+                  rows={3}
+                  className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-800 dark:text-gray-200 leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all placeholder:text-gray-400 bg-gray-50 dark:bg-gray-700"
+                />
+                <div className="mt-1 text-right text-xs text-gray-400 dark:text-gray-500">
+                  已输入 {(formData[field.name] || '').length} 字
+                </div>
+              </div>
             ) : field.type === 'select' ? (
               <select
                 value={formData[field.name] || ''}
@@ -302,6 +360,30 @@ export default function PlanGenerator({
             )}
           </div>
         ))}
+
+        {/* 输出长度选择器 */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            输出长度
+          </label>
+          <div className="flex gap-2">
+            {OUTPUT_LENGTH_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setOutputLength(option.value)}
+                className={`flex-1 px-3 py-2 rounded-xl text-xs font-medium border transition-all ${
+                  outputLength === option.value
+                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 ring-1 ring-primary-500/20'
+                    : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500'
+                }`}
+                title={option.desc}
+              >
+                <div className="font-semibold">{option.label}</div>
+                <div className="mt-0.5 opacity-70">{option.tokens} tokens</div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <button
           onClick={handleGenerate}
@@ -337,12 +419,31 @@ export default function PlanGenerator({
       {/* Result */}
       {(result || loading) && (
         <div className="border-t border-gray-100 dark:border-gray-700">
+          {/* 历史记录标签栏 */}
+          {history.length > 0 && (
+            <div className="flex items-center gap-1 px-6 pt-3 overflow-x-auto">
+              {history.map((item, index) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleSwitchHistory(item)}
+                  className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-lg border transition-all whitespace-nowrap ${
+                    activeHistoryId === item.id
+                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium'
+                      : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500'
+                  }`}
+                  title={item.formSummary}
+                >
+                  版本 {index + 1} &middot; {item.timestamp.getHours().toString().padStart(2, '0')}:{item.timestamp.getMinutes().toString().padStart(2, '0')}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="flex items-center justify-between px-6 py-3 bg-gray-50 dark:bg-gray-750">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               生成结果
               {result && (
                 <span className="ml-2 text-xs text-gray-400">
-                  {result.length} 字 · 约 {Math.round(result.length / 1.5)} Tokens
+                  {result.length} 字 &middot; 约 {Math.round(result.length / 1.5)} Tokens
                 </span>
               )}
             </span>
