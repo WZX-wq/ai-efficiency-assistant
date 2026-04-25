@@ -1,112 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/services</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/services</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/pricing</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/pricing</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/settings</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/settings</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/services/video</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/privacy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/terms</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/services/video</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/services/group-buy</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/services/group-buy</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/services/private-domain</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/services/private-domain</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/services/ai-cs</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/services/ai-cs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/services/data-analysis</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/services/data-analysis</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/services/live-stream</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/services/live-stream</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/creative</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/creative</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/calendar</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/calendar</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/scripts</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/scripts</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/copywriting</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/copywriting</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/history</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/history</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/brand</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/brand</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/seo</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/seo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/templates</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/templates</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/humanize</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/humanize</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/polish</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/polish</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yourusername.github.io/ai-efficiency-assistant/workspace/summarizer</loc>
+    <loc>https://wzx-wq.github.io/ai-efficiency-assistant/workspace/summarizer</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
