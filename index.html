@@ -25,14 +25,26 @@
     <meta name="theme-color" content="#2563eb" />
     <meta name="msapplication-TileColor" content="#2563eb" />
     <link rel="manifest" href="/ai-efficiency-assistant/manifest.json" />
-    <script type="module" crossorigin src="/ai-efficiency-assistant/assets/index-DEQlBixh.js"></script>
+    <script type="module" crossorigin src="/ai-efficiency-assistant/assets/index-DGaCjmV0.js"></script>
     <link rel="modulepreload" crossorigin href="/ai-efficiency-assistant/assets/vendor-react-DfmVI5gG.js">
     <link rel="modulepreload" crossorigin href="/ai-efficiency-assistant/assets/vendor-motion-Dx6xgJmk.js">
     <link rel="modulepreload" crossorigin href="/ai-efficiency-assistant/assets/vendor-markdown-BdQ8XZXe.js">
     <link rel="modulepreload" crossorigin href="/ai-efficiency-assistant/assets/vendor-syntax-CO1gxEK4.js">
-    <link rel="stylesheet" crossorigin href="/ai-efficiency-assistant/assets/index-J5io0yC9.css">
+    <link rel="stylesheet" crossorigin href="/ai-efficiency-assistant/assets/index-CKirx3G5.css">
   </head>
   <body class="antialiased">
+    <script>
+      // 防止暗色模式闪烁 (FOUC)
+      (function() {
+        try {
+          var stored = JSON.parse(localStorage.getItem('ai-assistant-app-store') || '{}');
+          var theme = stored.state && stored.state.theme ? stored.state.theme : 'system';
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
     <div id="root"></div>
     <script>
       // GitHub Pages SPA 路由修复：404.html 将路径转为查询参数

@@ -1,4 +1,4 @@
-import{j as e}from"./vendor-motion-Dx6xgJmk.js";import{a as r}from"./vendor-react-DfmVI5gG.js";import{u as G,a as U}from"./index-DEQlBixh.js";import{u as C}from"./chatStore-BQZlNQlA.js";import{c as q,a as B}from"./aiChat-rZQ7JYJC.js";import{M as F}from"./MarkdownRenderer-D-dJpOER.js";import"./vendor-syntax-CO1gxEK4.js";import"./vendor-markdown-BdQ8XZXe.js";import"./api-BzEi16Tb.js";const J=[{label:"✨ 润色",prompt:`请润色以下文本，使其更加流畅、专业：
+import{j as e}from"./vendor-motion-Dx6xgJmk.js";import{a as r}from"./vendor-react-DfmVI5gG.js";import{u as G,a as U}from"./index-DGaCjmV0.js";import{u as C}from"./chatStore-C5dloYSS.js";import{c as q,a as B}from"./aiChat-rZQ7JYJC.js";import{M as F}from"./MarkdownRenderer-D-dJpOER.js";import"./vendor-syntax-CO1gxEK4.js";import"./vendor-markdown-BdQ8XZXe.js";import"./api-BzEi16Tb.js";const J=[{label:"✨ 润色",prompt:`请润色以下文本，使其更加流畅、专业：
 
 `},{label:"📝 改写",prompt:`请用不同的方式改写以下文本：
 

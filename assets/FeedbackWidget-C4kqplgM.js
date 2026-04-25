@@ -17,10 +17,7 @@ import{j as e,m as r,A as c}from"./vendor-motion-Dx6xgJmk.js";import{a as s}from
           hover:bg-primary-700 dark:hover:bg-primary-500
           transition-colors duration-200
           group
-        `,children:[!a&&e.jsx("span",{className:"absolute inset-0 rounded-full bg-primary-500 animate-ping opacity-20"}),e.jsx("svg",{className:`w-5 h-5 transition-transform duration-300 ${a?"rotate-0":"group-hover:scale-110"}`,fill:"none",viewBox:"0 0 24 24",stroke:"currentColor",strokeWidth:1.8,children:e.jsx("path",{strokeLinecap:"round",strokeLinejoin:"round",d:`M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227
-               1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443
-               2.887 0 5.637-.504 7.687-1.429A3.375 3.375 0 0021.75 12.51V8.25
-               A3.375 3.375 0 0018.375 4.875H5.625A3.375 3.375 0 002.25 8.25v3.51z`})}),e.jsx(c,{children:N&&!a&&e.jsx(r.span,{initial:{scale:0},animate:{scale:1},exit:{scale:0},transition:{type:"spring",stiffness:500,damping:25},className:`
+        `,children:[!a&&e.jsx("span",{className:"absolute inset-0 rounded-full bg-primary-500 animate-ping opacity-20"}),e.jsx("svg",{className:`w-5 h-5 transition-transform duration-300 ${a?"rotate-0":"group-hover:scale-110"}`,fill:"none",viewBox:"0 0 24 24",stroke:"currentColor",strokeWidth:1.8,children:e.jsx("path",{strokeLinecap:"round",strokeLinejoin:"round",d:"M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.424 48.424 0 017.687-1.429A3.375 3.375 0 0021.75 12.51V8.25A3.375 3.375 0 0018.375 4.875H5.625A3.375 3.375 0 002.25 8.25v3.51z"})}),e.jsx(c,{children:N&&!a&&e.jsx(r.span,{initial:{scale:0},animate:{scale:1},exit:{scale:0},transition:{type:"spring",stiffness:500,damping:25},className:`
                 absolute -top-1 -right-1
                 w-5 h-5 rounded-full
                 bg-red-500 dark:bg-red-500
