@@ -132,8 +132,15 @@ export default function Header() {
                   </svg>
                 </button>
 
-                {toolsOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-2 animate-slide-down">
+                <AnimatePresence>
+                  {toolsOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-2 origin-top"
+                    >
                     <div className="p-2 border-b border-gray-100 dark:border-gray-700">
                       <input
                         type="text"
@@ -199,8 +206,9 @@ export default function Header() {
                         </>
                       );
                     })()}
-                  </div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </nav>
 

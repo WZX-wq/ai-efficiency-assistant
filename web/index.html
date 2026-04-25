@@ -27,6 +27,18 @@
     <link rel="manifest" href="/ai-efficiency-assistant/manifest.json" />
   </head>
   <body class="antialiased">
+    <script>
+      // 防止暗色模式闪烁 (FOUC)
+      (function() {
+        try {
+          var stored = JSON.parse(localStorage.getItem('ai-assistant-app-store') || '{}');
+          var theme = stored.state && stored.state.theme ? stored.state.theme : 'system';
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>

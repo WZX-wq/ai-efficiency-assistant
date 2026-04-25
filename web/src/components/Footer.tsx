@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useToast } from './ToastProvider';
 
 export default function Footer() {
+  const { toast } = useToast();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -28,7 +30,7 @@ export default function Footer() {
                 href="https://github.com/WZX-wq/ai-efficiency-assistant"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-500 hover:text-white transition-colors"
                 aria-label="GitHub"
               >
                 <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
@@ -36,9 +38,9 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
-                title="微信: AI效率助手"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+                href="javascript:void(0)"
+                title="即将上线"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-500 hover:text-white transition-colors"
                 aria-label="微信"
               >
                 <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
@@ -46,9 +48,9 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
-                title="微博: @AI效率助手"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+                href="javascript:void(0)"
+                title="即将上线"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-500 hover:text-white transition-colors"
                 aria-label="微博"
               >
                 <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
@@ -57,7 +59,7 @@ export default function Footer() {
               </a>
               <a
                 href="mailto:contact@ai-assistant.com"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-500 hover:text-white transition-colors"
                 aria-label="邮箱"
               >
                 <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -125,7 +127,7 @@ export default function Footer() {
                   localStorage.setItem('ai-newsletter-subs', JSON.stringify(subs));
                 }
                 (e.target as HTMLFormElement).reset();
-                alert('订阅成功！');
+                toast('订阅成功！', 'success');
               }
             }} className="flex gap-2">
               <input type="email" placeholder="your@email.com" required className="flex-1 px-3 py-1.5 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
@@ -154,7 +156,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-gray-800 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-            <p className="text-sm text-gray-500 dark:text-gray-600">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               &copy; {currentYear} AI效率助手. All rights reserved.
             </p>
             <div className="hidden sm:block w-px h-4 bg-gray-700" />

@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 export interface ChatSession {
   id: string;
   title: string;
-  messages: { role: 'user' | 'assistant'; content: string }[];
+  messages: { role: 'user' | 'assistant'; content: string; timestamp: number }[];
   systemPrompt: string;
   createdAt: number;
   updatedAt: number;
@@ -80,7 +80,7 @@ export const useChatStore = create<ChatStore>()(
             sess.id === sessionId
               ? {
                   ...sess,
-                  messages: [...sess.messages, { role, content }],
+                  messages: [...sess.messages, { role, content, timestamp: Date.now() }],
                   updatedAt: Date.now(),
                   // 自动生成标题（取第一条用户消息前20字）
                   title:

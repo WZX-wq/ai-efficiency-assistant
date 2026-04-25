@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import AiTextProcessor from '../components/AiTextProcessor';
 import ChatInterface from '../components/ChatInterface';
 import RichTextEditor from '../components/RichTextEditor';
@@ -188,7 +189,9 @@ export default function Workspace() {
       {/* Quick Tool Grid */}
       <section className="pb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+          <div className="relative">
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-50 dark:from-gray-950 to-transparent pointer-events-none z-10"></div>
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
             {[...QUICK_TOOLS]
               .sort((a, b) => {
                 const aIdx = recentTools.findIndex((r) => a.name.includes(r) || r.includes(a.name) || a.to.includes(r));
@@ -217,6 +220,7 @@ export default function Workspace() {
                 </div>
               </Link>
             ))}
+            </div>
           </div>
         </div>
       </section>
@@ -251,18 +255,46 @@ export default function Workspace() {
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
             style={{ height: 'calc(100vh - 320px)', minHeight: '500px' }}
           >
-            {activeTab === 'text' && <AiTextProcessor />}
+            <AnimatePresence mode="wait">
+              {activeTab === 'text' && (
+                <motion.div
+                  key="text"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full"
+                >
+                  <AiTextProcessor />
+                </motion.div>
+              )}
 
-            {activeTab === 'chat' && (
-              <ChatInterface
-                systemPrompt={CHAT_SYSTEM_PROMPT}
-                title="AI 内容创作对话"
-                placeholder="描述你的内容需求，AI 将帮你创作..."
-              />
-            )}
+              {activeTab === 'chat' && (
+                <motion.div
+                  key="chat"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full"
+                >
+                  <ChatInterface
+                    systemPrompt={CHAT_SYSTEM_PROMPT}
+                    title="AI 内容创作对话"
+                    placeholder="描述你的内容需求，AI 将帮你创作..."
+                  />
+                </motion.div>
+              )}
 
-            {activeTab === 'editor' && (
-              <div className="flex flex-col h-full">
+              {activeTab === 'editor' && (
+                <motion.div
+                  key="editor"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex flex-col h-full"
+                >
                 {/* Editor Toolbar */}
                 <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100 dark:border-gray-700">
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -319,8 +351,9 @@ export default function Workspace() {
                     placeholder="开始写作..."
                   />
                 </div>
-              </div>
+              </motion.div>
             )}
+            </AnimatePresence>
           </div>
         </div>
       </section>

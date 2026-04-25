@@ -419,6 +419,28 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 锚点导航 */}
+      <nav className="sticky top-16 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 flex items-center gap-6 overflow-x-auto scrollbar-hide py-2">
+          {[
+            { id: 'features', label: '核心功能' },
+            { id: 'demo', label: '产品演示' },
+            { id: 'pricing', label: '定价方案' },
+            { id: 'testimonials', label: '用户评价' },
+            { id: 'faq', label: '常见问题' },
+          ].map(item => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className="text-sm text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 whitespace-nowrap transition-colors"
+              onClick={(e) => { e.preventDefault(); document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' }); }}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+
       {/* Trust Logo Wall */}
       <section ref={trustRef} className="scroll-reveal py-12 bg-gray-50/50 dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -458,7 +480,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section ref={featuresRef} className="scroll-reveal py-20 sm:py-28">
+      <section id="features" ref={featuresRef} className="scroll-reveal py-20 sm:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
@@ -492,7 +514,7 @@ export default function Home() {
       </section>
 
       {/* Product Demo Section */}
-      <section className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
+      <section id="demo" className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16 scroll-reveal">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
@@ -610,16 +632,16 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-white dark:bg-gray-950">
+      <section id="pricing" className="py-20 bg-white dark:bg-gray-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-semibold rounded-full mb-3">灵活定价</span>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">选择适合你的方案</h2>
             <p className="text-gray-500 dark:text-gray-400 mt-3 max-w-2xl mx-auto">从免费版开始，随时升级</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pb-4 md:pb-0 scrollbar-hide max-w-5xl mx-auto">
             {/* 免费版 */}
-            <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+            <div className="min-w-[280px] md:min-w-0 snap-start p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">免费版</h3>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-bold text-gray-900 dark:text-white">¥0</span>
@@ -639,7 +661,7 @@ export default function Home() {
               </Link>
             </div>
             {/* 专业版 */}
-            <div className="relative p-6 rounded-2xl border-2 border-primary-500 dark:border-primary-400 shadow-xl shadow-primary-500/10">
+            <div className="relative min-w-[280px] md:min-w-0 snap-start p-6 rounded-2xl border-2 border-primary-500 dark:border-primary-400 shadow-xl shadow-primary-500/10">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-primary-600 text-white text-xs font-semibold rounded-full">推荐</div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">专业版</h3>
               <div className="mt-4 flex items-baseline gap-1">
@@ -660,7 +682,7 @@ export default function Home() {
               </Link>
             </div>
             {/* 团队版 */}
-            <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+            <div className="min-w-[280px] md:min-w-0 snap-start p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">团队版</h3>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-bold text-gray-900 dark:text-white">¥199</span>
@@ -687,7 +709,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section ref={testimonialsRef} className="scroll-reveal py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
+      <section id="testimonials" ref={testimonialsRef} className="scroll-reveal py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
@@ -822,7 +844,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-white dark:bg-gray-950">
+      <section id="faq" className="py-16 bg-white dark:bg-gray-950">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">

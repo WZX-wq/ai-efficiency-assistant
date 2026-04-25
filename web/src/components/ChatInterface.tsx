@@ -62,6 +62,7 @@ export default function ChatInterface({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const personaRef = useRef<HTMLDivElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const { addWordsGenerated, incrementActions } = useAppStore();
 
   const {
@@ -135,13 +136,17 @@ export default function ChatInterface({
       setLoading(true);
       incrementActions();
 
+      // 创建 AbortController 用于停止生成
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+
       const currentMessages = useChatStore.getState().sessions.find(s => s.id === sessionId)?.messages || [];
 
       try {
         const streamResp = await chatWithAiStream({
           messages: currentMessages,
           systemPrompt: activePersona.systemPrompt,
-        });
+        }, abortController.signal);
 
         if (streamResp.success && streamResp.stream) {
           const reader = streamResp.stream.getReader();
@@ -173,10 +178,16 @@ export default function ChatInterface({
         addMessage(sessionId, 'assistant', '抱歉，发生了错误，请稍后重试。');
       } finally {
         setLoading(false);
+        abortControllerRef.current = null;
       }
     },
     [loading, activeSessionId, activePersona.systemPrompt, createSession, addMessage, updateLastMessage, addWordsGenerated, incrementActions]
   );
+
+  const handleStopGeneration = useCallback(() => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -253,7 +264,7 @@ export default function ChatInterface({
       if (!session) return;
       // 截断到编辑位置，更新用户消息
       const msgs = session.messages.slice(0, msgIdx);
-      msgs.push({ role: 'user', content: editContent.trim() });
+      msgs.push({ role: 'user', content: editContent.trim(), timestamp: Date.now() });
       useChatStore.setState({
         sessions: store.sessions.map(s =>
           s.id === activeSessionId ? { ...s, messages: msgs } : s
@@ -419,7 +430,7 @@ export default function ChatInterface({
     <div className="flex h-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
       {/* 会话列表侧边栏 */}
       {sidebarOpen && (
-        <div className="w-64 border-r border-gray-100 dark:border-gray-700 flex flex-col bg-gray-50 dark:bg-gray-850 shrink-0 animate-slide-in-right">
+        <div className="w-64 border-r border-gray-100 dark:border-gray-700 flex flex-col bg-gray-50 dark:bg-gray-900 shrink-0 animate-slide-in-right">
           <div className="p-3 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
             <button
               onClick={handleNewChat}
@@ -753,7 +764,7 @@ export default function ChatInterface({
                 )}
                 {/* 操作按钮 */}
                 {msg.role === 'user' && editingMsgIdx !== i && (
-                  <div className="flex items-center gap-1 mt-1 opacity-0 hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 mt-1 opacity-100 md:opacity-0 md:hover:opacity-100 transition-opacity">
                     <button onClick={() => handleEditMessage(i)} className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 px-1.5 py-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
                       编辑
                     </button>
@@ -765,7 +776,7 @@ export default function ChatInterface({
                   </div>
                 )}
                 {msg.role === 'assistant' && (
-                  <div className="flex items-center gap-1 mt-1 opacity-0 hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 mt-1 opacity-100 md:opacity-0 md:hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => { navigator.clipboard.writeText(msg.content); }}
                       className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 px-1.5 py-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -799,6 +810,12 @@ export default function ChatInterface({
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.367 13.75c-.806 0-1.533.446-2.031 1.08a9.041 9.041 0 0 1-2.861 2.4c-.723.384-1.35.956-1.653 1.715a4.498 4.498 0 0 0-.322 1.672V21a.75.75 0 0 1-.75.75 2.25 2.25 0 0 1-2.25-2.25c0-1.152.26-2.243.723-3.218.266-.558-.107-1.282-.725-1.282m0 0H5.904m7.598 4.022A8.25 8.25 0 0 1 15.536 19.08" />
                       </svg>
                     </button>
+                  </div>
+                )}
+                {/* 消息时间戳 */}
+                {msg.timestamp && (
+                  <div className="mt-1 text-xs text-gray-300 dark:text-gray-600">
+                    {new Date(msg.timestamp).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 )}
               </div>
@@ -911,13 +928,24 @@ export default function ChatInterface({
               className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-800 dark:text-gray-200 leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all placeholder:text-gray-400 bg-gray-50 dark:bg-gray-700"
             />
             <button
-              onClick={() => sendMessage(input)}
+              onClick={loading ? handleStopGeneration : () => sendMessage(input)}
               disabled={(!input.trim() && images.length === 0) || loading}
-              className="shrink-0 w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-40 hover:bg-primary-700 hover:shadow-md"
+              title={loading ? '停止生成' : '发送'}
+              className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:shadow-md ${
+                loading
+                  ? 'bg-red-500 text-white hover:bg-red-600'
+                  : 'bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-40'
+              }`}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-              </svg>
+              {loading ? (
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <rect x="6" y="6" width="12" height="12" rx="1" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                </svg>
+              )}
             </button>
           </div>
           <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500 text-center">
