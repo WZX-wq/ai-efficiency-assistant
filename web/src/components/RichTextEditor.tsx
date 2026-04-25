@@ -89,6 +89,8 @@ export default function RichTextEditor({
         heading: {
           levels: [1, 2, 3, 4],
         },
+        underline: false,
+        link: false,
       }),
       Placeholder.configure({
         placeholder,
