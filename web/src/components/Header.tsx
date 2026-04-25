@@ -3,23 +3,26 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store/appStore';
 import { NotificationBell } from './NotificationCenter';
+import { useTranslation } from '../i18n';
 
-const toolLinks = [
-  { to: '/workspace', label: 'AI 工作台', icon: '⚡' },
-  { to: '/workspace/creative', label: '创意灵感', icon: '🎨' },
-  { to: '/workspace/calendar', label: '营销日历', icon: '📅' },
-  { to: '/workspace/scripts', label: '话术库', icon: '💬' },
-  { to: '/workspace/copywriting', label: '文案生成器', icon: '✍️' },
-  { to: '/workspace/history', label: '历史记录', icon: '📋' },
-  { to: '/workspace/brand', label: '品牌声音', icon: '🎨' },
-  { to: '/workspace/seo', label: 'SEO 优化', icon: '🔍' },
-  { to: '/workspace/templates', label: '模板库', icon: '📑' },
-  { to: '/workspace/humanize', label: '人性化改写', icon: '🧑' },
-  { to: '/workspace/polish', label: '文章润色', icon: '✨' },
-  { to: '/workspace/summarizer', label: '文本摘要', icon: '📝' },
+const toolLinkItems = [
+  { to: '/workspace', labelKey: 'header.workspace', icon: '⚡' },
+  { to: '/workspace/creative', labelKey: 'header.creative', icon: '🎨' },
+  { to: '/workspace/calendar', labelKey: 'header.calendar', icon: '📅' },
+  { to: '/workspace/scripts', labelKey: 'header.scripts', icon: '💬' },
+  { to: '/workspace/copywriting', labelKey: 'header.copywriting', icon: '✍️' },
+  { to: '/workspace/history', labelKey: 'header.history', icon: '📋' },
+  { to: '/workspace/brand', labelKey: 'header.brand', icon: '🎨' },
+  { to: '/workspace/seo', labelKey: 'header.seo', icon: '🔍' },
+  { to: '/workspace/templates', labelKey: 'header.templates', icon: '📑' },
+  { to: '/workspace/humanize', labelKey: 'header.humanize', icon: '🧑' },
+  { to: '/workspace/polish', labelKey: 'header.polish', icon: '✨' },
+  { to: '/workspace/summarizer', labelKey: 'header.summarizer', icon: '📝' },
 ];
 
 export default function Header() {
+  const { t } = useTranslation();
+  const toolLinks = toolLinkItems.map(item => ({ ...item, label: t(item.labelKey) }));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [toolboxSearch, setToolboxSearch] = useState('');
@@ -35,9 +38,9 @@ export default function Header() {
   };
 
   const navLinks = [
-    { to: '/', label: '首页' },
-    { to: '/services', label: '服务' },
-    { to: '/pricing', label: '定价' },
+    { to: '/', label: t('header.home') },
+    { to: '/services', label: t('header.services') },
+    { to: '/pricing', label: t('header.pricing') },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -125,7 +128,7 @@ export default function Header() {
                       : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
                   }`}
                 >
-                  工具箱
+                  {t('header.toolbox')}
                   <svg
                     className={`w-4 h-4 transition-transform duration-200 ${toolsOpen ? 'rotate-180' : ''}`}
                     fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
@@ -148,8 +151,8 @@ export default function Header() {
                         type="text"
                         value={toolboxSearch}
                         onChange={(e) => setToolboxSearch(e.target.value)}
-                        placeholder="搜索工具..."
-                        aria-label="搜索工具"
+                        placeholder={t('header.searchTools')}
+                        aria-label={t('header.searchTools')}
                         className="w-full px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                       />
                     </div>
@@ -164,7 +167,7 @@ export default function Header() {
                           {coreTools.length > 0 && (
                             <>
                               <div className="px-3 py-1.5">
-                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">核心工具</p>
+                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">{t('header.coreTools')}</p>
                               </div>
                               {coreTools.map((tool) => (
                                 <Link
@@ -187,7 +190,7 @@ export default function Header() {
                             <>
                               <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
                               <div className="px-3 py-1.5">
-                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">创作工具</p>
+                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">{t('header.creationTools')}</p>
                               </div>
                               {creativeTools.map((tool) => (
                                 <Link
@@ -227,7 +230,7 @@ export default function Header() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
                 </svg>
-                <span className="hidden lg:inline">AI 助手</span>
+                <span className="hidden lg:inline">{t('header.aiAssistant')}</span>
               </button>
 
               {/* 登录按钮 */}
@@ -235,7 +238,7 @@ export default function Header() {
                 to="/workspace"
                 className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
               >
-                登录
+                {t('header.login')}
               </Link>
 
               {/* 设置按钮 */}
@@ -271,7 +274,7 @@ export default function Header() {
                 to="/workspace"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors shadow-sm hover:shadow-md"
               >
-                免费开始
+                {t('header.startFree')}
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
@@ -333,7 +336,7 @@ export default function Header() {
 
                 {/* Mobile 工具箱 */}
                 <div className="pt-2 mt-2 border-t border-gray-100 dark:border-gray-800">
-                  <p className="px-4 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">工具箱</p>
+                  <p className="px-4 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('header.toolbox')}</p>
                   {toolLinks.map((tool) => (
                     <Link
                       key={tool.to}
@@ -357,16 +360,16 @@ export default function Header() {
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-primary-600 bg-primary-50 dark:bg-primary-900/20 rounded-lg"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0-3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
                     </svg>
-                    AI 助手
+                    {t('header.aiAssistant')}
                   </button>
                   <Link
                     to="/workspace"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex-1 px-4 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg text-center hover:bg-primary-700 transition-colors"
                   >
-                    免费开始
+                    {t('header.startFree')}
                   </Link>
                 </div>
               </div>

@@ -42,6 +42,61 @@ const zh: Record<string, string> = {
   'tools.humanize': '人性化改写',
   'tools.polish': '文章润色',
   'tools.textSummary': '文本摘要',
+
+  // ========== Header ==========
+  'header.home': '首页',
+  'header.services': '服务',
+  'header.pricing': '定价',
+  'header.settings': '设置',
+  'header.toolbox': '工具箱',
+  'header.coreTools': '核心工具',
+  'header.creationTools': '创作工具',
+  'header.searchTools': '搜索工具...',
+  'header.login': '登录',
+  'header.startFree': '免费开始',
+  'header.aiAssistant': 'AI 写作助手',
+
+  // Header 工具名称
+  'header.workspace': 'AI 工作台',
+  'header.creative': '创意灵感',
+  'header.copywriting': '文案生成',
+  'header.scripts': 'AI 话术库',
+  'header.calendar': '营销日历',
+  'header.seo': 'SEO 优化',
+  'header.humanize': '人性化改写',
+  'header.polish': '文章润色',
+  'header.summarizer': '内容总结',
+  'header.templates': '模板库',
+  'header.brand': '品牌声音',
+  'header.history': '历史记录',
+
+  // ========== Footer ==========
+  'footer.brandDesc': '企业级 AI 内容创作平台，助力企业数字化转型',
+  'footer.product': '产品',
+  'footer.tools': '工具',
+  'footer.services': '服务',
+  'footer.support': '支持',
+  'footer.about': '关于我们',
+  'footer.helpCenter': '帮助中心',
+  'footer.apiDocs': 'API 文档',
+  'footer.contact': '联系我们',
+  'footer.privacy': '隐私政策',
+  'footer.terms': '服务条款',
+  'footer.subscribePlaceholder': '输入您的邮箱',
+  'footer.subscribe': '订阅',
+  'footer.copyright': '© 2024 AI效率助手. 保留所有权利.',
+  'footer.trustSecure': '安全可靠',
+  'footer.trustFast': '极速响应',
+  'footer.trustSmart': '智能高效',
+
+  // ========== Home Hero ==========
+  'home.hero.badge': '🚀 全新 v2.5 企业级升级',
+  'home.hero.title': 'AI 驱动的',
+  'home.hero.titleHighlight': '企业级内容创作平台',
+  'home.hero.subtitle': '14+ AI 核心工具，覆盖内容创作全流程。从创意灵感到最终发布，AI 效率助手让每一步都更高效。',
+  'home.hero.cta': '免费开始使用',
+  'home.hero.ctaSecondary': '查看定价方案',
+  'home.hero.trusted': '已有 50,000+ 用户信赖',
 };
 
 export default zh;

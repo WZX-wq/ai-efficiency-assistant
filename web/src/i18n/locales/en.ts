@@ -42,6 +42,61 @@ const en: Record<string, string> = {
   'tools.humanize': 'Humanize Rewrite',
   'tools.polish': 'Article Polish',
   'tools.textSummary': 'Text Summary',
+
+  // ========== Header ==========
+  'header.home': 'Home',
+  'header.services': 'Services',
+  'header.pricing': 'Pricing',
+  'header.settings': 'Settings',
+  'header.toolbox': 'Toolbox',
+  'header.coreTools': 'Core Tools',
+  'header.creationTools': 'Creation Tools',
+  'header.searchTools': 'Search tools...',
+  'header.login': 'Login',
+  'header.startFree': 'Start Free',
+  'header.aiAssistant': 'AI Assistant',
+
+  // Header Tool Names
+  'header.workspace': 'AI Workspace',
+  'header.creative': 'Creative Ideas',
+  'header.copywriting': 'Copywriting',
+  'header.scripts': 'AI Scripts',
+  'header.calendar': 'Marketing Calendar',
+  'header.seo': 'SEO Optimization',
+  'header.humanize': 'Humanize',
+  'header.polish': 'Polish',
+  'header.summarizer': 'Summarizer',
+  'header.templates': 'Templates',
+  'header.brand': 'Brand Voice',
+  'header.history': 'History',
+
+  // ========== Footer ==========
+  'footer.brandDesc': 'Enterprise-grade AI content creation platform',
+  'footer.product': 'Product',
+  'footer.tools': 'Tools',
+  'footer.services': 'Services',
+  'footer.support': 'Support',
+  'footer.about': 'About',
+  'footer.helpCenter': 'Help Center',
+  'footer.apiDocs': 'API Docs',
+  'footer.contact': 'Contact',
+  'footer.privacy': 'Privacy Policy',
+  'footer.terms': 'Terms of Service',
+  'footer.subscribePlaceholder': 'Enter your email',
+  'footer.subscribe': 'Subscribe',
+  'footer.copyright': '© 2024 AI Efficiency Assistant. All rights reserved.',
+  'footer.trustSecure': 'Secure',
+  'footer.trustFast': 'Fast',
+  'footer.trustSmart': 'Smart',
+
+  // ========== Home Hero ==========
+  'home.hero.badge': '🚀 New v2.5 Enterprise Upgrade',
+  'home.hero.title': 'AI-Powered',
+  'home.hero.titleHighlight': 'Enterprise Content Platform',
+  'home.hero.subtitle': '14+ AI tools covering the entire content creation workflow.',
+  'home.hero.cta': 'Start Free',
+  'home.hero.ctaSecondary': 'View Pricing',
+  'home.hero.trusted': 'Trusted by 50,000+ users',
 };
 
 export default en;

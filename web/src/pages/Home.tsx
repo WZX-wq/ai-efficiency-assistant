@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { FeatureCard } from '../types';
 import { ACTION_DESCRIPTIONS } from '../types';
 import { useSeo, JsonLd, PAGE_SEO } from '../components/SeoHead';
-import { APP_VERSION } from '../version';
+import { useTranslation } from '../i18n';
 
 const features: FeatureCard[] = [
   {
@@ -308,6 +308,7 @@ function AnimatedCounter({ end, suffix = '', prefix = '' }: { end: number; suffi
 
 export default function Home() {
   useSeo(PAGE_SEO.home);
+  const { t } = useTranslation();
   const featuresRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const enterpriseRef = useRef<HTMLDivElement>(null);
@@ -374,20 +375,19 @@ export default function Home() {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-full text-sm text-primary-700 dark:text-primary-300 font-medium mb-8 animate-fade-in">
               <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
-              {APP_VERSION} 企业级升级 · 富文本编辑器 · AI 写作助手
+              {t('home.hero.badge')}
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight animate-slide-up animate-gradient-text">
-              AI效率助手
+              {t('home.hero.title')}
               <br />
               <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 bg-clip-text text-transparent">
-                让AI成为你的超级写作搭档
+                {t('home.hero.titleHighlight')}
               </span>
             </h1>
 
             <p className="mt-6 text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto animate-slide-up">
-              集成富文本编辑器、AI 写作助手、命令面板 --
-              十四大核心工具 + 六大服务，全面提升内容创作与运营效率
+              {t('home.hero.subtitle')}
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
@@ -395,7 +395,7 @@ export default function Home() {
                 to="/workspace"
                 className="inline-flex items-center gap-2 px-8 py-3.5 bg-primary-600 text-white text-base font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 hover:-translate-y-0.5"
               >
-                免费开始使用
+                {t('home.hero.cta')}
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
@@ -404,7 +404,7 @@ export default function Home() {
                 to="/pricing"
                 className="inline-flex items-center gap-2 px-8 py-3.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-base font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:-translate-y-0.5"
               >
-                查看定价方案
+                {t('home.hero.ctaSecondary')}
               </Link>
             </div>
 

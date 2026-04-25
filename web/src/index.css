@@ -438,3 +438,65 @@ html.theme-transitioning *::after {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* 打印样式 */
+@media print {
+  /* 隐藏不需要打印的元素 */
+  .no-print,
+  header,
+  footer,
+  nav,
+  .back-to-top,
+  .reading-progress,
+  .mobile-nav,
+  .command-palette,
+  .toast-container,
+  .announcement-bar,
+  .notification-center,
+  .feedback-widget,
+  .ai-assistant-panel {
+    display: none !important;
+  }
+
+  /* 重置页面布局 */
+  body {
+    margin: 0;
+    padding: 20px;
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  /* 确保内容区域占满宽度 */
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* 链接显示 URL */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* 避免分页断裂 */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  img, pre, blockquote {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* 代码块保持样式 */
+  pre {
+    border: 1px solid #ddd;
+    padding: 10px;
+    background: #f5f5f5 !important;
+  }
+}

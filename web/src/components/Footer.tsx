@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useToast } from './ToastProvider';
+import { useTranslation } from '../i18n';
 
 export default function Footer() {
   const { toast } = useToast();
-  const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   return (
     <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300">
@@ -22,7 +23,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-gray-400 dark:text-gray-500 leading-relaxed mb-6">
-              企业级 AI 内容创作平台，集成富文本编辑器与 AI 写作助手，全面提升内容创作与运营效率。
+              {t('footer.brandDesc')}
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-3">
@@ -71,7 +72,7 @@ export default function Footer() {
 
           {/* Product */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">产品</h3>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{t('footer.product')}</h3>
             <ul className="space-y-3">
               <li><Link to="/workspace" className="text-sm text-gray-400 hover:text-white transition-colors">AI工作台</Link></li>
               <li><Link to="/workspace/templates" className="text-sm text-gray-400 hover:text-white transition-colors">模板库</Link></li>
@@ -82,7 +83,7 @@ export default function Footer() {
 
           {/* Tools */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">工具</h3>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{t('footer.tools')}</h3>
             <ul className="space-y-3">
               <li><Link to="/workspace/creative" className="text-sm text-gray-400 hover:text-white transition-colors">创意灵感</Link></li>
               <li><Link to="/workspace/copywriting" className="text-sm text-gray-400 hover:text-white transition-colors">文案生成器</Link></li>
@@ -93,7 +94,7 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">服务</h3>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{t('footer.services')}</h3>
             <ul className="space-y-3">
               <li><Link to="/services" className="text-sm text-gray-400 hover:text-white transition-colors">服务总览</Link></li>
               <li><Link to="/services/video" className="text-sm text-gray-400 hover:text-white transition-colors">短视频运营</Link></li>
@@ -104,19 +105,19 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">支持</h3>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{t('footer.support')}</h3>
             <ul className="space-y-3">
               <li><Link to="/settings" className="text-sm text-gray-400 hover:text-white transition-colors">设置</Link></li>
               <li><Link to="/workspace/history" className="text-sm text-gray-400 hover:text-white transition-colors">历史记录</Link></li>
-              <li><Link to="/services#contact" className="text-sm text-gray-400 hover:text-white transition-colors">联系我们</Link></li>
-              <li><Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors">帮助中心</Link></li>
+              <li><Link to="/services#contact" className="text-sm text-gray-400 hover:text-white transition-colors">{t('footer.contact')}</Link></li>
+              <li><Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors">{t('footer.helpCenter')}</Link></li>
             </ul>
           </div>
 
           {/* Newsletter */}
           <div className="col-span-1 md:col-span-2 lg:col-span-5">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">订阅更新</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">获取最新功能更新和使用技巧</p>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('footer.subscribe')}</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{t('footer.subscribePlaceholder')}</p>
             <form onSubmit={(e) => {
               e.preventDefault();
               const email = (e.target as HTMLFormElement).querySelector('input')?.value;
@@ -131,7 +132,7 @@ export default function Footer() {
               }
             }} className="flex gap-2">
               <input type="email" placeholder="your@email.com" required className="flex-1 px-3 py-1.5 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
-              <button type="submit" className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors">订阅</button>
+              <button type="submit" className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors">{t('footer.subscribe')}</button>
             </form>
           </div>
         </div>
@@ -140,12 +141,12 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-800 dark:border-gray-700">
           <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
             {[
-              { icon: '🔒', label: '数据加密传输' },
-              { icon: '🛡️', label: '隐私安全保护' },
-              { icon: '⚡', label: '99.9% 服务可用' },
-              { icon: '🌍', label: '全球 CDN 加速' },
+              { icon: '🔒', label: t('footer.trustSecure'), key: 'secure-1' },
+              { icon: '🛡️', label: t('footer.trustSecure'), key: 'secure-2' },
+              { icon: '⚡', label: t('footer.trustFast'), key: 'fast-1' },
+              { icon: '🌍', label: t('footer.trustFast'), key: 'fast-2' },
             ].map((badge) => (
-              <div key={badge.label} className="flex items-center gap-2 text-sm text-gray-500">
+              <div key={badge.key} className="flex items-center gap-2 text-sm text-gray-500">
                 <span>{badge.icon}</span>
                 <span>{badge.label}</span>
               </div>
@@ -157,12 +158,12 @@ export default function Footer() {
         <div className="pt-8 border-t border-gray-800 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              &copy; {currentYear} AI效率助手. All rights reserved.
+              {t('footer.copyright')}
             </p>
             <div className="hidden sm:block w-px h-4 bg-gray-700" />
             <div className="flex items-center gap-4">
-              <Link to="/privacy" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">隐私政策</Link>
-              <Link to="/terms" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">服务条款</Link>
+              <Link to="/privacy" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">{t('footer.privacy')}</Link>
+              <Link to="/terms" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">{t('footer.terms')}</Link>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-600">

@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import type { ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../components/ToastProvider';
 import { checkApiHealth, getModelConfig } from '../services/api';
@@ -153,6 +154,92 @@ export default function Settings() {
       reader.readAsText(file);
     };
     input.click();
+  };
+
+  const RESTORE_STORAGE_KEYS = [
+    'ai-assistant-app-store',
+    'ai-assistant-chat-store',
+    'ai-assistant-notification-store',
+    'ai-assistant-history',
+    'ai-assistant-brand-config',
+  ];
+
+  const [restoreFileInputRef, setRestoreFileInputRef] = useState<HTMLInputElement | null>(null);
+  const [restorePreview, setRestorePreview] = useState<Record<string, string> | null>(null);
+  const [restoreConfirming, setRestoreConfirming] = useState(false);
+  const restoreConfirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleRestoreFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+          toast('文件格式不正确：需要一个 JSON 对象', 'error');
+          return;
+        }
+
+        // 验证是否包含预期的数据结构
+        const matchedKeys = RESTORE_STORAGE_KEYS.filter((key) => key in data);
+        if (matchedKeys.length === 0) {
+          toast('文件中未找到可恢复的数据，请确认是正确的备份文件', 'error');
+          return;
+        }
+
+        // 显示预览供用户确认
+        setRestorePreview(
+          Object.fromEntries(matchedKeys.map((key) => [key, data[key] as string]))
+        );
+        setRestoreConfirming(false);
+      } catch {
+        toast('文件解析失败：不是有效的 JSON 文件', 'error');
+      }
+    };
+    reader.readAsText(file);
+
+    // 重置 input 以便再次选择同一文件
+    e.target.value = '';
+  };
+
+  const handleRestoreConfirm = useCallback(() => {
+    if (!restorePreview) return;
+
+    if (restoreConfirming) {
+      // 第二次点击：执行恢复
+      if (restoreConfirmTimerRef.current) {
+        clearTimeout(restoreConfirmTimerRef.current);
+        restoreConfirmTimerRef.current = null;
+      }
+
+      let count = 0;
+      for (const [key, value] of Object.entries(restorePreview)) {
+        localStorage.setItem(key, value);
+        count++;
+      }
+
+      setRestorePreview(null);
+      setRestoreConfirming(false);
+      toast(`成功恢复 ${count} 项数据，请刷新页面以生效`, 'success');
+    } else {
+      // 第一次点击：进入确认状态
+      setRestoreConfirming(true);
+      restoreConfirmTimerRef.current = setTimeout(() => {
+        setRestoreConfirming(false);
+        restoreConfirmTimerRef.current = null;
+      }, 5000);
+    }
+  }, [restorePreview, restoreConfirming, toast]);
+
+  const handleRestoreCancel = () => {
+    setRestorePreview(null);
+    setRestoreConfirming(false);
+    if (restoreConfirmTimerRef.current) {
+      clearTimeout(restoreConfirmTimerRef.current);
+      restoreConfirmTimerRef.current = null;
+    }
   };
 
   const handleResetAll = useCallback(() => {
@@ -379,6 +466,20 @@ export default function Settings() {
                   导出所有数据
                 </button>
                 <button
+                  onClick={() => restoreFileInputRef?.click()}
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium rounded-xl border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                  恢复数据
+                </button>
+                <input
+                  ref={setRestoreFileInputRef}
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={handleRestoreFileChange}
+                />
+                <button
                   onClick={handleImportData}
                   className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                 >
@@ -397,9 +498,47 @@ export default function Settings() {
                   {confirmReset ? '再次点击确认重置' : '重置所有设置'}
                 </button>
               </div>
-            </section>
 
-            {/* Help Links */}
+              {/* 恢复数据确认对话框 */}
+              {restorePreview && (
+                <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+                  <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-2">
+                    确认恢复数据
+                  </h3>
+                  <p className="text-xs text-amber-700 dark:text-amber-300 mb-3">
+                    以下数据将被覆盖，此操作不可撤销：
+                  </p>
+                  <div className="space-y-1 mb-4">
+                    {Object.keys(restorePreview).map((key) => (
+                      <div key={key} className="flex items-center gap-2 text-xs text-amber-700 dark:text-amber-300">
+                        <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <code className="bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">{key}</code>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleRestoreConfirm}
+                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                        restoreConfirming
+                          ? 'bg-red-600 text-white hover:bg-red-700 animate-pulse'
+                          : 'bg-amber-600 dark:bg-amber-700 text-white hover:bg-amber-700 dark:hover:bg-amber-800'
+                      }`}
+                    >
+                      {restoreConfirming ? '再次点击确认恢复' : '确认恢复'}
+                    </button>
+                    <button
+                      onClick={handleRestoreCancel}
+                      className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      取消
+                    </button>
+                  </div>
+                </div>
+              )}
+            </section>
             <section className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">帮助与支持</h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">获取帮助、提交反馈或了解相关政策</p>
