@@ -1,0 +1,17 @@
+{
+  "name": "AI效率助手",
+  "short_name": "AI助手",
+  "description": "企业级 AI 内容创作平台",
+  "start_url": "/ai-efficiency-assistant/",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/ai-efficiency-assistant/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["productivity", "utilities"]
+}
