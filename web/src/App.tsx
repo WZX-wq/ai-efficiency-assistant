@@ -53,6 +53,10 @@ const DocAnalysisTool = lazy(() => import('./pages/tools/DocAnalysisTool'));
 const MindMapTool = lazy(() => import('./pages/tools/MindMapTool'));
 const LongFormTool = lazy(() => import('./pages/tools/LongFormTool'));
 const LifeAssistantTool = lazy(() => import('./pages/tools/LifeAssistantTool'));
+const PptGeneratorTool = lazy(() => import('./pages/tools/PptGeneratorTool'));
+const DataAnalysisTool = lazy(() => import('./pages/tools/DataAnalysisTool'));
+const MarketingTool = lazy(() => import('./pages/tools/MarketingTool'));
+const InteractiveFictionTool = lazy(() => import('./pages/tools/InteractiveFictionTool'));
 const Playground = lazy(() => import('./pages/Playground'));
 const RolePlayChat = lazy(() => import('./pages/RolePlayChat'));
 const CharacterCreator = lazy(() => import('./pages/CharacterCreator'));
@@ -186,6 +190,10 @@ function AppContent() {
                 <Route path="/workspace/mindmap" element={<ErrorBoundary><Suspense fallback={LazyFallback}><MindMapTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/longform" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LongFormTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/life-assistant" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LifeAssistantTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/ppt-generator" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PptGeneratorTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/data-analysis" element={<ErrorBoundary><Suspense fallback={LazyFallback}><DataAnalysisTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/marketing" element={<ErrorBoundary><Suspense fallback={LazyFallback}><MarketingTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/fiction" element={<ErrorBoundary><Suspense fallback={LazyFallback}><InteractiveFictionTool /></Suspense></ErrorBoundary>} />
                 <Route path="/playground" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Playground /></Suspense></ErrorBoundary>} />
                 <Route path="/playground/:cardId" element={<ErrorBoundary><Suspense fallback={LazyFallback}><RolePlayChat /></Suspense></ErrorBoundary>} />
                 <Route path="/playground/create" element={<ErrorBoundary><Suspense fallback={LazyFallback}><CharacterCreator /></Suspense></ErrorBoundary>} />

@@ -77,8 +77,12 @@ const en: Record<string, string> = {
   'header.docAnalysis': 'Document Analysis',
   'header.mindmap': 'Mind Map',
   'header.lifeAssistant': 'Life Assistant',
+  'header.pptGenerator': 'PPT Generator',
+  'header.dataAnalysis': 'Data Analysis',
   'header.codeAssistant': 'Code Assistant',
   'header.learning': 'Learning Assistant',
+  'header.marketing': 'Marketing Copy',
+  'header.fiction': 'Interactive Fiction',
 
   // ========== Footer ==========
   'footer.brandDesc': 'Enterprise-grade AI content creation platform',

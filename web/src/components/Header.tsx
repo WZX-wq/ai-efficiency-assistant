@@ -26,6 +26,10 @@ const toolLinkItems = [
   { to: '/workspace/doc-analysis', labelKey: 'header.docAnalysis', icon: '📄' },
   { to: '/workspace/mindmap', labelKey: 'header.mindmap', icon: '🧠' },
   { to: '/workspace/life-assistant', labelKey: 'header.lifeAssistant', icon: '🌿' },
+  { to: '/workspace/marketing', labelKey: 'header.marketing', icon: '📣' },
+  { to: '/workspace/fiction', labelKey: 'header.fiction', icon: '📖' },
+  { to: '/workspace/ppt-generator', labelKey: 'header.pptGenerator', icon: '📊' },
+  { to: '/workspace/data-analysis', labelKey: 'header.dataAnalysis', icon: '📈' },
 ];
 
 export default function Header() {

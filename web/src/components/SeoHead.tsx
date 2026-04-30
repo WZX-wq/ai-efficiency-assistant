@@ -340,6 +340,16 @@ export const PAGE_SEO = {
   // 生活助手
   'life-assistant': { title: 'AI生活助手 - AI效率助手', description: 'AI生活助手提供旅行规划、美食推荐、健康顾问、职业规划、情感倾听等智能生活服务，让AI成为你的全方位生活助手。', keywords: 'AI生活助手,旅行规划,美食推荐,健康顾问,职业规划,情感倾听,AI助手' },
 
+  // 营销文案
+  marketing: { title: 'AI营销文案 - AI效率助手', description: 'AI营销文案生成器，支持小红书、抖音、微信公众号、微博、朋友圈、电商详情页、邮件营销等多平台文案一键生成。', keywords: 'AI营销文案,小红书文案,抖音脚本,公众号文章,微博文案,电商文案,邮件营销,AI文案生成' },
+
+  // 互动小说
+  fiction: { title: 'AI互动小说 - AI效率助手', description: 'AI互动小说生成器，支持奇幻冒险、科幻未来、悬疑推理、恐怖惊悚、浪漫爱情、末日生存等多种题材，沉浸式互动阅读体验。', keywords: 'AI互动小说,互动阅读,文字冒险,选择游戏,AI故事生成,互动小说' },
+
+  'ppt-generator': { title: 'AI PPT生成器 - AI效率助手', description: 'AI智能PPT生成器，输入主题自动生成大纲和幻灯片内容，支持多种风格，一键导出HTML演示文稿和演讲稿。', keywords: 'AI PPT生成器,智能PPT,PPT大纲,幻灯片生成,AI演示文稿,PPT制作工具' },
+
+  'tool-data-analysis': { title: 'AI数据分析 - AI效率助手', description: 'AI数据分析工具，支持CSV/JSON数据上传，提供数据概览、趋势分析、对比分析、相关性分析和智能洞察。', keywords: 'AI数据分析,数据可视化,CSV分析,趋势分析,数据洞察,AI分析工具' },
+
   // 游乐场
   playground: { title: 'AI游乐场 - AI效率助手', description: 'AI角色扮演互动体验，修仙、三国、荒岛求生等多种世界观等你探索' },
 

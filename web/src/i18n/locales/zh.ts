@@ -77,8 +77,12 @@ const zh: Record<string, string> = {
   'header.docAnalysis': '文档分析',
   'header.mindmap': '思维导图',
   'header.lifeAssistant': '生活助手',
+  'header.pptGenerator': 'PPT 生成器',
+  'header.dataAnalysis': '数据分析',
   'header.codeAssistant': '代码助手',
   'header.learning': '学习助手',
+  'header.marketing': '营销文案',
+  'header.fiction': '互动小说',
 
   // ========== Footer ==========
   'footer.brandDesc': '企业级 AI 内容创作平台，助力企业数字化转型',
