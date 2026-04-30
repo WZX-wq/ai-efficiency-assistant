@@ -1,1 +1,0 @@
-const a={rewrite:"智能改写",expand:"一键扩写",translate:"多语言翻译",summarize:"内容总结"},e={expand:"基于原文扩展内容，丰富细节和论述",translate:"支持多语言互译，打破语言壁垒",summarize:"提炼核心要点，快速把握文章主旨"};export{e as A,a};
