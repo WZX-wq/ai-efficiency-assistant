@@ -331,6 +331,9 @@ export const PAGE_SEO = {
   polish: { title: '文章润色 - AI效率助手', description: 'AI文章润色工具，智能优化文笔、修正语法和提升表达' },
   summarizer: { title: '内容总结 - AI效率助手', description: 'AI内容总结工具，快速提取长文核心要点和关键信息' },
 
+  // 游乐场
+  playground: { title: 'AI游乐场 - AI效率助手', description: 'AI角色扮演互动体验，修仙、三国、荒岛求生等多种世界观等你探索' },
+
   // 其他页面
   privacy: { title: '隐私政策 - AI效率助手', description: '了解AI效率助手如何收集、使用和保护您的个人信息' },
   terms: { title: '服务条款 - AI效率助手', description: 'AI效率助手的服务条款和使用协议' },

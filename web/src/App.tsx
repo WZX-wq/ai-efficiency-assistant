@@ -46,6 +46,9 @@ const Templates = lazy(() => import('./pages/tools/Templates'));
 const HumanizeTool = lazy(() => import('./pages/tools/HumanizeTool'));
 const PolishTool = lazy(() => import('./pages/tools/PolishTool'));
 const SummarizerTool = lazy(() => import('./pages/tools/SummarizerTool'));
+const Playground = lazy(() => import('./pages/Playground'));
+const RolePlayChat = lazy(() => import('./pages/RolePlayChat'));
+const CharacterCreator = lazy(() => import('./pages/CharacterCreator'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -167,6 +170,9 @@ function AppContent() {
                 <Route path="/workspace/humanize" element={<Suspense fallback={LazyFallback}><HumanizeTool /></Suspense>} />
                 <Route path="/workspace/polish" element={<Suspense fallback={LazyFallback}><PolishTool /></Suspense>} />
                 <Route path="/workspace/summarizer" element={<Suspense fallback={LazyFallback}><SummarizerTool /></Suspense>} />
+                <Route path="/playground" element={<Suspense fallback={LazyFallback}><Playground /></Suspense>} />
+                <Route path="/playground/:cardId" element={<Suspense fallback={LazyFallback}><RolePlayChat /></Suspense>} />
+                <Route path="/playground/create" element={<Suspense fallback={LazyFallback}><CharacterCreator /></Suspense>} />
                 <Route path="/privacy" element={<Suspense fallback={LazyFallback}><PrivacyPolicy /></Suspense>} />
                 <Route path="/terms" element={<Suspense fallback={LazyFallback}><TermsOfService /></Suspense>} />
                 <Route path="*" element={<Suspense fallback={LazyFallback}><NotFound /></Suspense>} />
