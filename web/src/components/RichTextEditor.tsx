@@ -17,6 +17,7 @@ import Color from '@tiptap/extension-color';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import type { Editor } from '@tiptap/react';
 import { chatWithAi } from '../services/aiChat';
+import { useToast } from './ToastProvider';
 
 interface RichTextEditorProps {
   content: string;
@@ -26,6 +27,38 @@ interface RichTextEditorProps {
   editable?: boolean;
   onWordCount?: (count: number) => void;
 }
+
+const SLASH_COMMANDS: Array<{
+  title: string;
+  icon: string;
+  action?: (editor: Editor) => void;
+  isAi?: boolean;
+  desc?: string;
+  aiAction?: string;
+}> = [
+  { title: '一级标题', icon: 'H1', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 1 }).run() },
+  { title: '二级标题', icon: 'H2', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 2 }).run() },
+  { title: '三级标题', icon: 'H3', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 3 }).run() },
+  { title: '四级标题', icon: 'H4', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 4 }).run() },
+  { title: '粗体', icon: 'B', action: (editor: Editor) => editor.chain().focus().toggleBold().run() },
+  { title: '斜体', icon: 'I', action: (editor: Editor) => editor.chain().focus().toggleItalic().run() },
+  { title: '下划线', icon: 'U', action: (editor: Editor) => editor.chain().focus().toggleUnderline().run() },
+  { title: '删除线', icon: 'S', action: (editor: Editor) => editor.chain().focus().toggleStrike().run() },
+  { title: '无序列表', icon: '•', action: (editor: Editor) => editor.chain().focus().toggleBulletList().run() },
+  { title: '有序列表', icon: '1.', action: (editor: Editor) => editor.chain().focus().toggleOrderedList().run() },
+  { title: '引用块', icon: '❝', action: (editor: Editor) => editor.chain().focus().toggleBlockquote().run() },
+  { title: '代码块', icon: '</>', action: (editor: Editor) => editor.chain().focus().toggleCodeBlock().run() },
+  { title: '分割线', icon: '—', action: (editor: Editor) => editor.chain().focus().setHorizontalRule().run() },
+  { title: '插入表格', icon: '⊞', action: (editor: Editor) => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
+  { title: '待办事项', icon: '☑', action: (editor: Editor) => editor.chain().focus().toggleTaskList().run() },
+  { title: '高亮', icon: '◐', action: (editor: Editor) => editor.chain().focus().toggleHighlight().run() },
+  { title: 'AI 润色', icon: '✨', desc: '优化文字表达', isAi: true, aiAction: 'polish' },
+  { title: 'AI 改写', icon: '🔄', desc: '重新表述内容', isAi: true, aiAction: 'rewrite' },
+  { title: 'AI 扩写', icon: '📝', desc: '扩展详细内容', isAi: true, aiAction: 'expand' },
+  { title: 'AI 缩写', icon: '✂️', desc: '精简提炼内容', isAi: true, aiAction: 'condense' },
+  { title: 'AI 翻译', icon: '🌐', desc: '翻译为英文', isAi: true, aiAction: 'translate' },
+  { title: 'AI 总结', icon: '📋', desc: '提取核心要点', isAi: true, aiAction: 'summarize' },
+];
 
 export default function RichTextEditor({
   content,
@@ -51,38 +84,7 @@ export default function RichTextEditor({
   const [showImageInput, setShowImageInput] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const SLASH_COMMANDS: Array<{
-    title: string;
-    icon: string;
-    action?: (editor: Editor) => void;
-    isAi?: boolean;
-    desc?: string;
-    aiAction?: string;
-  }> = [
-    { title: '一级标题', icon: 'H1', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 1 }).run() },
-    { title: '二级标题', icon: 'H2', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 2 }).run() },
-    { title: '三级标题', icon: 'H3', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 3 }).run() },
-    { title: '四级标题', icon: 'H4', action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 4 }).run() },
-    { title: '粗体', icon: 'B', action: (editor: Editor) => editor.chain().focus().toggleBold().run() },
-    { title: '斜体', icon: 'I', action: (editor: Editor) => editor.chain().focus().toggleItalic().run() },
-    { title: '下划线', icon: 'U', action: (editor: Editor) => editor.chain().focus().toggleUnderline().run() },
-    { title: '删除线', icon: 'S', action: (editor: Editor) => editor.chain().focus().toggleStrike().run() },
-    { title: '无序列表', icon: '•', action: (editor: Editor) => editor.chain().focus().toggleBulletList().run() },
-    { title: '有序列表', icon: '1.', action: (editor: Editor) => editor.chain().focus().toggleOrderedList().run() },
-    { title: '引用块', icon: '❝', action: (editor: Editor) => editor.chain().focus().toggleBlockquote().run() },
-    { title: '代码块', icon: '</>', action: (editor: Editor) => editor.chain().focus().toggleCodeBlock().run() },
-    { title: '分割线', icon: '—', action: (editor: Editor) => editor.chain().focus().setHorizontalRule().run() },
-    { title: '插入表格', icon: '⊞', action: (editor: Editor) => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
-    { title: '待办事项', icon: '☑', action: (editor: Editor) => editor.chain().focus().toggleTaskList().run() },
-    { title: '高亮', icon: '◐', action: (editor: Editor) => editor.chain().focus().toggleHighlight().run() },
-    { title: 'AI 润色', icon: '✨', desc: '优化文字表达', isAi: true, aiAction: 'polish' },
-    { title: 'AI 改写', icon: '🔄', desc: '重新表述内容', isAi: true, aiAction: 'rewrite' },
-    { title: 'AI 扩写', icon: '📝', desc: '扩展详细内容', isAi: true, aiAction: 'expand' },
-    { title: 'AI 缩写', icon: '✂️', desc: '精简提炼内容', isAi: true, aiAction: 'condense' },
-    { title: 'AI 翻译', icon: '🌐', desc: '翻译为英文', isAi: true, aiAction: 'translate' },
-    { title: 'AI 总结', icon: '📋', desc: '提取核心要点', isAi: true, aiAction: 'summarize' },
-  ];
+  const { toast } = useToast();
 
   const editor = useEditor({
     extensions: [
@@ -224,7 +226,7 @@ export default function RichTextEditor({
     const selectedText = editor.state.doc.textBetween(from, to, '\n');
 
     if (!selectedText.trim()) {
-      alert('请先选中需要处理的文本');
+      toast('请先选中需要处理的文本', 'warning');
       setShowSlashMenu(false);
       return;
     }

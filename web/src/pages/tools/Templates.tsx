@@ -335,6 +335,14 @@ export default function Templates() {
     return result;
   }, [activeCategory, searchQuery, favorites, sortOption, usageData]);
 
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const t of templates) {
+      counts[t.category] = (counts[t.category] || 0) + 1;
+    }
+    return counts;
+  }, []);
+
   // Template use view
   if (selectedTemplate) {
     const meta = categoryMeta[selectedTemplate.category];
@@ -461,7 +469,7 @@ export default function Templates() {
                     {cat.label}
                     {cat.key !== 'all' && (
                       <span className="ml-1.5 text-xs opacity-70">
-                        ({templates.filter((t) => t.category === cat.key).length})
+                        ({categoryCounts[cat.key] || 0})
                       </span>
                     )}
                   </button>
@@ -503,7 +511,7 @@ export default function Templates() {
           <div className="mb-4">
             <span className="text-sm text-gray-500 dark:text-gray-400">
               共 {filteredTemplates.length} 个模板
-              {searchQuery && <span> · 搜索 "<HighlightText text={searchQuery} query="" /></span>}
+              {searchQuery && <span> · 搜索 "<HighlightText text={searchQuery} query={searchQuery} /></span>}
             </span>
           </div>
 

@@ -356,6 +356,75 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  // FAQ structured data (JSON-LD)
+  useEffect(() => {
+    const faqData = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'AI效率助手是什么？能帮我做什么？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等14+种内容创作任务，大幅提升你的写作效率。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '支持哪些 AI 模型？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '我们支持 DeepSeek、GPT-4o、Claude、GLM-4、通义千问等主流 AI 大模型，同时兼容 OpenAI API 格式的自定义模型。你可以在设置页面自由切换和配置。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '我的数据安全吗？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '我们非常重视数据安全。所有 API 密钥仅存储在你的本地浏览器中，不会上传到任何服务器。AI 对话内容仅在你设备和 AI 模型服务商之间传输，我们不会收集或存储你的创作内容。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '免费版有什么限制？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '免费版可以体验所有基础功能，包括 AI 文本处理、AI 对话、富文本编辑等。专业版提供更高的使用额度、优先响应速度和高级功能。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '如何切换不同的 AI 模型？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '进入「设置 → 模型配置」页面，选择你想要使用的 AI 服务商，填入对应的 API 密钥即可。切换后立即生效，无需重启。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '支持哪些浏览器？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'AI效率助手支持所有现代浏览器，包括 Chrome、Firefox、Safari、Edge 的最新版本。推荐使用 Chrome 或 Edge 获得最佳体验。',
+          },
+        },
+      ],
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'faq-structured-data';
+    script.textContent = JSON.stringify(faqData);
+    document.head.appendChild(script);
+
+    return () => {
+      const existing = document.getElementById('faq-structured-data');
+      if (existing) existing.remove();
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
       <JsonLd data={{

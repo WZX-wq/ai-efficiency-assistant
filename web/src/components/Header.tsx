@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store/appStore';
@@ -22,7 +22,7 @@ const toolLinkItems = [
 
 export default function Header() {
   const { t } = useTranslation();
-  const toolLinks = toolLinkItems.map(item => ({ ...item, label: t(item.labelKey) }));
+  const toolLinks = useMemo(() => toolLinkItems.map(item => ({ ...item, label: t(item.labelKey) })), [t]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [toolboxSearch, setToolboxSearch] = useState('');
@@ -31,18 +31,18 @@ export default function Header() {
   const location = useLocation();
   const { theme, setTheme, toggleAiPanel } = useAppStore();
 
-  const darkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const darkMode = useMemo(() => theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches), [theme]);
 
   const toggleDarkMode = () => {
     setTheme(darkMode ? 'light' : 'dark');
   };
 
-  const navLinks = [
+  const navLinks = useMemo(() => [
     { to: '/', label: t('header.home') },
     { to: '/services', label: t('header.services') },
     { to: '/playground', label: '游乐场' },
     { to: '/pricing', label: t('header.pricing') },
-  ];
+  ], [t]);
 
   const isActive = (path: string) => location.pathname === path;
   const isToolsActive = location.pathname.startsWith('/workspace');

@@ -58,6 +58,8 @@ export default function ChatInterface({
   const [showCustomRoleForm, setShowCustomRoleForm] = useState(false);
   const [customRoleName, setCustomRoleName] = useState('');
   const [customRolePrompt, setCustomRolePrompt] = useState('');
+  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+  const [confirmClear, setConfirmClear] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const personaRef = useRef<HTMLDivElement>(null);
@@ -503,10 +505,18 @@ export default function ChatInterface({
           {sessions.length > 0 && (
             <div className="p-3 border-t border-gray-100 dark:border-gray-700">
               <button
-                onClick={clearAllSessions}
+                onClick={() => {
+                  if (confirmClear) {
+                    clearAllSessions();
+                    setConfirmClear(false);
+                  } else {
+                    setConfirmClear(true);
+                    setTimeout(() => setConfirmClear(false), 3000);
+                  }
+                }}
                 className="w-full text-xs text-gray-400 hover:text-red-500 transition-colors text-center"
               >
-                清空所有对话
+                {confirmClear ? '确认清空?' : '清空所有对话'}
               </button>
             </div>
           )}
@@ -778,10 +788,14 @@ export default function ChatInterface({
                 {msg.role === 'assistant' && (
                   <div className="flex items-center gap-1 mt-1 opacity-100 md:opacity-0 md:hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => { navigator.clipboard.writeText(msg.content); }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(msg.content);
+                        setCopiedIdx(i);
+                        setTimeout(() => setCopiedIdx(null), 2000);
+                      }}
                       className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 px-1.5 py-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                      复制
+                      {copiedIdx === i ? '已复制' : '复制'}
                     </button>
                     {i === messages.length - 1 && !loading && (
                       <button

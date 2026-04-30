@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSeo } from '../components/SeoHead';
@@ -75,7 +75,7 @@ const modalVariants = {
 // ============================================================
 
 /** 分类标签 */
-function CategoryTag({ category }: { category: CharacterCategory }) {
+const CategoryTag = React.memo(function CategoryTag({ category }: { category: CharacterCategory }) {
   const colors = CATEGORY_COLORS[category];
   return (
     <span
@@ -84,10 +84,10 @@ function CategoryTag({ category }: { category: CharacterCategory }) {
       {CATEGORY_LABELS[category]}
     </span>
   );
-}
+});
 
 /** 角色卡详情弹窗 */
-function CardDetailModal({
+const CardDetailModal = React.memo(function CardDetailModal({
   card,
   isFav,
   onToggleFav,
@@ -320,10 +320,10 @@ function CardDetailModal({
       </motion.div>
     </AnimatePresence>
   );
-}
+});
 
 /** 角色卡网格项 */
-function CharacterCardItem({
+const CharacterCardItem = React.memo(function CharacterCardItem({
   card,
   isFav,
   onToggleFav,
@@ -423,7 +423,7 @@ function CharacterCardItem({
       </div>
     </motion.div>
   );
-}
+});
 
 /** 空状态 */
 function EmptyState({ query }: { query: string }) {
@@ -465,9 +465,18 @@ export default function Playground() {
   const customCards = roleplayStore((s) => s.customCards);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<CharacterCategory | 'all'>('all');
   const [activeTab, setActiveTab] = useState<RankingTab>('hot');
   const [previewCard, setPreviewCard] = useState<CharacterCard | null>(null);
+
+  /** 搜索防抖 */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   /** 合并所有角色卡 */
   const allCards = useMemo(
@@ -486,15 +495,15 @@ export default function Playground() {
 
   /** 按搜索过滤 */
   const filteredCards = useMemo(() => {
-    if (!searchQuery.trim()) return filteredByCategory;
-    const q = searchQuery.toLowerCase().trim();
+    if (!debouncedSearchQuery.trim()) return filteredByCategory;
+    const q = debouncedSearchQuery.toLowerCase().trim();
     return filteredByCategory.filter(
       (c) =>
         c.name.toLowerCase().includes(q) ||
         c.description.toLowerCase().includes(q) ||
         c.tags.some((t) => t.toLowerCase().includes(q)),
     );
-  }, [filteredByCategory, searchQuery]);
+  }, [filteredByCategory, debouncedSearchQuery]);
 
   /** 按 Tab 排序 */
   const sortedCards = useMemo(() => {

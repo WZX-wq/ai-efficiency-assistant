@@ -24,6 +24,18 @@ const CHARACTER_CATEGORIES: { label: string; value: CharacterCategory }[] = [
   { label: '日常', value: 'daily' },
 ];
 
+const CATEGORY_LABELS: Record<string, string> = {
+  fantasy: '奇幻',
+  historical: '历史',
+  survival: '生存',
+  mystery: '推理',
+  scifi: '科幻',
+  romance: '恋爱',
+  adventure: '冒险',
+  daily: '日常',
+  horror: '恐怖',
+};
+
 /* ------------------------------------------------------------------ */
 /*  表单状态                                                            */
 /* ------------------------------------------------------------------ */
@@ -207,7 +219,7 @@ export default function CharacterCreator() {
     addCard(card);
     setToast('角色卡已保存');
     setTimeout(() => setToast(null), 3000);
-    navigate('/workspace');
+    navigate('/playground');
   }, [validate, buildCard, addCard, navigate]);
 
   /* ---- 导出 JSON ---- */
@@ -786,7 +798,7 @@ export default function CharacterCreator() {
                 </div>
                 <div className="flex flex-wrap gap-2 mt-4">
                   <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs font-medium backdrop-blur-sm">
-                    {form.category}
+                    {CATEGORY_LABELS[form.category] || form.category}
                   </span>
                   {previewTags.map((tag, i) => (
                     <span

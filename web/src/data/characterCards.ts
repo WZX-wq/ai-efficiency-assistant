@@ -13,6 +13,7 @@ export type CharacterCategory = CharacterCard['category'];
 
 /** Role-play message */
 export interface RolePlayMessage {
+  id?: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: number;

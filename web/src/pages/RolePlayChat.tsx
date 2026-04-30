@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { chatWithAiStream } from '../services/aiChat';
@@ -11,6 +11,7 @@ import {
 } from '../data/characterCards';
 import MarkdownRenderer from '../components/MarkdownRenderer';
 import { useSeo } from '../components/SeoHead';
+import { useToast } from '../components/ToastProvider';
 
 // ============================================================
 // 工具函数
@@ -258,7 +259,7 @@ function SessionSidebar({
 }
 
 /** 单条聊天消息 */
-function ChatMessageItem({
+const ChatMessageItem = React.memo(function ChatMessageItem({
   message,
   emoji,
   themeColor,
@@ -319,7 +320,7 @@ function ChatMessageItem({
       )}
     </motion.div>
   );
-}
+});
 
 // ============================================================
 // 主组件
@@ -328,6 +329,7 @@ function ChatMessageItem({
 export default function RolePlayChat() {
   const { cardId } = useParams<{ cardId: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // ---- Store ----
   const customCards = roleplayStore((s) => s.customCards);
@@ -390,6 +392,7 @@ export default function RolePlayChat() {
     // 发送 greeting 作为第一条 AI 消息
     setMessages([
       {
+        id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         role: 'assistant',
         content: card.greeting,
         timestamp: Date.now(),
@@ -445,6 +448,7 @@ export default function RolePlayChat() {
     setSessionId(sid);
     setMessages([
       {
+        id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         role: 'assistant',
         content: card.greeting,
         timestamp: Date.now(),
@@ -470,6 +474,7 @@ export default function RolePlayChat() {
       if (!card || !content.trim() || isGenerating) return;
 
       const userMessage: RolePlayMessage = {
+        id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         role: 'user',
         content: content.trim(),
         timestamp: Date.now(),
@@ -500,6 +505,7 @@ export default function RolePlayChat() {
 
       // 添加空的 AI 消息占位
       const aiMessage: RolePlayMessage = {
+        id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         role: 'assistant',
         content: '',
         timestamp: Date.now(),
@@ -527,19 +533,35 @@ export default function RolePlayChat() {
 
         const reader = response.stream.getReader();
         let fullContent = '';
+        let rafId: number | null = null;
+        let pendingContent = '';
+
+        const flushMessages = () => {
+          rafId = null;
+          setMessages((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              ...updated[updated.length - 1],
+              content: pendingContent,
+            };
+            return updated;
+          });
+        };
 
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           fullContent += value;
-          setMessages((prev) => {
-            const updated = [...prev];
-            updated[updated.length - 1] = {
-              ...updated[updated.length - 1],
-              content: fullContent,
-            };
-            return updated;
-          });
+          pendingContent = fullContent;
+          if (rafId === null) {
+            rafId = requestAnimationFrame(flushMessages);
+          }
+        }
+
+        // 确保最后一次更新被刷新
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+          flushMessages();
         }
 
         // 解析状态更新
@@ -597,6 +619,7 @@ export default function RolePlayChat() {
     setStatusValues(initialStatus);
     setMessages([
       {
+        id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         role: 'assistant',
         content: card.greeting,
         timestamp: Date.now(),
@@ -616,7 +639,8 @@ export default function RolePlayChat() {
     a.download = `roleplay_${card?.name || 'session'}_${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [sessionId, exportSession, card]);
+    toast('导出成功', 'success');
+  }, [sessionId, exportSession, card, toast]);
 
   // ---- 键盘事件 ----
   const handleKeyDown = useCallback(
@@ -769,7 +793,7 @@ export default function RolePlayChat() {
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4 scrollbar-thin">
         {messages.map((msg, idx) => (
           <ChatMessageItem
-            key={idx}
+            key={msg.id || idx}
             message={msg}
             emoji={card.avatar}
             themeColor={theme.primary}

@@ -115,7 +115,18 @@ export default function Workspace() {
     };
   }, [editorContent]);
 
-  const { chars, words } = countWords(editorContent);
+  const { chars, words } = useMemo(() => countWords(editorContent), [editorContent]);
+
+  const sortedQuickTools = useMemo(() => {
+    return [...QUICK_TOOLS].sort((a, b) => {
+      const aIdx = recentTools.findIndex((r) => a.name.includes(r) || r.includes(a.name) || a.to.includes(r));
+      const bIdx = recentTools.findIndex((r) => b.name.includes(r) || r.includes(b.name) || b.to.includes(r));
+      if (aIdx === -1 && bIdx === -1) return 0;
+      if (aIdx === -1) return 1;
+      if (bIdx === -1) return -1;
+      return aIdx - bIdx;
+    });
+  }, [recentTools]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -192,16 +203,7 @@ export default function Workspace() {
           <div className="relative">
             <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-50 dark:from-gray-950 to-transparent pointer-events-none z-10"></div>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
-            {[...QUICK_TOOLS]
-              .sort((a, b) => {
-                const aIdx = recentTools.findIndex((r) => a.name.includes(r) || r.includes(a.name) || a.to.includes(r));
-                const bIdx = recentTools.findIndex((r) => b.name.includes(r) || r.includes(b.name) || b.to.includes(r));
-                if (aIdx === -1 && bIdx === -1) return 0;
-                if (aIdx === -1) return 1;
-                if (bIdx === -1) return -1;
-                return aIdx - bIdx;
-              })
-              .map((tool) => (
+            {sortedQuickTools.map((tool) => (
               <Link
                 key={tool.to}
                 to={tool.to}
