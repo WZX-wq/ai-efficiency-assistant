@@ -3,6 +3,7 @@ import { useChatStore } from '../store/chatStore';
 import { chatWithAiStream, chatWithAi } from '../services/aiChat';
 import { useAppStore } from '../store/appStore';
 import MarkdownRenderer from './MarkdownRenderer';
+import { useToast } from './ToastProvider';
 
 /**
  * 增强版 ChatInterface
@@ -66,6 +67,7 @@ export default function ChatInterface({
   const imageInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { addWordsGenerated, incrementActions } = useAppStore();
+  const { toast } = useToast();
 
   const {
     sessions,
@@ -162,7 +164,8 @@ export default function ChatInterface({
               updateLastMessage(sessionId, accumulated);
             }
             addWordsGenerated(accumulated.length);
-          } catch {
+          } catch (err) {
+            console.error('ChatInterface error:', err);
             const fallback = await chatWithAi({ messages: currentMessages, systemPrompt: activePersona.systemPrompt });
             if (fallback.success && fallback.result) {
               updateLastMessage(sessionId, fallback.result);
@@ -176,7 +179,8 @@ export default function ChatInterface({
             addWordsGenerated(fallback.result.length);
           }
         }
-      } catch {
+      } catch (err) {
+        console.error('ChatInterface error:', err);
         addMessage(sessionId, 'assistant', '抱歉，发生了错误，请稍后重试。');
       } finally {
         setLoading(false);
@@ -238,9 +242,9 @@ export default function ChatInterface({
                 updateLastMessage(activeSessionId, accumulated);
               }
               addWordsGenerated(accumulated.length);
-            } catch { /* fallback */ }
+            } catch (err) { console.error('ChatInterface error:', err); /* fallback */ }
           }
-        } catch { /* error */ }
+        } catch (err) { console.error('ChatInterface error:', err); /* error */ }
         finally { setLoading(false); }
       }
     },
@@ -327,7 +331,7 @@ export default function ChatInterface({
                 updateLastMessage(activeSessionId, accumulated);
               }
               addWordsGenerated(accumulated.length);
-            } catch { /* fallback */ }
+            } catch (err) { console.error('ChatInterface error:', err); /* fallback */ }
           } else {
             const fallback = await chatWithAi({ messages: msgs, systemPrompt: activePersona.systemPrompt });
             if (fallback.success && fallback.result) {
@@ -335,7 +339,8 @@ export default function ChatInterface({
               addWordsGenerated(fallback.result.length);
             }
           }
-        } catch {
+        } catch (err) {
+          console.error('ChatInterface error:', err);
           addMessage(activeSessionId, 'assistant', '抱歉，发生了错误，请稍后重试。');
         } finally {
           setLoading(false);
@@ -360,7 +365,12 @@ export default function ChatInterface({
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
     Array.from(files).forEach(file => {
+      if (file.size > MAX_SIZE) {
+        toast('图片大小不能超过5MB', 'warning');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === 'string') {
@@ -371,7 +381,7 @@ export default function ChatInterface({
     });
     // 重置 input 以便重复选择同一文件
     e.target.value = '';
-  }, []);
+  }, [toast]);
 
   const removeImage = useCallback((idx: number) => {
     setImages(prev => prev.filter((_, i) => i !== idx));
@@ -384,7 +394,7 @@ export default function ChatInterface({
       if (saved) {
         setCustomRoles(JSON.parse(saved));
       }
-    } catch { /* ignore */ }
+    } catch (err) { console.error('ChatInterface error:', err); /* ignore */ }
   }, []);
 
   const saveCustomRoles = useCallback((roles: Array<{ id: string; name: string; systemPrompt: string }>) => {

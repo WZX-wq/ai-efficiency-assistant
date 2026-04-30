@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { chatWithAiStream } from '../services/aiChat';
 import { roleplayStore } from '../store/roleplayStore';
+import { useAppStore } from '../store/appStore';
 import {
   PRESET_CARDS,
   CATEGORY_THEME,
@@ -119,6 +120,7 @@ function SessionSidebar({
   onNewGame,
   onDeleteSession,
   currentSessionId,
+  isDark,
 }: {
   cardId: string;
   cardName: string;
@@ -129,6 +131,7 @@ function SessionSidebar({
   onNewGame: () => void;
   onDeleteSession: (sessionId: string) => void;
   currentSessionId: string | null;
+  isDark: boolean;
 }) {
   const sessions = roleplayStore((s) => s.sessions);
   const cardSessions = useMemo(
@@ -156,18 +159,22 @@ function SessionSidebar({
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed top-0 left-0 bottom-0 w-[280px] max-w-[85vw] bg-gray-900/95 backdrop-blur-xl
-                       border-r border-white/10 z-50 flex flex-col shadow-2xl"
+            className={`fixed top-0 left-0 bottom-0 w-[280px] max-w-[85vw] backdrop-blur-xl
+                       border-r z-50 flex flex-col shadow-2xl ${
+                         isDark
+                           ? 'bg-gray-900/95 border-white/10'
+                           : 'bg-white/95 border-gray-200'
+                       }`}
           >
             {/* 头部 */}
-            <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
+            <div className={`flex items-center justify-between px-4 py-4 border-b ${isDark ? 'border-white/10' : 'border-gray-200'}`}>
               <div className="flex items-center gap-2">
                 <span className="text-xl">{cardAvatar}</span>
-                <h2 className="text-lg font-bold text-white">游戏记录</h2>
+                <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>游戏记录</h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                className={`p-1.5 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10 text-gray-400 hover:text-white' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-900'}`}
                 aria-label="关闭侧边栏"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -180,9 +187,12 @@ function SessionSidebar({
             <div className="px-3 py-3">
               <button
                 onClick={() => { onNewGame(); onClose(); }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-                           bg-white/10 hover:bg-white/15 border border-white/15
-                           text-white text-sm font-medium transition-all duration-200"
+                className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+                           border text-sm font-medium transition-all duration-200 ${
+                             isDark
+                               ? 'bg-white/10 hover:bg-white/15 border-white/15 text-white'
+                               : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700'
+                           }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -194,7 +204,7 @@ function SessionSidebar({
             {/* 会话列表 */}
             <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-1 scrollbar-thin">
               {cardSessions.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 text-sm">
+                <div className={`text-center py-8 text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                   <p>暂无游戏记录</p>
                   <p className="mt-1 text-xs">点击上方按钮开始新游戏</p>
                 </div>
@@ -206,10 +216,14 @@ function SessionSidebar({
                     <motion.div
                       key={session.id}
                       whileHover={{ x: 2 }}
-                      className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${
+                      className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 border ${
                         isActive
-                          ? 'bg-white/15 border border-white/20'
-                          : 'hover:bg-white/8 border border-transparent'
+                          ? isDark
+                            ? 'bg-white/15 border-white/20'
+                            : 'bg-primary-50 border-primary-200'
+                          : isDark
+                            ? 'hover:bg-white/8 border-transparent'
+                            : 'hover:bg-gray-50 border-transparent'
                       }`}
                       onClick={() => {
                         onSwitchSession({
@@ -222,7 +236,7 @@ function SessionSidebar({
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-white truncate">{cardName}</span>
+                          <span className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{cardName}</span>
                           {isActive && (
                             <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-green-400" />
                           )}
@@ -237,9 +251,12 @@ function SessionSidebar({
                           e.stopPropagation();
                           onDeleteSession(session.id);
                         }}
-                        className="flex-shrink-0 p-1.5 rounded-lg opacity-0 group-hover:opacity-100
-                                   hover:bg-red-500/20 text-gray-500 hover:text-red-400
-                                   transition-all duration-200"
+                        className={`flex-shrink-0 p-1.5 rounded-lg opacity-0 group-hover:opacity-100
+                                   transition-all duration-200 ${
+                                     isDark
+                                       ? 'hover:bg-red-500/20 text-gray-500 hover:text-red-400'
+                                       : 'hover:bg-red-50 text-gray-400 hover:text-red-500'
+                                   }`}
                         aria-label="删除会话"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -264,11 +281,13 @@ const ChatMessageItem = React.memo(function ChatMessageItem({
   emoji,
   themeColor,
   isStreaming,
+  isDark,
 }: {
   message: RolePlayMessage;
   emoji: string;
   themeColor: string;
   isStreaming?: boolean;
+  isDark: boolean;
 }) {
   const isUser = message.role === 'user';
   const displayContent = isUser ? message.content : stripStatusCommands(message.content);
@@ -295,16 +314,18 @@ const ChatMessageItem = React.memo(function ChatMessageItem({
         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
           isUser
             ? 'bg-blue-600 text-white rounded-tr-sm'
-            : 'bg-white/10 dark:bg-gray-700/50 backdrop-blur-sm text-gray-100 dark:text-gray-100 rounded-tl-sm border border-white/10'
+            : isDark
+              ? 'bg-white/10 backdrop-blur-sm text-gray-100 rounded-tl-sm border border-white/10'
+              : 'bg-white text-gray-800 rounded-tl-sm border border-gray-200 shadow-sm'
         }`}
       >
         {isUser ? (
           <p className="text-sm leading-relaxed whitespace-pre-wrap">{displayContent}</p>
         ) : (
-          <div className="text-sm leading-relaxed [&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:text-white">
-            <MarkdownRenderer content={displayContent} className="prose-invert prose-sm max-w-none [&_p]:text-gray-200 [&_strong]:text-white [&_h1]:text-white [&_h2]:text-white [&_h3]:text-white [&_li]:text-gray-200" />
+          <div className={`text-sm leading-relaxed ${isDark ? '[&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:text-white' : '[&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:text-gray-900'}`}>
+            <MarkdownRenderer content={displayContent} className={`prose-sm max-w-none ${isDark ? 'prose-invert [&_p]:text-gray-200 [&_strong]:text-white [&_h1]:text-white [&_h2]:text-white [&_h3]:text-white [&_li]:text-gray-200' : '[&_p]:text-gray-700 [&_strong]:text-gray-900 [&_h1]:text-gray-900 [&_h2]:text-gray-900 [&_h3]:text-gray-900 [&_li]:text-gray-700'}`} />
             {isStreaming && (
-              <span className="inline-block w-1.5 h-4 ml-1 bg-white/60 animate-pulse rounded-sm" />
+              <span className={`inline-block w-1.5 h-4 ml-1 animate-pulse rounded-sm ${isDark ? 'bg-white/60' : 'bg-gray-400'}`} />
             )}
           </div>
         )}
@@ -339,6 +360,27 @@ export default function RolePlayChat() {
   const deleteSession = roleplayStore((s) => s.deleteSession);
   const setActiveSession = roleplayStore((s) => s.setActiveSession);
   const activeSessionId = roleplayStore((s) => s.activeSessionId);
+
+  // ---- 主题检测 ----
+  const appTheme = useAppStore((s) => s.theme);
+  const [isDark, setIsDark] = useState(() => {
+    if (appTheme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return appTheme === 'dark';
+  });
+
+  useEffect(() => {
+    if (appTheme === 'system') {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
+      mq.addEventListener('change', handler);
+      setIsDark(mq.matches);
+      return () => mq.removeEventListener('change', handler);
+    } else {
+      setIsDark(appTheme === 'dark');
+    }
+  }, [appTheme]);
 
   // ---- 查找角色卡 ----
   const card = useMemo<CharacterCard | null>(() => {
@@ -664,8 +706,8 @@ export default function RolePlayChat() {
   // ---- 角色卡不存在 ----
   if (!card) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center text-gray-400">
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           <p className="text-xl mb-4">角色卡不存在</p>
           <button
             onClick={() => navigate('/playground')}
@@ -680,7 +722,11 @@ export default function RolePlayChat() {
 
   return (
     <div
-      className={`h-screen flex flex-col bg-gradient-to-b ${theme.gradient} text-white overflow-hidden`}
+      className={`h-screen flex flex-col overflow-hidden ${
+        isDark
+          ? `bg-gradient-to-b ${theme.gradient} text-white`
+          : 'bg-gray-50 text-gray-900'
+      }`}
     >
       {/* ====== 会话侧边栏 ====== */}
       <SessionSidebar
@@ -693,14 +739,19 @@ export default function RolePlayChat() {
         onNewGame={handleNewGame}
         onDeleteSession={handleDeleteSession}
         currentSessionId={sessionId}
+        isDark={isDark}
       />
 
       {/* ====== 顶部栏 ====== */}
-      <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 bg-black/20 backdrop-blur-md border-b border-white/10">
+      <header className={`flex-shrink-0 flex items-center justify-between px-4 py-3 backdrop-blur-md border-b ${
+        isDark
+          ? 'bg-black/20 border-white/10'
+          : 'bg-white/80 border-gray-200'
+      }`}>
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/playground')}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            className={`p-2 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
             aria-label="返回"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -717,7 +768,7 @@ export default function RolePlayChat() {
           {/* 历史记录按钮 */}
           <button
             onClick={() => setSidebarOpen((prev) => !prev)}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            className={`p-2 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
             aria-label="游戏记录"
             title="游戏记录"
           >
@@ -733,7 +784,7 @@ export default function RolePlayChat() {
                 saveSession(sessionId, messages, statusValues);
               }
             }}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            className={`p-2 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
             aria-label="存档"
             title="保存存档"
           >
@@ -746,7 +797,7 @@ export default function RolePlayChat() {
           <div ref={settingsRef} className="relative">
             <button
               onClick={() => setShowSettings((prev) => !prev)}
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+              className={`p-2 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
               aria-label="设置"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -772,15 +823,23 @@ export default function RolePlayChat() {
       </header>
 
       {/* ====== 状态栏 ====== */}
-      <div className="flex-shrink-0 px-4 py-2 bg-black/10 backdrop-blur-md border-b border-white/5">
+      <div className={`flex-shrink-0 px-4 py-2 backdrop-blur-md border-b ${
+        isDark
+          ? 'bg-black/10 border-white/5'
+          : 'bg-white/60 border-gray-100'
+      }`}>
         <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
           {card.statusFields?.map((field) => (
             <div
               key={field.name}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 whitespace-nowrap"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border whitespace-nowrap ${
+                isDark
+                  ? 'bg-white/5 border-white/10'
+                  : 'bg-gray-100 border-gray-200'
+              }`}
             >
               <span className="text-sm">{field.icon}</span>
-              <span className="text-xs text-gray-300">{field.name}:</span>
+              <span className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{field.name}:</span>
               <span className="text-xs font-semibold" style={{ color: theme.primary }}>
                 {statusValues[field.name] || field.defaultValue}
               </span>
@@ -798,6 +857,7 @@ export default function RolePlayChat() {
             emoji={card.avatar}
             themeColor={theme.primary}
             isStreaming={isGenerating && idx === messages.length - 1 && msg.role === 'assistant'}
+            isDark={isDark}
           />
         ))}
         <div ref={chatEndRef} />
@@ -805,18 +865,24 @@ export default function RolePlayChat() {
 
       {/* ====== 快捷指令栏 ====== */}
       {(card.quickCommands?.length ?? 0) > 0 && (
-        <div className="flex-shrink-0 px-4 py-2 bg-black/10 backdrop-blur-md border-t border-white/5">
+        <div className={`flex-shrink-0 px-4 py-2 backdrop-blur-md border-t ${
+          isDark
+            ? 'bg-black/10 border-white/5'
+            : 'bg-white/60 border-gray-100'
+        }`}>
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
             {card.quickCommands?.map((cmd) => (
               <button
                 key={cmd.label}
                 onClick={() => sendMessage(cmd.prompt)}
                 disabled={isGenerating}
-                className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium
-                           bg-white/10 border border-white/15 text-gray-200
-                           hover:bg-white/20 hover:border-white/25
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium border
                            disabled:opacity-50 disabled:cursor-not-allowed
-                           transition-all duration-200"
+                           transition-all duration-200 ${
+                             isDark
+                               ? 'bg-white/10 border-white/15 text-gray-200 hover:bg-white/20 hover:border-white/25'
+                               : 'bg-gray-100 border-gray-200 text-gray-700 hover:bg-gray-200 hover:border-gray-300'
+                           }`}
               >
                 {cmd.label}
               </button>
@@ -826,7 +892,11 @@ export default function RolePlayChat() {
       )}
 
       {/* ====== 输入区域 ====== */}
-      <div className="flex-shrink-0 px-4 py-3 bg-black/20 backdrop-blur-md border-t border-white/10">
+      <div className={`flex-shrink-0 px-4 py-3 backdrop-blur-md border-t ${
+        isDark
+          ? 'bg-black/20 border-white/10'
+          : 'bg-white/80 border-gray-200'
+      }`}>
         <div className="flex items-end gap-3 max-w-4xl mx-auto">
           <textarea
             ref={textareaRef}
@@ -836,9 +906,12 @@ export default function RolePlayChat() {
             placeholder="输入你的行动..."
             rows={1}
             disabled={isGenerating}
-            className="flex-1 px-4 py-3 rounded-2xl bg-white/10 border border-white/15 text-white
-                       placeholder-gray-400 resize-none focus:outline-none focus:ring-2
-                       disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className={`flex-1 px-4 py-3 rounded-2xl border resize-none focus:outline-none focus:ring-2
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
+                         isDark
+                           ? 'bg-white/10 border-white/15 text-white placeholder-gray-400'
+                           : 'bg-gray-100 border-gray-200 text-gray-900 placeholder-gray-500'
+                       }`}
             style={{ '--tw-ring-color': theme.primary } as React.CSSProperties}
           />
           {isGenerating ? (

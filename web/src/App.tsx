@@ -148,34 +148,34 @@ function AppContent() {
           <ErrorBoundary>
             <PageTransition>
               <Routes>
-                <Route path="/" element={<Suspense fallback={LazyFallback}><Home /></Suspense>} />
-                <Route path="/workspace" element={<Suspense fallback={LazyFallback}><Workspace /></Suspense>} />
-                <Route path="/pricing" element={<Suspense fallback={LazyFallback}><Pricing /></Suspense>} />
-                <Route path="/services" element={<Suspense fallback={LazyFallback}><Services /></Suspense>} />
-                <Route path="/settings" element={<Suspense fallback={LazyFallback}><Settings /></Suspense>} />
-                <Route path="/services/video" element={<Suspense fallback={LazyFallback}><VideoProduction /></Suspense>} />
-                <Route path="/services/group-buy" element={<Suspense fallback={LazyFallback}><GroupBuy /></Suspense>} />
-                <Route path="/services/private-domain" element={<Suspense fallback={LazyFallback}><PrivateDomain /></Suspense>} />
-                <Route path="/services/ai-cs" element={<Suspense fallback={LazyFallback}><AiCustomerService /></Suspense>} />
-                <Route path="/services/data-analysis" element={<Suspense fallback={LazyFallback}><DataAnalysis /></Suspense>} />
-                <Route path="/services/live-stream" element={<Suspense fallback={LazyFallback}><LiveStream /></Suspense>} />
-                <Route path="/workspace/creative" element={<Suspense fallback={LazyFallback}><CreativeTool /></Suspense>} />
-                <Route path="/workspace/calendar" element={<Suspense fallback={LazyFallback}><MarketingCalendar /></Suspense>} />
-                <Route path="/workspace/scripts" element={<Suspense fallback={LazyFallback}><ScriptLibrary /></Suspense>} />
-                <Route path="/workspace/copywriting" element={<Suspense fallback={LazyFallback}><CopywritingTool /></Suspense>} />
-                <Route path="/workspace/history" element={<Suspense fallback={LazyFallback}><History /></Suspense>} />
-                <Route path="/workspace/brand" element={<Suspense fallback={LazyFallback}><BrandVoice /></Suspense>} />
-                <Route path="/workspace/seo" element={<Suspense fallback={LazyFallback}><SeoTool /></Suspense>} />
-                <Route path="/workspace/templates" element={<Suspense fallback={LazyFallback}><Templates /></Suspense>} />
-                <Route path="/workspace/humanize" element={<Suspense fallback={LazyFallback}><HumanizeTool /></Suspense>} />
-                <Route path="/workspace/polish" element={<Suspense fallback={LazyFallback}><PolishTool /></Suspense>} />
-                <Route path="/workspace/summarizer" element={<Suspense fallback={LazyFallback}><SummarizerTool /></Suspense>} />
-                <Route path="/playground" element={<Suspense fallback={LazyFallback}><Playground /></Suspense>} />
-                <Route path="/playground/:cardId" element={<Suspense fallback={LazyFallback}><RolePlayChat /></Suspense>} />
-                <Route path="/playground/create" element={<Suspense fallback={LazyFallback}><CharacterCreator /></Suspense>} />
-                <Route path="/privacy" element={<Suspense fallback={LazyFallback}><PrivacyPolicy /></Suspense>} />
-                <Route path="/terms" element={<Suspense fallback={LazyFallback}><TermsOfService /></Suspense>} />
-                <Route path="*" element={<Suspense fallback={LazyFallback}><NotFound /></Suspense>} />
+                <Route path="/" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Home /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Workspace /></Suspense></ErrorBoundary>} />
+                <Route path="/pricing" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Pricing /></Suspense></ErrorBoundary>} />
+                <Route path="/services" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Services /></Suspense></ErrorBoundary>} />
+                <Route path="/settings" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Settings /></Suspense></ErrorBoundary>} />
+                <Route path="/services/video" element={<ErrorBoundary><Suspense fallback={LazyFallback}><VideoProduction /></Suspense></ErrorBoundary>} />
+                <Route path="/services/group-buy" element={<ErrorBoundary><Suspense fallback={LazyFallback}><GroupBuy /></Suspense></ErrorBoundary>} />
+                <Route path="/services/private-domain" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PrivateDomain /></Suspense></ErrorBoundary>} />
+                <Route path="/services/ai-cs" element={<ErrorBoundary><Suspense fallback={LazyFallback}><AiCustomerService /></Suspense></ErrorBoundary>} />
+                <Route path="/services/data-analysis" element={<ErrorBoundary><Suspense fallback={LazyFallback}><DataAnalysis /></Suspense></ErrorBoundary>} />
+                <Route path="/services/live-stream" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LiveStream /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/creative" element={<ErrorBoundary><Suspense fallback={LazyFallback}><CreativeTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/calendar" element={<ErrorBoundary><Suspense fallback={LazyFallback}><MarketingCalendar /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/scripts" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ScriptLibrary /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/copywriting" element={<ErrorBoundary><Suspense fallback={LazyFallback}><CopywritingTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/history" element={<ErrorBoundary><Suspense fallback={LazyFallback}><History /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/brand" element={<ErrorBoundary><Suspense fallback={LazyFallback}><BrandVoice /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/seo" element={<ErrorBoundary><Suspense fallback={LazyFallback}><SeoTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/templates" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Templates /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/humanize" element={<ErrorBoundary><Suspense fallback={LazyFallback}><HumanizeTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/polish" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PolishTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/summarizer" element={<ErrorBoundary><Suspense fallback={LazyFallback}><SummarizerTool /></Suspense></ErrorBoundary>} />
+                <Route path="/playground" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Playground /></Suspense></ErrorBoundary>} />
+                <Route path="/playground/:cardId" element={<ErrorBoundary><Suspense fallback={LazyFallback}><RolePlayChat /></Suspense></ErrorBoundary>} />
+                <Route path="/playground/create" element={<ErrorBoundary><Suspense fallback={LazyFallback}><CharacterCreator /></Suspense></ErrorBoundary>} />
+                <Route path="/privacy" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PrivacyPolicy /></Suspense></ErrorBoundary>} />
+                <Route path="/terms" element={<ErrorBoundary><Suspense fallback={LazyFallback}><TermsOfService /></Suspense></ErrorBoundary>} />
+                <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>
           </ErrorBoundary>

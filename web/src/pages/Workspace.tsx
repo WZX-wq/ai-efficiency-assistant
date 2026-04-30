@@ -129,7 +129,7 @@ export default function Workspace() {
   }, [recentTools]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="flex flex-col h-[100dvh] bg-gray-50 dark:bg-gray-950">
       {/* Hero */}
       <section className="relative overflow-hidden pt-28 pb-10 sm:pt-32 sm:pb-12">
         <div className="absolute inset-0 -z-10">
@@ -228,8 +228,8 @@ export default function Workspace() {
       </section>
 
       {/* Tab Navigation */}
-      <section className="pb-20 sm:pb-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="flex-1 flex flex-col min-h-0 pb-20 sm:pb-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col flex-1 min-h-0">
           {/* Tab Bar */}
           <div className="relative flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 w-fit" role="tablist">
             <div
@@ -258,8 +258,7 @@ export default function Workspace() {
 
           {/* Tab Content */}
           <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
-            style={{ height: 'calc(100vh - 320px)', minHeight: '500px' }}
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex-1 min-h-[500px]"
           >
             <AnimatePresence mode="wait">
               {activeTab === 'text' && (

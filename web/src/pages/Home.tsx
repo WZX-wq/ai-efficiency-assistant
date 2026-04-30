@@ -331,6 +331,30 @@ export default function Home() {
   const trustRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const [faqOpenIndex, setFaqOpenIndex] = useState<number | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('');
+
+  // 锚点导航高亮
+  useEffect(() => {
+    const sectionIds = ['features', 'demo', 'pricing', 'testimonials', 'faq'];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // 找到当前可见比例最大的 section
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length > 0) {
+          // 取第一个可见的（按 DOM 顺序）
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const refs = [
@@ -516,7 +540,11 @@ export default function Home() {
             <a
               key={item.id}
               href={`#${item.id}`}
-              className="text-sm text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 whitespace-nowrap transition-colors"
+              className={`relative text-sm whitespace-nowrap transition-colors pb-1 ${
+                activeSection === item.id
+                  ? 'text-primary-600 dark:text-primary-400 font-semibold'
+                  : 'text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400'
+              } ${activeSection === item.id ? 'after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-600 dark:after:bg-primary-400 after:rounded-full' : ''}`}
               onClick={(e) => { e.preventDefault(); document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' }); }}
             >
               {item.label}
@@ -564,7 +592,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" ref={featuresRef} className="scroll-reveal py-20 sm:py-28">
+      <section id="features" ref={featuresRef} className="scroll-reveal py-20 sm:py-28" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
@@ -617,7 +645,7 @@ export default function Home() {
       </section>
 
       {/* Product Demo Section */}
-      <section id="demo" className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
+      <section id="demo" className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16 scroll-reveal">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
@@ -735,7 +763,7 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-white dark:bg-gray-950">
+      <section id="pricing" className="py-20 bg-white dark:bg-gray-950" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-semibold rounded-full mb-3">灵活定价</span>
@@ -812,7 +840,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" ref={testimonialsRef} className="scroll-reveal py-20 sm:py-28 bg-gray-50 dark:bg-gray-900">
+      <section id="testimonials" ref={testimonialsRef} className="scroll-reveal py-20 sm:py-28 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
@@ -948,7 +976,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-16 bg-white dark:bg-gray-950">
+      <section id="faq" className="py-16 bg-white dark:bg-gray-950" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">

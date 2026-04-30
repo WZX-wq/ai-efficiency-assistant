@@ -86,6 +86,10 @@ export default function RichTextEditor({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  // Color picker state
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -208,6 +212,17 @@ export default function RichTextEditor({
       editor.commands.setContent(content);
     }
   }, [content, editor]);
+
+  // 点击外部关闭颜色选择器
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(e.target as Node)) {
+        setShowColorPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const setLink = useCallback(() => {
     if (!editor) return;
@@ -510,8 +525,7 @@ export default function RichTextEditor({
             <div className="relative">
               <ToolbarButton
                 onClick={() => {
-                  const el = document.getElementById('color-picker-dropdown');
-                  if (el) el.classList.toggle('hidden');
+                  setShowColorPicker(prev => !prev);
                 }}
                 title="文字颜色"
               >
@@ -519,7 +533,8 @@ export default function RichTextEditor({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125V4.5M6.75 21h10.5A2.25 2.25 0 0 0 19.5 18.75V10.5m-9.75 0h9.75" />
                 </svg>
               </ToolbarButton>
-              <div id="color-picker-dropdown" className="hidden absolute top-full left-0 mt-1 z-30 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg">
+              {showColorPicker && (
+              <div ref={colorPickerRef} className="absolute top-full left-0 mt-1 z-30 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg">
                 <div className="grid grid-cols-4 gap-1.5">
                   {[
                     { color: '#000000', label: '黑色' },
@@ -536,7 +551,7 @@ export default function RichTextEditor({
                       type="button"
                       onClick={() => {
                         editor.chain().focus().setColor(color).run();
-                        document.getElementById('color-picker-dropdown')?.classList.add('hidden');
+                        setShowColorPicker(false);
                       }}
                       title={label}
                       aria-label={`设置文字颜色为${label}`}
@@ -549,13 +564,14 @@ export default function RichTextEditor({
                   type="button"
                   onClick={() => {
                     editor.chain().focus().unsetColor().run();
-                    document.getElementById('color-picker-dropdown')?.classList.add('hidden');
+                    setShowColorPicker(false);
                   }}
                   className="w-full mt-1.5 px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors text-center"
                 >
                   重置颜色
                 </button>
               </div>
+              )}
             </div>
           </ToolbarGroup>
         </div>
