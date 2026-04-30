@@ -68,6 +68,7 @@ export default function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in"
       onClick={onClose}
+      role="presentation"
     >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
@@ -76,10 +77,13 @@ export default function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
       <div
         className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg mx-4 p-6"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="shortcuts-modal-title"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 id="shortcuts-modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             键盘快捷键
           </h2>
           <button

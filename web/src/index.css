@@ -420,6 +420,45 @@ body {
   transition-delay: calc(var(--stagger-index, 0) * 60ms);
 }
 
+/* ─── High Contrast Mode ────────────────────────────────── */
+[data-high-contrast] {
+  --hc-border: 1px solid white;
+  --hc-focus: 3px solid #005fcc;
+}
+
+[data-high-contrast] button,
+[data-high-contrast] a,
+[data-high-contrast] input,
+[data-high-contrast] textarea,
+[data-high-contrast] select {
+  border: var(--hc-border) !important;
+}
+
+[data-high-contrast] *:focus-visible {
+  outline: var(--hc-focus) !important;
+  outline-offset: 2px !important;
+}
+
+[data-high-contrast] .bg-gray-50,
+[data-high-contrast] .bg-gray-100 {
+  background-color: #000000 !important;
+}
+
+[data-high-contrast] .text-gray-400,
+[data-high-contrast] .text-gray-500 {
+  color: #ffffff !important;
+}
+
+/* ─── Reduced Motion (duplicate for specificity) ─────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ─── Header scroll shadow ────────────────────────────────── */
 .header-scrolled {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);

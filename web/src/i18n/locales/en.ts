@@ -108,6 +108,7 @@ const en: Record<string, string> = {
   'header.marketing': 'Marketing Copy',
   'header.fiction': 'Interactive Fiction',
   'header.dashboard': 'Dashboard',
+  'header.pluginStore': 'Plugin Store',
   'header.templateMarket': 'Templates',
 
   // ========== Footer ==========
@@ -619,6 +620,63 @@ const en: Record<string, string> = {
   // Bookmark
   'collab.bookmark.success': 'Added to bookmarks',
   'collab.bookmark.alreadyBookmarked': 'This content is already bookmarked',
+
+  // ========== Smart Recommendations ==========
+  'recommendation.smartRecommend': 'Smart Recommendations',
+  'recommendation.forYou': 'For you',
+  'recommendation.refresh': 'Refresh',
+  'recommendation.dismiss': 'Dismiss this recommendation',
+  'recommendation.greeting.morning': 'Good Morning',
+  'recommendation.greeting.afternoon': 'Good Afternoon',
+  'recommendation.greeting.evening': 'Good Evening',
+  'recommendation.lastUsed': 'You last used {tool}',
+  'recommendation.quickContinue': 'Continue',
+  'recommendation.exploreNew': 'Explore New Features',
+  'recommendation.dontShowAgain': "Don't show this welcome again",
+  'recommendation.quickAction': 'Quick Actions',
+  'recommendation.discover': 'Discover',
+  'recommendation.productivityTip': 'Productivity Tip',
+
+  // ========== Accessibility ==========
+  'a11y.pageTitle': 'Accessibility Settings',
+  'a11y.pageDesc': 'Customize your accessibility experience to make AI Efficiency Assistant work better for you.',
+  'a11y.displaySettings': 'Display Settings',
+  'a11y.fontSize': 'Font Size',
+  'a11y.lineHeight': 'Line Height',
+  'a11y.highContrast': 'High Contrast Mode',
+  'a11y.highContrastDesc': 'Increase text-to-background contrast for better readability',
+  'a11y.reducedMotion': 'Reduced Motion',
+  'a11y.reducedMotionDesc': 'Reduce page animations and transitions (respects system preference by default)',
+  'a11y.navigationSettings': 'Navigation Settings',
+  'a11y.shortcut': 'Shortcut',
+  'a11y.description': 'Description',
+  'a11y.shortcuts.tab': 'Navigate between focusable elements',
+  'a11y.shortcuts.enter': 'Activate button or link',
+  'a11y.shortcuts.escape': 'Close modal or dropdown',
+  'a11y.shortcuts.arrows': 'Navigate within lists or menus',
+  'a11y.shortcuts.ctrlK': 'Open AI Assistant',
+  'a11y.shortcuts.ctrlSlash': 'Show keyboard shortcuts',
+  'a11y.screenReaderSettings': 'Screen Reader Settings',
+  'a11y.srAnnouncements': 'Screen Reader Announcements',
+  'a11y.srAnnouncementsDesc': 'Announce status changes via screen reader after actions complete',
+  'a11y.verboseMode': 'Verbose Mode',
+  'a11y.verboseModeDesc': 'Announce more detailed information for users who need more context',
+  'a11y.testAnnouncement': 'Test Announcement',
+  'a11y.testAnnouncementVerbose': 'This is a test announcement. Verbose mode is enabled. The screen reader will announce more contextual information.',
+  'a11y.auditTitle': 'Accessibility Audit',
+  'a11y.audit.skipNav': 'Skip navigation link',
+  'a11y.audit.ariaLabels': 'ARIA labels on interactive elements',
+  'a11y.audit.focusManagement': 'Focus management in modals',
+  'a11y.audit.colorContrast': 'Color contrast meets WCAG standards',
+  'a11y.audit.keyboardNav': 'Keyboard navigation support',
+  'a11y.audit.screenReader': 'Screen reader compatible',
+  'a11y.audit.reducedMotion': 'Reduced motion support',
+  'a11y.audit.highContrast': 'High contrast mode',
+  'a11y.resetAll': 'Reset to Defaults',
+  'a11y.resetSuccess': 'Accessibility settings reset to defaults',
+
+  // Footer
+  'footer.accessibility': 'Accessibility Statement',
 };
 
 export default en;

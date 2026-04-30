@@ -116,6 +116,8 @@ const BREADCRUMB_NAMES: Record<string, string> = {
   summarizer: '内容总结',
   longform: 'AI长文写作',
   'theme-settings': '主题设置',
+  accessibility: '无障碍设置',
+  plugins: 'AI插件市场',
 }
 
 // ============================================================
@@ -730,5 +732,22 @@ export const PAGE_SEO = {
     keywords:
       '主题设置,自定义主题,深色模式,配色方案,AI效率助手',
     canonicalUrl: '/theme-settings',
+  },
+  accessibility: {
+    title: '无障碍设置 - AI效率助手',
+    description:
+      '自定义AI效率助手的无障碍体验，包括字体大小、行高、高对比度模式、减少动画、屏幕阅读器支持等设置。',
+    keywords:
+      '无障碍,辅助功能,高对比度,减少动画,屏幕阅读器,字体设置,AI效率助手',
+    canonicalUrl: '/accessibility',
+  },
+
+  plugins: {
+    title: 'AI插件市场 - AI效率助手',
+    description:
+      '探索和安装AI效率助手的社区插件，扩展AI能力，或创建你的专属插件。50+插件覆盖效率工具、写作增强、数据处理、AI模型等场景。',
+    keywords:
+      'AI插件,插件市场,插件商店,AI扩展,效率工具,写作增强,AI效率助手',
+    canonicalUrl: '/plugins',
   },
 } as const

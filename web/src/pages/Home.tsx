@@ -417,6 +417,45 @@ const features: FeatureCard[] = [
     textColor: 'text-fuchsia-600',
     bgColor: 'bg-fuchsia-50 dark:bg-fuchsia-950/30',
   },
+  {
+    id: 'pluginStore',
+    title: '插件市场',
+    description: '50+社区插件，一键安装扩展AI能力，支持自定义插件',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.491 48.491 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 00.657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 005.427-.63 48.05 48.05 0 00.582-4.717.532.532 0 00-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.959.401v0a.656.656 0 00.658-.663 48.422 48.422 0 00-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 01-.61-.58v0z" />
+      </svg>
+    ),
+    color: 'from-violet-500 to-purple-600',
+    textColor: 'text-violet-600',
+    bgColor: 'bg-violet-50 dark:bg-violet-950/30',
+  },
+  {
+    id: 'smartRecommend',
+    title: '智能推荐',
+    description: '基于使用习惯的个性化推荐，发现最适合你的AI工具',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+      </svg>
+    ),
+    color: 'from-amber-500 to-orange-600',
+    textColor: 'text-amber-600',
+    bgColor: 'bg-amber-50 dark:bg-amber-950/30',
+  },
+  {
+    id: 'accessibility',
+    title: '无障碍访问',
+    description: 'WCAG合规，支持屏幕阅读器、键盘导航、高对比度模式',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+      </svg>
+    ),
+    color: 'from-teal-500 to-cyan-600',
+    textColor: 'text-teal-600',
+    bgColor: 'bg-teal-50 dark:bg-teal-950/30',
+  },
 ];
 
 const stats = [
@@ -610,7 +649,7 @@ export default function Home() {
           name: 'AI效率助手是什么？能帮我做什么？',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等32+种内容创作任务，大幅提升你的写作效率。',
+            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等35+种内容创作任务，大幅提升你的写作效率。',
           },
         },
         {
@@ -736,7 +775,7 @@ export default function Home() {
 
             {/* Business Value Badges (replacing tech badges) */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 animate-fade-in">
-              {['32+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
+              {['35+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
                 <span key={badge} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700">
                   {badge}
                 </span>
@@ -815,7 +854,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
-              三十二核心功能
+              三十五核心功能
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               覆盖内容创作与运营全流程，AI 全程陪伴
@@ -1020,7 +1059,7 @@ export default function Home() {
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">适合内容创作者</p>
               <ul className="mt-6 space-y-3">
-                {['无限 AI 调用', '全部 32+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
+                {['无限 AI 调用', '全部 35+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <svg className="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     {f}
@@ -1118,7 +1157,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
             {[
-              { step: '01', title: '选择工具', description: '从三十二 AI 工具中选择适合你需求的工具，打开即用。' },
+              { step: '01', title: '选择工具', description: '从三十五 AI 工具中选择适合你需求的工具，打开即用。' },
               { step: '02', title: '输入需求', description: '在富文本编辑器中填写信息，或使用 AI 助手对话。' },
               { step: '03', title: 'AI 即刻生成', description: 'AI 流式生成专业结果，支持复制、导出、继续编辑。' },
             ].map((item) => (
@@ -1170,6 +1209,7 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             {[
+              { version: 'v3.5', date: '2025-05', title: '插件系统与智能推荐', desc: 'AI插件市场(16插件/创建插件)、智能推荐引擎、欢迎回来弹窗、WCAG无障碍访问', tag: '新功能', tagColor: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
               { version: 'v3.4', date: '2025-05', title: '模板市场与主题系统', desc: 'AI模板市场(24模板/10分类)、协作工具栏(分享/版本/评论)、8种预设主题+自定义编辑器', tag: '新功能', tagColor: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
               { version: 'v3.3', date: '2025-05', title: 'SEO与性能全面优化', desc: 'SEO结构化数据/sitemap/robots.txt，性能优化(代码分割/PWA缓存)，数据面板与错误追踪', tag: '优化', tagColor: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' },
               { version: 'v3.2', date: '2025-05', title: '平台能力大升级', desc: '新增API开放平台、移动端优化、四语言国际化(中/英/日/韩)，修复产品演示', tag: '重大更新', tagColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },

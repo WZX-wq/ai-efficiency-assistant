@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import AiTextProcessor from '../components/AiTextProcessor';
 import ChatInterface from '../components/ChatInterface';
 import RichTextEditor from '../components/RichTextEditor';
+import QuickActions from '../components/QuickActions';
 import { exportAsMarkdown, exportAsHtml, exportAsPlainText } from '../utils/export';
 import { useSeo, PAGE_SEO } from '../components/SeoHead';
 import { useAppStore } from '../store/appStore';
@@ -196,6 +197,9 @@ export default function Workspace() {
           </div>
         </section>
       )}
+
+      {/* Smart Recommendations */}
+      <QuickActions />
 
       {/* Quick Tool Grid */}
       <section className="pb-4">

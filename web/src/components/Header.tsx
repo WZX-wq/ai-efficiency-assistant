@@ -9,6 +9,7 @@ import { useTranslation, supportedLocales, localeLabels } from '../i18n';
 import type { Locale } from '../i18n';
 
 const toolLinkItems = [
+  { to: '/plugins', labelKey: 'header.pluginStore', icon: '🧩' },
   { to: '/workspace', labelKey: 'header.workspace', icon: '⚡' },
   { to: '/workspace/creative', labelKey: 'header.creative', icon: '🎨' },
   { to: '/workspace/calendar', labelKey: 'header.calendar', icon: '📅' },
@@ -144,6 +145,7 @@ export default function Header() {
                   onClick={() => setToolsOpen(!toolsOpen)}
                   aria-expanded={toolsOpen}
                   aria-haspopup="true"
+                  aria-controls="tools-dropdown"
                   className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isToolsActive
                       ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
@@ -166,6 +168,7 @@ export default function Header() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
+                      id="tools-dropdown"
                       className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-2 origin-top"
                     >
                     <div className="p-2 border-b border-gray-100 dark:border-gray-700">
@@ -297,6 +300,8 @@ export default function Header() {
                   onClick={() => setLangOpen(!langOpen)}
                   className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   aria-label="Language"
+                  aria-expanded={langOpen}
+                  aria-controls="lang-dropdown"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
@@ -309,6 +314,7 @@ export default function Header() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
+                      id="lang-dropdown"
                       className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-1 origin-top z-50"
                     >
                       {supportedLocales.map((loc) => (
@@ -373,6 +379,8 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               aria-label={t('header.toggleMenu')}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {mobileMenuOpen ? (
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -397,6 +405,10 @@ export default function Header() {
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed inset-0 z-50 bg-white dark:bg-gray-900 lg:hidden"
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('header.toggleMenu')}
           >
             {/* Backdrop */}
             <div

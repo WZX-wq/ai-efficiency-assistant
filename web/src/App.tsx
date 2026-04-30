@@ -29,6 +29,7 @@ const AiAssistantPanel = lazy(() => import('./components/AiAssistantPanel'));
 const CommandPalette = lazy(() => import('./components/CommandPalette'));
 const ShortcutsModal = lazy(() => import('./components/ShortcutsModal'));
 const FeedbackWidget = lazy(() => import('./components/FeedbackWidget'));
+const WelcomeBack = lazy(() => import('./components/WelcomeBack'));
 
 const Home = lazy(() => import('./pages/Home'));
 const Workspace = lazy(() => import('./pages/Workspace'));
@@ -75,6 +76,8 @@ const ApiPlatform = lazy(() => import('./pages/ApiPlatform'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const TemplateMarket = lazy(() => import('./pages/TemplateMarket'));
 const ThemeSettings = lazy(() => import('./pages/ThemeSettings'));
+const PluginStore = lazy(() => import('./pages/PluginStore'));
+const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -221,6 +224,8 @@ function AppContent() {
                 <Route path="/dashboard" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Dashboard /></Suspense></ErrorBoundary>} />
                 <Route path="/templates" element={<ErrorBoundary><Suspense fallback={LazyFallback}><TemplateMarket /></Suspense></ErrorBoundary>} />
                 <Route path="/theme-settings" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ThemeSettings /></Suspense></ErrorBoundary>} />
+                <Route path="/accessibility" element={<ErrorBoundary><Suspense fallback={LazyFallback}><AccessibilityPage /></Suspense></ErrorBoundary>} />
+                <Route path="/plugins" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PluginStore /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>
@@ -242,7 +247,12 @@ function AppContent() {
       <Suspense fallback={null}>
         <FeedbackWidget />
       </Suspense>
+      <Suspense fallback={null}>
+        <WelcomeBack />
+      </Suspense>
       <ScrollToTop />
+      {/* Screen reader live region for announcements */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only" id="sr-announcer" />
     </>
   );
 }

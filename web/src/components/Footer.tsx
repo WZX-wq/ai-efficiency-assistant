@@ -113,6 +113,7 @@ export default function Footer() {
               <li><Link to="/workspace/history" className="text-sm text-gray-400 hover:text-white transition-colors">{t('footer.historyLink')}</Link></li>
               <li><Link to="/services#contact" className="text-sm text-gray-400 hover:text-white transition-colors">{t('footer.contact')}</Link></li>
               <li><Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors">{t('footer.helpCenter')}</Link></li>
+              <li><Link to="/accessibility" className="text-sm text-gray-400 hover:text-white transition-colors">{t('footer.accessibility')}</Link></li>
             </ul>
           </div>
 

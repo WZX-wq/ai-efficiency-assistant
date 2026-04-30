@@ -109,6 +109,8 @@ const zh: Record<string, string> = {
   'header.fiction': '互动小说',
   'header.apiPlatform': 'API 平台',
   'header.dashboard': '数据面板',
+  'header.templateMarket': '模板市场',
+  'header.pluginStore': '插件市场',
 
   // ========== Footer ==========
   'footer.brandDesc': '企业级 AI 内容创作平台，助力企业数字化转型',
@@ -619,6 +621,63 @@ const zh: Record<string, string> = {
   // Bookmark
   'collab.bookmark.success': '已添加到收藏',
   'collab.bookmark.alreadyBookmarked': '该内容已在收藏中',
+
+  // ========== Smart Recommendations ==========
+  'recommendation.smartRecommend': '智能推荐',
+  'recommendation.forYou': '为你推荐',
+  'recommendation.refresh': '换一批',
+  'recommendation.dismiss': '忽略此推荐',
+  'recommendation.greeting.morning': '早上好',
+  'recommendation.greeting.afternoon': '下午好',
+  'recommendation.greeting.evening': '晚上好',
+  'recommendation.lastUsed': '上次你使用了 {tool}',
+  'recommendation.quickContinue': '快速继续',
+  'recommendation.exploreNew': '探索新功能',
+  'recommendation.dontShowAgain': '不再显示此欢迎弹窗',
+  'recommendation.quickAction': '快速操作',
+  'recommendation.discover': '发现新功能',
+  'recommendation.productivityTip': '效率提示',
+
+  // ========== Accessibility ==========
+  'a11y.pageTitle': '无障碍设置',
+  'a11y.pageDesc': '自定义无障碍体验，让AI效率助手更适合您的使用需求。',
+  'a11y.displaySettings': '显示设置',
+  'a11y.fontSize': '字体大小',
+  'a11y.lineHeight': '行高',
+  'a11y.highContrast': '高对比度模式',
+  'a11y.highContrastDesc': '增强文字与背景的对比度，提升可读性',
+  'a11y.reducedMotion': '减少动画',
+  'a11y.reducedMotionDesc': '减少页面动画和过渡效果（默认跟随系统偏好）',
+  'a11y.navigationSettings': '导航设置',
+  'a11y.shortcut': '快捷键',
+  'a11y.description': '说明',
+  'a11y.shortcuts.tab': '在可聚焦元素之间导航',
+  'a11y.shortcuts.enter': '激活按钮或链接',
+  'a11y.shortcuts.escape': '关闭弹窗或下拉菜单',
+  'a11y.shortcuts.arrows': '在列表或菜单中导航',
+  'a11y.shortcuts.ctrlK': '打开 AI 助手',
+  'a11y.shortcuts.ctrlSlash': '显示键盘快捷键',
+  'a11y.screenReaderSettings': '屏幕阅读器设置',
+  'a11y.srAnnouncements': '屏幕阅读器通知',
+  'a11y.srAnnouncementsDesc': '操作完成后通过屏幕阅读器播报状态变化',
+  'a11y.verboseMode': '详细模式',
+  'a11y.verboseModeDesc': '播报更多详细信息，适合需要更多上下文的用户',
+  'a11y.testAnnouncement': '测试通知播报',
+  'a11y.testAnnouncementVerbose': '这是一条测试通知。当前已启用详细模式，屏幕阅读器将播报更多上下文信息。',
+  'a11y.auditTitle': '无障碍审计',
+  'a11y.audit.skipNav': '跳过导航链接',
+  'a11y.audit.ariaLabels': '交互元素上的 ARIA 标签',
+  'a11y.audit.focusManagement': '弹窗中的焦点管理',
+  'a11y.audit.colorContrast': '颜色对比度符合 WCAG 标准',
+  'a11y.audit.keyboardNav': '键盘导航支持',
+  'a11y.audit.screenReader': '屏幕阅读器兼容',
+  'a11y.audit.reducedMotion': '减少动画支持',
+  'a11y.audit.highContrast': '高对比度模式',
+  'a11y.resetAll': '恢复默认设置',
+  'a11y.resetSuccess': '已恢复默认无障碍设置',
+
+  // Footer
+  'footer.accessibility': '无障碍声明',
 };
 
 export default zh;
