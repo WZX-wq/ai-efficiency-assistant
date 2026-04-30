@@ -434,6 +434,10 @@ export default function Home() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('revealed');
+            // 同时为内部所有 scroll-reveal 和 stagger-children 元素添加 revealed
+            entry.target.querySelectorAll('.scroll-reveal, .stagger-children').forEach((el) => {
+              el.classList.add('revealed');
+            });
           }
         });
       },
