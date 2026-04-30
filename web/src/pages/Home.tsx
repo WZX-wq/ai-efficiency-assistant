@@ -543,7 +543,7 @@ export default function Home() {
         url: 'https://wzx-wq.github.io/ai-efficiency-assistant',
       }} />
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
+      <section className="relative overflow-hidden pt-32 pb-10 sm:pt-40 sm:pb-14">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-950 animate-gradient" style={{ backgroundSize: '200% 200%' }}>
           <div className="absolute top-20 right-10 w-72 h-72 bg-primary-400/20 dark:bg-primary-600/10 rounded-full blur-3xl animate-float" />
           <div className="absolute bottom-10 left-10 w-96 h-96 bg-indigo-400/15 dark:bg-indigo-600/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
@@ -647,7 +647,7 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section ref={statsRef} className="scroll-reveal py-12 bg-gray-50 dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800">
+      <section ref={statsRef} className="scroll-reveal py-8 bg-gray-50 dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
@@ -663,9 +663,9 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" ref={featuresRef} className="scroll-reveal py-20 sm:py-28" style={{ scrollMarginTop: '80px' }}>
+      <section id="features" ref={featuresRef} className="scroll-reveal py-12 sm:py-16" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               二十一大核心功能
             </h2>
@@ -716,9 +716,9 @@ export default function Home() {
       </section>
 
       {/* Product Demo Section */}
-      <section id="demo" className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
+      <section id="demo" className="py-12 sm:py-16 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16 scroll-reveal">
+          <div className="text-center max-w-2xl mx-auto mb-10 scroll-reveal">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               直观高效的工作台
             </h2>
@@ -800,9 +800,9 @@ export default function Home() {
       </section>
 
       {/* Enterprise Features */}
-      <section ref={enterpriseRef} className="scroll-reveal py-20 sm:py-28">
+      <section ref={enterpriseRef} className="scroll-reveal py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               企业级特性
             </h2>
@@ -911,9 +911,9 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" ref={testimonialsRef} className="scroll-reveal py-20 sm:py-28 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
+      <section id="testimonials" ref={testimonialsRef} className="scroll-reveal py-12 sm:py-16 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               用户怎么说
             </h2>
@@ -957,9 +957,9 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section ref={howItWorksRef} className="scroll-reveal py-20 sm:py-28">
+      <section ref={howItWorksRef} className="scroll-reveal py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
               三步开始使用
             </h2>
