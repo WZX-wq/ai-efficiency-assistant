@@ -42,3 +42,27 @@ export interface PlaySession {
   updatedAt: number;
   savedAt?: number; // 存档时间
 }
+
+// Branch choice for interactive storytelling
+export interface BranchChoice {
+  id: string;
+  label: string;
+  prompt: string;
+  icon?: string;
+}
+
+// Achievement system
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  category: 'exploration' | 'social' | 'creation' | 'milestone';
+  condition: {
+    type: 'message_count' | 'session_count' | 'card_played' | 'favorite_added' | 'custom_card_created';
+    target: number;
+    cardId?: string;
+  };
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  unlockedAt?: number;
+}

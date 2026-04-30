@@ -1,6 +1,21 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { CharacterCard, RolePlaySession } from '../data/characterCards';
+import type { Achievement } from '../types/roleplay';
+
+/** 默认成就列表 */
+const DEFAULT_ACHIEVEMENTS: Achievement[] = [
+  { id: 'first_chat', title: '初次冒险', description: '完成第一次角色扮演对话', icon: '🌟', category: 'milestone', condition: { type: 'message_count', target: 1 }, rarity: 'common' },
+  { id: 'talkative', title: '话痨玩家', description: '在单次对话中发送10条消息', icon: '💬', category: 'social', condition: { type: 'message_count', target: 10 }, rarity: 'common' },
+  { id: 'storyteller', title: '故事大师', description: '在单次对话中发送30条消息', icon: '📖', category: 'social', condition: { type: 'message_count', target: 30 }, rarity: 'rare' },
+  { id: 'explorer', title: '世界探索者', description: '体验3个不同的角色卡', icon: '🗺️', category: 'exploration', condition: { type: 'card_played', target: 3 }, rarity: 'rare' },
+  { id: 'collector', title: '收藏家', description: '收藏5个角色卡', icon: '💎', category: 'creation', condition: { type: 'favorite_added', target: 5 }, rarity: 'rare' },
+  { id: 'creator', title: '造物主', description: '创建第一个自定义角色卡', icon: '🎨', category: 'creation', condition: { type: 'custom_card_created', target: 1 }, rarity: 'common' },
+  { id: 'veteran', title: '资深玩家', description: '完成10次游戏会话', icon: '🏆', category: 'milestone', condition: { type: 'session_count', target: 10 }, rarity: 'epic' },
+  { id: 'legend', title: '传说玩家', description: '在单次对话中发送50条消息', icon: '👑', category: 'milestone', condition: { type: 'message_count', target: 50 }, rarity: 'legendary' },
+  { id: 'world_traveler', title: '环球旅行家', description: '体验8个不同的角色卡', icon: '🌍', category: 'exploration', condition: { type: 'card_played', target: 8 }, rarity: 'epic' },
+  { id: 'master_collector', title: '大师收藏家', description: '收藏10个角色卡', icon: '🏅', category: 'creation', condition: { type: 'favorite_added', target: 10 }, rarity: 'epic' },
+];
 
 /** 角色扮演全局状态 */
 interface RolePlayState {
@@ -12,6 +27,8 @@ interface RolePlayState {
   sessions: RolePlaySession[];
   /** 当前活跃会话 ID */
   activeSessionId: string | null;
+  /** 成就列表 */
+  achievements: Achievement[];
 
   // 收藏操作
   toggleFavorite: (cardId: string) => void;
@@ -32,6 +49,10 @@ interface RolePlayState {
   // 导出/导入
   exportSession: (sessionId: string) => string | null;
   importSession: (json: string) => boolean;
+
+  // 成就操作
+  unlockAchievement: (achievementId: string) => void;
+  checkAchievements: (stats: { totalMessages: number; totalSessions: number; cardsPlayed: string[]; favoritesCount: number; customCardsCount: number }) => Achievement[];
 }
 
 export const roleplayStore = create<RolePlayState>()(
@@ -41,6 +62,7 @@ export const roleplayStore = create<RolePlayState>()(
       customCards: [],
       sessions: [],
       activeSessionId: null,
+      achievements: DEFAULT_ACHIEVEMENTS,
 
       // ---- 收藏 ----
       toggleFavorite: (cardId) =>
@@ -139,6 +161,57 @@ export const roleplayStore = create<RolePlayState>()(
           return false;
         }
       },
+
+      // ---- 成就 ----
+      unlockAchievement: (achievementId) =>
+        set((s) => ({
+          achievements: s.achievements.map((a) =>
+            a.id === achievementId && !a.unlockedAt
+              ? { ...a, unlockedAt: Date.now() }
+              : a,
+          ),
+        })),
+
+      checkAchievements: (stats) => {
+        const state = get();
+        const newlyUnlocked: Achievement[] = [];
+
+        for (const achievement of state.achievements) {
+          if (achievement.unlockedAt) continue;
+
+          let shouldUnlock = false;
+          switch (achievement.condition.type) {
+            case 'message_count':
+              shouldUnlock = stats.totalMessages >= achievement.condition.target;
+              break;
+            case 'session_count':
+              shouldUnlock = stats.totalSessions >= achievement.condition.target;
+              break;
+            case 'card_played':
+              shouldUnlock = stats.cardsPlayed.length >= achievement.condition.target;
+              break;
+            case 'favorite_added':
+              shouldUnlock = stats.favoritesCount >= achievement.condition.target;
+              break;
+            case 'custom_card_created':
+              shouldUnlock = stats.customCardsCount >= achievement.condition.target;
+              break;
+          }
+
+          if (shouldUnlock) {
+            newlyUnlocked.push({ ...achievement, unlockedAt: Date.now() });
+            set((s) => ({
+              achievements: s.achievements.map((a) =>
+                a.id === achievement.id
+                  ? { ...a, unlockedAt: Date.now() }
+                  : a,
+              ),
+            }));
+          }
+        }
+
+        return newlyUnlocked;
+      },
     }),
     {
       name: 'ai-assistant-roleplay-store',
@@ -150,6 +223,7 @@ export const roleplayStore = create<RolePlayState>()(
           messages: s.messages.slice(-100),
         })),
         activeSessionId: state.activeSessionId,
+        achievements: state.achievements,
       }),
     }
   )

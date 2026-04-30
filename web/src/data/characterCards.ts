@@ -17,6 +17,7 @@ export interface RolePlayMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: number;
+  branchChoices?: { id: string; label: string; prompt: string; icon?: string }[];
 }
 
 /** Role-play session */

@@ -463,6 +463,7 @@ export default function Playground() {
   const favorites = roleplayStore((s) => s.favorites);
   const toggleFavorite = roleplayStore((s) => s.toggleFavorite);
   const customCards = roleplayStore((s) => s.customCards);
+  const achievements = roleplayStore((s) => s.achievements);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
@@ -720,6 +721,105 @@ export default function Playground() {
             <EmptyState query={searchQuery} />
           )}
         </AnimatePresence>
+      </div>
+
+      {/* ====== 成就系统 ====== */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">成就系统</h2>
+            <span className="px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
+              已解锁 {achievements.filter((a) => a.unlockedAt).length}/{achievements.length}
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {achievements.map((achievement, idx) => {
+            const isUnlocked = !!achievement.unlockedAt;
+            const rarityColors: Record<string, { bg: string; border: string; text: string; badge: string }> = {
+              common: {
+                bg: isUnlocked ? 'bg-gray-50 dark:bg-gray-800/80' : 'bg-gray-100 dark:bg-gray-800/40',
+                border: isUnlocked ? 'border-gray-300 dark:border-gray-600' : 'border-gray-200 dark:border-gray-700',
+                text: isUnlocked ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500',
+                badge: 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400',
+              },
+              rare: {
+                bg: isUnlocked ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-gray-100 dark:bg-gray-800/40',
+                border: isUnlocked ? 'border-blue-300 dark:border-blue-700' : 'border-gray-200 dark:border-gray-700',
+                text: isUnlocked ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500',
+                badge: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+              },
+              epic: {
+                bg: isUnlocked ? 'bg-purple-50 dark:bg-purple-900/20' : 'bg-gray-100 dark:bg-gray-800/40',
+                border: isUnlocked ? 'border-purple-300 dark:border-purple-700' : 'border-gray-200 dark:border-gray-700',
+                text: isUnlocked ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500',
+                badge: 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300',
+              },
+              legendary: {
+                bg: isUnlocked ? 'bg-yellow-50 dark:bg-yellow-900/20' : 'bg-gray-100 dark:bg-gray-800/40',
+                border: isUnlocked ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700',
+                text: isUnlocked ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500',
+                badge: 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300',
+              },
+            };
+            const colors = rarityColors[achievement.rarity];
+            const rarityLabels: Record<string, string> = {
+              common: '普通',
+              rare: '稀有',
+              epic: '史诗',
+              legendary: '传说',
+            };
+
+            return (
+              <motion.div
+                key={achievement.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                className={`relative rounded-2xl border p-4 transition-all duration-200 ${colors.bg} ${colors.border} ${
+                  isUnlocked ? 'hover:shadow-md' : 'opacity-60'
+                }`}
+              >
+                {/* 锁定遮罩 */}
+                {!isUnlocked && (
+                  <div className="absolute inset-0 rounded-2xl bg-gray-900/10 dark:bg-gray-900/30 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                )}
+
+                <div className="relative">
+                  {/* 图标 */}
+                  <div className="text-3xl mb-2">{isUnlocked ? achievement.icon : '🔒'}</div>
+
+                  {/* 标题 */}
+                  <h3 className={`text-sm font-bold mb-1 ${colors.text}`}>
+                    {achievement.title}
+                  </h3>
+
+                  {/* 描述 */}
+                  <p className={`text-xs leading-relaxed mb-2 ${isUnlocked ? 'text-gray-600 dark:text-gray-400' : 'text-gray-400 dark:text-gray-500'}`}>
+                    {achievement.description}
+                  </p>
+
+                  {/* 稀有度标签 */}
+                  <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${colors.badge}`}>
+                    {rarityLabels[achievement.rarity]}
+                  </span>
+
+                  {/* 解锁日期 */}
+                  {isUnlocked && achievement.unlockedAt && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5">
+                      {new Date(achievement.unlockedAt).toLocaleDateString('zh-CN')}
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
       {/* ====== 角色卡详情弹窗 ====== */}

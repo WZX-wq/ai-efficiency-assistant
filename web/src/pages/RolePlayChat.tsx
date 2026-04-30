@@ -34,6 +34,27 @@ function stripStatusCommands(text: string): string {
   return text.replace(/\[状态:[^\]]+\]/g, '').trim();
 }
 
+/** 从 AI 回复中解析分支选择 [选择:选项文本|指令] */
+function parseBranchChoices(content: string): {
+  choices: { id: string; label: string; prompt: string; icon?: string }[];
+  cleanedContent: string;
+} {
+  const choices: { id: string; label: string; prompt: string; icon?: string }[] = [];
+  const regex = /\[选择:([^\]|]+)\|([^\]]+)\]/g;
+  let match: RegExpExecArray | null;
+  let index = 0;
+  while ((match = regex.exec(content)) !== null) {
+    choices.push({
+      id: `branch_${Date.now()}_${index}`,
+      label: match[1].trim(),
+      prompt: match[2].trim(),
+    });
+    index++;
+  }
+  const cleanedContent = content.replace(/\[选择:[^\]]+\]/g, '').trim();
+  return { choices, cleanedContent };
+}
+
 /** 从 greeting 中解析初始状态 */
 function parseInitialStatus(greeting: string): Record<string, string> {
   return parseStatusUpdates(greeting);
@@ -282,12 +303,14 @@ const ChatMessageItem = React.memo(function ChatMessageItem({
   themeColor,
   isStreaming,
   isDark,
+  onBranchChoice,
 }: {
   message: RolePlayMessage;
   emoji: string;
   themeColor: string;
   isStreaming?: boolean;
   isDark: boolean;
+  onBranchChoice?: (choice: { label: string; prompt: string }) => void;
 }) {
   const isUser = message.role === 'user';
   const displayContent = isUser ? message.content : stripStatusCommands(message.content);
@@ -339,6 +362,32 @@ const ChatMessageItem = React.memo(function ChatMessageItem({
           </svg>
         </div>
       )}
+
+      {/* 分支选择按钮 */}
+      {!isUser && !isStreaming && message.branchChoices && message.branchChoices.length > 0 && onBranchChoice && (
+        <div className="flex-1 flex flex-col gap-2 mt-2 ml-13">
+          {message.branchChoices.map((choice, idx) => (
+            <motion.button
+              key={choice.id}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: idx * 0.1 }}
+              onClick={() => onBranchChoice({ label: choice.label, prompt: choice.prompt })}
+              disabled={isStreaming}
+              className={`text-left px-4 py-2.5 rounded-xl text-sm font-medium border
+                         transition-all duration-200 hover:shadow-md active:scale-[0.98]
+                         disabled:opacity-50 disabled:cursor-not-allowed ${
+                           isDark
+                             ? 'bg-white/8 border-white/15 text-gray-200 hover:bg-white/15 hover:border-white/25'
+                             : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm'
+                         }`}
+            >
+              <span className="mr-2">{choice.icon || '🔀'}</span>
+              {choice.label}
+            </motion.button>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 });
@@ -360,6 +409,12 @@ export default function RolePlayChat() {
   const deleteSession = roleplayStore((s) => s.deleteSession);
   const setActiveSession = roleplayStore((s) => s.setActiveSession);
   const activeSessionId = roleplayStore((s) => s.activeSessionId);
+  const checkAchievements = roleplayStore((s) => s.checkAchievements);
+  const sessions = roleplayStore((s) => s.sessions);
+  const favorites = roleplayStore((s) => s.favorites);
+
+  // ---- 成就检查 ref（避免 sendMessage 依赖顺序问题） ----
+  const triggerAchievementCheckRef = useRef<() => void>(() => {});
 
   // ---- 主题检测 ----
   const appTheme = useAppStore((s) => s.theme);
@@ -534,7 +589,7 @@ export default function RolePlayChat() {
       // 构建 system prompt
       const systemPrompt = `${card.worldSetting}\n\n${card.characterPrompt}\n\n当前玩家状态：\n${Object.entries(statusValues)
         .map(([k, v]) => `- ${k}: ${v}`)
-        .join('\n')}`;
+        .join('\n')}\n\n当故事发展到需要玩家做选择的时刻，请在回复末尾用以下格式提供2-3个选项：\n[选择:选项描述|对应的行动指令]\n例如：\n[选择:走进洞穴探索|我决定走进洞穴，看看里面有什么]\n[选择:在营地休息|我选择在营地休息，恢复体力]\n[选择:与神秘人对话|我走向那个神秘的人，试图与他交谈]`;
 
       // 构建消息历史（最近 20 条）
       const history = [...messages, userMessage]
@@ -612,10 +667,29 @@ export default function RolePlayChat() {
           setStatusValues((prev) => ({ ...prev, ...updates }));
         }
 
+        // 解析分支选择
+        const { choices: branchChoices, cleanedContent } = parseBranchChoices(fullContent);
+
         // 保存会话
-        const finalMessages = [...messages, userMessage, { ...aiMessage, content: fullContent }];
+        const finalMessages = [...messages, userMessage, { ...aiMessage, content: cleanedContent, branchChoices: branchChoices.length > 0 ? branchChoices : undefined }];
         if (sessionId) {
           saveSession(sessionId, finalMessages, { ...statusValues, ...updates });
+        }
+
+        // 检查成就
+        setTimeout(() => triggerAchievementCheckRef.current(), 200);
+
+        // 更新显示的消息（去除分支标记）
+        if (branchChoices.length > 0) {
+          setMessages((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              ...updated[updated.length - 1],
+              content: cleanedContent,
+              branchChoices,
+            };
+            return updated;
+          });
         }
       } catch {
         if (controller.signal.aborted) {
@@ -650,6 +724,47 @@ export default function RolePlayChat() {
   const stopGenerating = useCallback(() => {
     abortRef.current?.abort();
   }, []);
+
+  // ---- 分支选择 ----
+  const handleBranchChoice = useCallback(
+    (choice: { label: string; prompt: string }) => {
+      if (isGenerating) return;
+      const userMsg: RolePlayMessage = {
+        id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        role: 'user',
+        content: choice.label,
+        timestamp: Date.now(),
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      setInputValue('');
+      setTimeout(() => {
+        sendMessage(choice.prompt);
+      }, 100);
+    },
+    [isGenerating, sendMessage],
+  );
+
+  // ---- 成就检查 ----
+  const triggerAchievementCheck = useCallback(() => {
+    const totalMessages = messages.filter((m) => m.role === 'user').length;
+    const totalSessions = sessions.length;
+    const cardsPlayed = [...new Set(sessions.map((s) => s.cardId))];
+    const newAchievements = checkAchievements({
+      totalMessages,
+      totalSessions,
+      cardsPlayed,
+      favoritesCount: favorites.length,
+      customCardsCount: customCards.length,
+    });
+    for (const ach of newAchievements) {
+      toast(`成就解锁：${ach.title}！`, 'success');
+    }
+  }, [messages, sessions, favorites, customCards, checkAchievements, toast]);
+
+  // 保持 ref 同步
+  useEffect(() => {
+    triggerAchievementCheckRef.current = triggerAchievementCheck;
+  }, [triggerAchievementCheck]);
 
   // ---- 清除对话 ----
   const clearChat = useCallback(() => {
@@ -858,6 +973,7 @@ export default function RolePlayChat() {
             themeColor={theme.primary}
             isStreaming={isGenerating && idx === messages.length - 1 && msg.role === 'assistant'}
             isDark={isDark}
+            onBranchChoice={handleBranchChoice}
           />
         ))}
         <div ref={chatEndRef} />
