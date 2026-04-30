@@ -4,6 +4,7 @@ import { useSeo } from '../../components/SeoHead';
 import { useAppStore } from '../../store/appStore';
 import { chatWithAiStream } from '../../services/aiChat';
 import { exportAsMarkdown, exportAsText, exportFile } from '../../utils/export';
+import CollabToolbar from '../../components/CollabToolbar';
 
 // ============================================================
 // Types
@@ -1169,6 +1170,15 @@ ${prevSections ? `\n## 已完成的章节内容（供参考，保持连贯性）
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 text-sm rounded-lg shadow-lg z-50 animate-fade-in">
           {toast}
         </div>
+      )}
+
+      {/* Collaboration Toolbar - shown when there is content */}
+      {(step === 'writing' || step === 'complete') && (
+        <CollabToolbar
+          title={topic || 'AI 长文写作'}
+          content={getFullArticle()}
+          onContentChange={() => {}}
+        />
       )}
     </div>
   );

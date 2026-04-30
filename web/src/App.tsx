@@ -13,6 +13,7 @@ import MobileNav from './components/MobileNav';
 import BackToTop from './components/BackToTop';
 import PageTransition from './components/PageTransition';
 import { ToolPageSkeleton } from './components/Skeleton';
+import ThemeProvider from './components/ThemeProvider';
 import { useAppStore } from './store/appStore';
 import { analytics } from './utils/analytics';
 
@@ -72,6 +73,8 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const ApiPlatform = lazy(() => import('./pages/ApiPlatform'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const TemplateMarket = lazy(() => import('./pages/TemplateMarket'));
+const ThemeSettings = lazy(() => import('./pages/ThemeSettings'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -121,10 +124,12 @@ function ScrollToTop() {
 export default function App() {
   return (
     <BrowserRouter basename="/ai-efficiency-assistant">
-      <ToastProvider>
-        <ThemeInitializer />
-        <AppContent />
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <ThemeInitializer />
+          <AppContent />
+        </ToastProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }
@@ -214,6 +219,8 @@ function AppContent() {
                 <Route path="/profile" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ProfilePage /></Suspense></ErrorBoundary>} />
                 <Route path="/api-platform" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ApiPlatform /></Suspense></ErrorBoundary>} />
                 <Route path="/dashboard" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Dashboard /></Suspense></ErrorBoundary>} />
+                <Route path="/templates" element={<ErrorBoundary><Suspense fallback={LazyFallback}><TemplateMarket /></Suspense></ErrorBoundary>} />
+                <Route path="/theme-settings" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ThemeSettings /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>

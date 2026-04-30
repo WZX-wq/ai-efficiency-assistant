@@ -542,6 +542,83 @@ const zh: Record<string, string> = {
   'dashboard.colName': '名称',
   'dashboard.colDetails': '详情',
   'dashboard.privacyNote': '所有数据仅存储在本地浏览器中，不会上传到任何服务器。',
+
+  // ========== Theme Settings ==========
+  'theme.title': '主题设置',
+  'theme.description': '自定义应用外观，选择预设主题或创建你的专属风格',
+  'theme.presetThemes': '预设主题',
+  'theme.customEditor': '自定义编辑器',
+  'theme.customThemes': '自定义主题',
+  'theme.darkMode': '深色模式',
+  'theme.darkModeDesc': '切换深色/浅色模式',
+  'theme.light': '浅色',
+  'theme.dark': '深色',
+  'theme.primaryColor': '主色调',
+  'theme.accentColor': '强调色',
+  'theme.borderRadius': '圆角大小',
+  'theme.fontSize': '字体大小',
+  'theme.fontFamily': '字体风格',
+  'theme.livePreview': '实时预览',
+  'theme.saveCurrent': '保存当前设置为主题',
+  'theme.noCustomThemes': '暂无自定义主题，点击上方按钮保存当前设置',
+  'theme.use': '使用',
+  'theme.saveDialogTitle': '保存自定义主题',
+  'theme.themeNamePlaceholder': '输入主题名称...',
+  'theme.resetDefault': '恢复默认主题',
+  'theme.themeSettings': '主题设置',
+  'theme.themeTooltip': '主题设置',
+
+  // ========== Collaboration ==========
+  // Share Modal
+  'collab.share.title': '分享',
+  'collab.share.shareLink': '分享链接',
+  'collab.share.copyLink': '复制链接',
+  'collab.share.linkCopied': '链接已复制到剪贴板',
+  'collab.share.copyFailed': '复制失败，请手动复制',
+  'collab.share.qrCode': '二维码',
+  'collab.share.qrHint': '扫描二维码查看分享内容',
+  'collab.share.exportOptions': '导出选项',
+  'collab.share.copyAsText': '复制纯文本',
+  'collab.share.copyAsMd': '复制 Markdown',
+  'collab.share.downloadSuccess': '文件下载成功',
+  'collab.share.preview': '内容预览',
+  'collab.share.words': '字',
+  'collab.share.socialShare': '社交分享',
+  'collab.share.weiboHint': '分享到微博',
+  'collab.share.twitterHint': '分享到 Twitter/X',
+  'collab.share.email': '邮件分享',
+  'collab.share.emailHint': '通过邮件发送给好友',
+
+  // Version History
+  'collab.version.title': '版本历史',
+  'collab.version.noVersions': '暂无版本记录',
+  'collab.version.emptyContent': '（空内容）',
+  'collab.version.restore': '恢复此版本',
+  'collab.version.restoreSuccess': '已恢复到该版本',
+  'collab.version.diff': '对比',
+  'collab.version.clearAll': '清除历史',
+  'collab.version.clearConfirm': '确定要清除所有版本历史吗？此操作不可撤销。',
+  'collab.version.clearSuccess': '版本历史已清除',
+
+  // Comment Panel
+  'collab.comment.title': '评论',
+  'collab.comment.placeholder': '添加评论...',
+  'collab.comment.submitHint': 'Ctrl+Enter 发送',
+  'collab.comment.add': '发送',
+  'collab.comment.addSuccess': '评论已添加',
+  'collab.comment.deleteSuccess': '评论已删除',
+  'collab.comment.noComments': '暂无评论',
+
+  // Collab Toolbar
+  'collab.toolbar.share': '分享',
+  'collab.toolbar.history': '版本历史',
+  'collab.toolbar.comments': '评论',
+  'collab.toolbar.export': '导出',
+  'collab.toolbar.bookmark': '收藏',
+
+  // Bookmark
+  'collab.bookmark.success': '已添加到收藏',
+  'collab.bookmark.alreadyBookmarked': '该内容已在收藏中',
 };
 
 export default zh;

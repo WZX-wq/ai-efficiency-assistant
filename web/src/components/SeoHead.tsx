@@ -110,10 +110,12 @@ const BREADCRUMB_NAMES: Record<string, string> = {
   brand: '品牌声音',
   seo: 'SEO优化',
   templates: '模板库',
+  'template-market': 'AI模板市场',
   humanize: '人性化改写',
   polish: '文章润色',
   summarizer: '内容总结',
   longform: 'AI长文写作',
+  'theme-settings': '主题设置',
 }
 
 // ============================================================
@@ -710,5 +712,23 @@ export const PAGE_SEO = {
     keywords:
       '数据分析,使用统计,错误追踪,数据面板,使用报告',
     canonicalUrl: '/dashboard',
+  },
+
+  'template-market': {
+    title: 'AI模板市场 - AI效率助手',
+    description:
+      '精选200+专业AI模板，覆盖商务办公、内容创作、学术研究、营销推广、技术开发、教育学习等场景，一键使用，让AI为你赋能。',
+    keywords:
+      'AI模板,模板市场,AI写作模板,文案模板,办公模板,创作模板,AI效率助手',
+    canonicalUrl: '/templates',
+  },
+
+  'theme-settings': {
+    title: '主题设置 - AI效率助手',
+    description:
+      '自定义AI效率助手的外观主题，包括预设主题、自定义配色、圆角、字体等个性化设置。',
+    keywords:
+      '主题设置,自定义主题,深色模式,配色方案,AI效率助手',
+    canonicalUrl: '/theme-settings',
   },
 } as const

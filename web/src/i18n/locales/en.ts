@@ -108,6 +108,7 @@ const en: Record<string, string> = {
   'header.marketing': 'Marketing Copy',
   'header.fiction': 'Interactive Fiction',
   'header.dashboard': 'Dashboard',
+  'header.templateMarket': 'Templates',
 
   // ========== Footer ==========
   'footer.brandDesc': 'Enterprise-grade AI content creation platform',
@@ -541,6 +542,83 @@ const en: Record<string, string> = {
   'dashboard.colName': 'Name',
   'dashboard.colDetails': 'Details',
   'dashboard.privacyNote': 'All data is stored locally in your browser and is never sent to any server.',
+
+  // ========== Theme Settings ==========
+  'theme.title': 'Theme Settings',
+  'theme.description': 'Customize the app appearance, choose a preset theme or create your own style',
+  'theme.presetThemes': 'Preset Themes',
+  'theme.customEditor': 'Custom Editor',
+  'theme.customThemes': 'Custom Themes',
+  'theme.darkMode': 'Dark Mode',
+  'theme.darkModeDesc': 'Toggle between dark and light mode',
+  'theme.light': 'Light',
+  'theme.dark': 'Dark',
+  'theme.primaryColor': 'Primary Color',
+  'theme.accentColor': 'Accent Color',
+  'theme.borderRadius': 'Border Radius',
+  'theme.fontSize': 'Font Size',
+  'theme.fontFamily': 'Font Family',
+  'theme.livePreview': 'Live Preview',
+  'theme.saveCurrent': 'Save Current as Theme',
+  'theme.noCustomThemes': 'No custom themes yet. Click the button above to save your current settings.',
+  'theme.use': 'Use',
+  'theme.saveDialogTitle': 'Save Custom Theme',
+  'theme.themeNamePlaceholder': 'Enter theme name...',
+  'theme.resetDefault': 'Reset to Default',
+  'theme.themeSettings': 'Theme Settings',
+  'theme.themeTooltip': 'Theme Settings',
+
+  // ========== Collaboration ==========
+  // Share Modal
+  'collab.share.title': 'Share',
+  'collab.share.shareLink': 'Share Link',
+  'collab.share.copyLink': 'Copy Link',
+  'collab.share.linkCopied': 'Link copied to clipboard',
+  'collab.share.copyFailed': 'Copy failed, please copy manually',
+  'collab.share.qrCode': 'QR Code',
+  'collab.share.qrHint': 'Scan QR code to view shared content',
+  'collab.share.exportOptions': 'Export Options',
+  'collab.share.copyAsText': 'Copy as Plain Text',
+  'collab.share.copyAsMd': 'Copy as Markdown',
+  'collab.share.downloadSuccess': 'File downloaded successfully',
+  'collab.share.preview': 'Content Preview',
+  'collab.share.words': 'words',
+  'collab.share.socialShare': 'Social Share',
+  'collab.share.weiboHint': 'Share to Weibo',
+  'collab.share.twitterHint': 'Share to Twitter/X',
+  'collab.share.email': 'Email Share',
+  'collab.share.emailHint': 'Send via email to a friend',
+
+  // Version History
+  'collab.version.title': 'Version History',
+  'collab.version.noVersions': 'No versions recorded',
+  'collab.version.emptyContent': '(empty content)',
+  'collab.version.restore': 'Restore Version',
+  'collab.version.restoreSuccess': 'Restored to this version',
+  'collab.version.diff': 'Compare',
+  'collab.version.clearAll': 'Clear History',
+  'collab.version.clearConfirm': 'Are you sure you want to clear all version history? This action cannot be undone.',
+  'collab.version.clearSuccess': 'Version history cleared',
+
+  // Comment Panel
+  'collab.comment.title': 'Comments',
+  'collab.comment.placeholder': 'Add a comment...',
+  'collab.comment.submitHint': 'Ctrl+Enter to submit',
+  'collab.comment.add': 'Submit',
+  'collab.comment.addSuccess': 'Comment added',
+  'collab.comment.deleteSuccess': 'Comment deleted',
+  'collab.comment.noComments': 'No comments yet',
+
+  // Collab Toolbar
+  'collab.toolbar.share': 'Share',
+  'collab.toolbar.history': 'Version History',
+  'collab.toolbar.comments': 'Comments',
+  'collab.toolbar.export': 'Export',
+  'collab.toolbar.bookmark': 'Bookmark',
+
+  // Bookmark
+  'collab.bookmark.success': 'Added to bookmarks',
+  'collab.bookmark.alreadyBookmarked': 'This content is already bookmarked',
 };
 
 export default en;

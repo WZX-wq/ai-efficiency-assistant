@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store/appStore';
+import { useThemeStore } from '../store/useThemeStore';
 import { useUserStore } from '../store/userStore';
 import { NotificationBell } from './NotificationCenter';
 import { useTranslation, supportedLocales, localeLabels } from '../i18n';
@@ -44,17 +45,16 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const { theme, setTheme, toggleAiPanel } = useAppStore();
+  const { toggleAiPanel } = useAppStore();
+  const { isDark, toggleDark, currentTheme } = useThemeStore();
+  const navigate = useNavigate();
   const { user, isAuthenticated, isDemoMode } = useUserStore();
 
-  const darkMode = useMemo(() => theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches), [theme]);
-
-  const toggleDarkMode = () => {
-    setTheme(darkMode ? 'light' : 'dark');
-  };
+  const darkMode = isDark;
 
   const navLinks = useMemo(() => [
     { to: '/', label: t('header.home') },
+    { to: '/templates', label: t('header.templateMarket') },
     { to: '/services', label: t('header.services') },
     { to: '/playground', label: t('header.playground') },
     { to: '/api-platform', label: t('header.apiPlatform') },
@@ -328,22 +328,35 @@ export default function Header() {
                   )}
                 </AnimatePresence>
               </div>
-              {/* 暗黑模式切换 */}
-              <button
-                onClick={toggleDarkMode}
-                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label={t('header.toggleDarkMode')}
-              >
-                {darkMode ? (
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                  </svg>
-                )}
-              </button>
+              {/* 暗黑模式切换 / 主题设置 */}
+              <div className="relative group">
+                <button
+                  onClick={toggleDark}
+                  onContextMenu={(e) => { e.preventDefault(); navigate('/theme-settings'); }}
+                  className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative"
+                  aria-label={t('header.toggleDarkMode')}
+                  title={t('theme.themeTooltip')}
+                >
+                  {darkMode ? (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                  )}
+                  {/* Theme color indicator dot */}
+                  <span
+                    className="absolute bottom-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-800"
+                    style={{ backgroundColor: currentTheme.primaryColor === 'blue' ? '#3b82f6' : currentTheme.primaryColor === 'emerald' ? '#10b981' : currentTheme.primaryColor === 'orange' ? '#f97316' : currentTheme.primaryColor === 'violet' ? '#8b5cf6' : currentTheme.primaryColor === 'rose' ? '#f43f5e' : currentTheme.primaryColor === 'indigo' ? '#6366f1' : currentTheme.primaryColor === 'slate' ? '#64748b' : currentTheme.primaryColor === 'yellow' ? '#eab308' : '#3b82f6' }}
+                  />
+                </button>
+                {/* Tooltip on hover */}
+                <div className="absolute right-0 top-full mt-1 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                  {t('theme.themeTooltip')} (右键打开)
+                </div>
+              </div>
               <Link
                 to="/workspace"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors shadow-sm hover:shadow-md"
