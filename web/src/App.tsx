@@ -52,9 +52,12 @@ const TranslationTool = lazy(() => import('./pages/tools/TranslationTool'));
 const DocAnalysisTool = lazy(() => import('./pages/tools/DocAnalysisTool'));
 const MindMapTool = lazy(() => import('./pages/tools/MindMapTool'));
 const LongFormTool = lazy(() => import('./pages/tools/LongFormTool'));
+const LifeAssistantTool = lazy(() => import('./pages/tools/LifeAssistantTool'));
 const Playground = lazy(() => import('./pages/Playground'));
 const RolePlayChat = lazy(() => import('./pages/RolePlayChat'));
 const CharacterCreator = lazy(() => import('./pages/CharacterCreator'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -182,11 +185,14 @@ function AppContent() {
                 <Route path="/workspace/doc-analysis" element={<ErrorBoundary><Suspense fallback={LazyFallback}><DocAnalysisTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/mindmap" element={<ErrorBoundary><Suspense fallback={LazyFallback}><MindMapTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/longform" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LongFormTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/life-assistant" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LifeAssistantTool /></Suspense></ErrorBoundary>} />
                 <Route path="/playground" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Playground /></Suspense></ErrorBoundary>} />
                 <Route path="/playground/:cardId" element={<ErrorBoundary><Suspense fallback={LazyFallback}><RolePlayChat /></Suspense></ErrorBoundary>} />
                 <Route path="/playground/create" element={<ErrorBoundary><Suspense fallback={LazyFallback}><CharacterCreator /></Suspense></ErrorBoundary>} />
                 <Route path="/privacy" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PrivacyPolicy /></Suspense></ErrorBoundary>} />
                 <Route path="/terms" element={<ErrorBoundary><Suspense fallback={LazyFallback}><TermsOfService /></Suspense></ErrorBoundary>} />
+                <Route path="/login" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LoginPage /></Suspense></ErrorBoundary>} />
+                <Route path="/profile" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ProfilePage /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>

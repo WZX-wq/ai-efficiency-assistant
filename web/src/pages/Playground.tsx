@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSeo } from '../components/SeoHead';
+import { useToast } from '../components/ToastProvider';
 import { roleplayStore } from '../store/roleplayStore';
 import {
   PRESET_CARDS,
@@ -19,7 +20,7 @@ import {
 /** 所有分类 */
 const ALL_CATEGORIES: (CharacterCategory | 'all')[] = [
   'all', 'fantasy', 'historical', 'survival', 'mystery',
-  'scifi', 'romance', 'adventure', 'daily',
+  'scifi', 'romance', 'adventure', 'daily', 'life', 'education', 'career',
 ];
 
 /** 排行榜 Tab 类型 */
@@ -328,11 +329,13 @@ const CharacterCardItem = React.memo(function CharacterCardItem({
   isFav,
   onToggleFav,
   onClick,
+  onShare,
 }: {
   card: CharacterCard;
   isFav: boolean;
   onToggleFav: () => void;
   onClick: () => void;
+  onShare: () => void;
 }) {
   return (
     <motion.div
@@ -371,6 +374,25 @@ const CharacterCardItem = React.memo(function CharacterCardItem({
               strokeLinejoin="round"
               d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
             />
+          </svg>
+        </button>
+        {/* 分享按钮 */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onShare();
+          }}
+          className="absolute top-3 right-12 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          aria-label="分享角色卡"
+        >
+          <svg
+            className="w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
           </svg>
         </button>
       </div>
@@ -460,6 +482,7 @@ export default function Playground() {
   });
 
   const navigate = useNavigate();
+  const { toast } = useToast();
   const favorites = roleplayStore((s) => s.favorites);
   const toggleFavorite = roleplayStore((s) => s.toggleFavorite);
   const customCards = roleplayStore((s) => s.customCards);
@@ -470,6 +493,7 @@ export default function Playground() {
   const [activeCategory, setActiveCategory] = useState<CharacterCategory | 'all'>('all');
   const [activeTab, setActiveTab] = useState<RankingTab>('hot');
   const [previewCard, setPreviewCard] = useState<CharacterCard | null>(null);
+  const [showAllCommunity, setShowAllCommunity] = useState(false);
 
   /** 搜索防抖 */
   useEffect(() => {
@@ -529,6 +553,23 @@ export default function Playground() {
     }
     return counts;
   }, [allCards]);
+
+  /** 社区精选：按评分排序的预设卡 */
+  const communityCards = useMemo(() => {
+    return [...PRESET_CARDS]
+      .filter((c) => c.rating >= 4)
+      .sort((a, b) => b.rating - a.rating || b.playCount - a.playCount);
+  }, []);
+
+  /** 分享角色卡 */
+  const handleShareCard = useCallback((card: CharacterCard) => {
+    const shareText = `🌟 推荐一个超棒的 AI 角色卡：${card.name}\n\n${card.description}\n\n分类：${CATEGORY_LABELS[card.category]}\n评分：${'⭐'.repeat(card.rating)}\n\n快来 AI 效率助手的游乐场体验吧！`;
+    navigator.clipboard.writeText(shareText).then(() => {
+      toast('分享内容已复制到剪贴板', 'success');
+    }).catch(() => {
+      toast('复制失败，请手动复制', 'error');
+    });
+  }, [toast]);
 
   /** ESC 键关闭弹窗 */
   useEffect(() => {
@@ -637,6 +678,67 @@ export default function Playground() {
         </div>
       </section>
 
+      {/* ====== 社区精选 ====== */}
+      {communityCards.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">🏆 社区精选</h2>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+                TOP {communityCards.length}
+              </span>
+            </div>
+            <button
+              onClick={() => setShowAllCommunity((prev) => !prev)}
+              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors flex items-center gap-1"
+            >
+              {showAllCommunity ? '收起' : '查看更多'}
+              <svg className={`w-4 h-4 transition-transform ${showAllCommunity ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+
+          <div className={`flex gap-4 overflow-x-auto pb-4 scrollbar-hide ${showAllCommunity ? 'flex-wrap' : ''}`}>
+            {(showAllCommunity ? communityCards : communityCards.slice(0, 8)).map((card) => (
+              <motion.div
+                key={card.id}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className={`flex-shrink-0 bg-white dark:bg-gray-800/80 rounded-2xl border border-gray-200 dark:border-gray-700
+                           shadow-sm hover:shadow-lg dark:hover:shadow-gray-900/50 transition-shadow duration-300
+                           overflow-hidden cursor-pointer group
+                           ${showAllCommunity ? 'w-[220px]' : 'w-[200px]'}`}
+                onClick={() => handleCardClick(card)}
+              >
+                <div className="relative pt-4 pb-2 flex items-center justify-center bg-gradient-to-b from-gray-50 to-transparent dark:from-gray-700/30 dark:to-transparent">
+                  <span className="text-4xl group-hover:scale-110 transition-transform duration-300">{card.avatar}</span>
+                  {/* Rating badge */}
+                  <div className="absolute top-2 left-2 flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-sm">
+                    <svg className="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">{card.rating}</span>
+                  </div>
+                </div>
+                <div className="px-3 pb-3">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">{card.name}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{card.author}</p>
+                  <div className="flex items-center gap-3 mt-2 text-xs text-gray-400 dark:text-gray-500">
+                    <span className="flex items-center gap-0.5">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      {card.playCount.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ====== 分类标签栏 ====== */}
       <div className="sticky top-16 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -714,6 +816,7 @@ export default function Playground() {
                   isFav={favorites.includes(card.id)}
                   onToggleFav={() => toggleFavorite(card.id)}
                   onClick={() => handleCardClick(card)}
+                  onShare={() => handleShareCard(card)}
                 />
               ))}
             </motion.div>

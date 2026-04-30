@@ -335,7 +335,10 @@ export const PAGE_SEO = {
   rewrite: { title: 'AI智能改写 - AI效率助手', description: 'AI智能改写工具，支持降重改写、去AI痕迹、学术润色、口语化等多种改写模式，一键提升文本质量。', keywords: 'AI改写,文本降重,去AI痕迹,学术润色,文本人性化,AI降重工具' },
   translation: { title: 'AI智能翻译 - AI效率助手', description: 'AI智能翻译工具，支持中英日韩法德西俄阿葡多语言互译，提供文本翻译、文档翻译、批量翻译、润色翻译四种模式。', keywords: 'AI翻译,多语言翻译,智能翻译,文档翻译,批量翻译,翻译工具' },
   'doc-analysis': { title: 'AI文档分析 - AI效率助手', description: 'AI文档分析工具，支持智能摘要、关键信息提取、文档问答、文档对比等多种分析模式，快速洞察文档内容。', keywords: 'AI文档分析,文档摘要,信息提取,文档问答,文档对比,AI分析工具' },
-  mindmap: { title: 'AI思维导图 - AI效率助手', description: 'AI智能思维导图生成器，输入主题自动生成结构化思维导图，支持思维发散、流程图、SWOT分析等多种类型。', keywords: 'AI思维导图,思维导图生成器,脑图工具,SWOT分析,知识框架,项目规划,AI导图' },
+ mindmap: { title: 'AI思维导图 - AI效率助手', description: 'AI智能思维导图生成器，输入主题自动生成结构化思维导图，支持思维发散、流程图、SWOT分析等多种类型。', keywords: 'AI思维导图,思维导图生成器,脑图工具,SWOT分析,知识框架,项目规划,AI导图' },
+
+  // 生活助手
+  'life-assistant': { title: 'AI生活助手 - AI效率助手', description: 'AI生活助手提供旅行规划、美食推荐、健康顾问、职业规划、情感倾听等智能生活服务，让AI成为你的全方位生活助手。', keywords: 'AI生活助手,旅行规划,美食推荐,健康顾问,职业规划,情感倾听,AI助手' },
 
   // 游乐场
   playground: { title: 'AI游乐场 - AI效率助手', description: 'AI角色扮演互动体验，修仙、三国、荒岛求生等多种世界观等你探索' },
@@ -343,4 +346,18 @@ export const PAGE_SEO = {
   // 其他页面
   privacy: { title: '隐私政策 - AI效率助手', description: '了解AI效率助手如何收集、使用和保护您的个人信息' },
   terms: { title: '服务条款 - AI效率助手', description: 'AI效率助手的服务条款和使用协议' },
+
+  // 用户系统
+  login: {
+    title: '登录 / 注册 - AI效率助手',
+    description: '登录或注册AI效率助手账户，开始使用AI智能写作、文案生成、内容优化等强大功能。',
+    keywords: 'AI登录,注册,账号管理,AI写作助手,免费注册',
+    canonicalUrl: '/login',
+  },
+  profile: {
+    title: '个人中心 - AI效率助手',
+    description: '管理您的AI效率助手个人资料、查看使用统计、账户设置和会员计划。',
+    keywords: '个人中心,用户资料,使用统计,账户设置,会员管理',
+    canonicalUrl: '/profile',
+  },
 } as const

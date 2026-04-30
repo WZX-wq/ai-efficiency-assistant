@@ -3,7 +3,7 @@ export interface CharacterCard {
   name: string;
   description: string;
   avatar: string; // emoji
-  category: 'fantasy' | 'historical' | 'survival' | 'mystery' | 'scifi' | 'romance' | 'adventure' | 'daily';
+  category: 'fantasy' | 'historical' | 'survival' | 'mystery' | 'scifi' | 'romance' | 'adventure' | 'daily' | 'life' | 'education' | 'career';
   tags: string[];
   author: string;
   playCount: number;

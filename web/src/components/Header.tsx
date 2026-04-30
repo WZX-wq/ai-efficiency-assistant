@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store/appStore';
+import { useUserStore } from '../store/userStore';
 import { NotificationBell } from './NotificationCenter';
 import { useTranslation } from '../i18n';
 
@@ -24,6 +25,7 @@ const toolLinkItems = [
   { to: '/workspace/translation', labelKey: 'header.translation', icon: '🌐' },
   { to: '/workspace/doc-analysis', labelKey: 'header.docAnalysis', icon: '📄' },
   { to: '/workspace/mindmap', labelKey: 'header.mindmap', icon: '🧠' },
+  { to: '/workspace/life-assistant', labelKey: 'header.lifeAssistant', icon: '🌿' },
 ];
 
 export default function Header() {
@@ -36,6 +38,7 @@ export default function Header() {
   const toolsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { theme, setTheme, toggleAiPanel } = useAppStore();
+  const { user, isAuthenticated, isDemoMode } = useUserStore();
 
   const darkMode = useMemo(() => theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches), [theme]);
 
@@ -240,13 +243,28 @@ export default function Header() {
                 <span className="hidden lg:inline">{t('header.aiAssistant')}</span>
               </button>
 
-              {/* 登录按钮 */}
-              <Link
-                to="/workspace"
-                className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                {t('header.login')}
-              </Link>
+              {/* 登录按钮 / 用户头像 */}
+              {isAuthenticated && user ? (
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                >
+                  <img src={user.avatar} alt={user.username} className="w-6 h-6 rounded-full" />
+                  <span className="hidden lg:inline max-w-[80px] truncate">{user.username}</span>
+                  {isDemoMode && (
+                    <span className="hidden sm:inline-flex px-1.5 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 rounded">
+                      {t('header.demoMode')}
+                    </span>
+                  )}
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                >
+                  {t('header.login')}
+                </Link>
+              )}
 
               {/* 设置按钮 */}
               <Link
