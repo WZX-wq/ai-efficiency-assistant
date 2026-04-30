@@ -72,6 +72,9 @@ const en: Record<string, string> = {
   'header.templates': 'Templates',
   'header.brand': 'Brand Voice',
   'header.history': 'History',
+  'header.translation': 'Smart Translation',
+  'header.docAnalysis': 'Document Analysis',
+  'header.mindmap': 'Mind Map',
 
   // ========== Footer ==========
   'footer.brandDesc': 'Enterprise-grade AI content creation platform',

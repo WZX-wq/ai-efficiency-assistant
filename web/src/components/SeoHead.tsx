@@ -333,6 +333,9 @@ export const PAGE_SEO = {
   longform: { title: 'AI长文写作 - AI效率助手', description: 'AI长文写作工具，支持大纲规划与分段生成，轻松创作万字论文、报告、小说、教程等专业长文内容。', keywords: 'AI长文写作,万字论文生成,大纲规划,分段写作,长文生成器,AI写作助手' },
   continue: { title: 'AI续写扩写 - AI效率助手', description: 'AI续写扩写工具，智能理解上下文，一键续写文章、扩写段落、生成结尾，支持多版本对比选择。', keywords: 'AI续写,文章扩写,智能续写,结尾生成,标题生成,AI写作助手' },
   rewrite: { title: 'AI智能改写 - AI效率助手', description: 'AI智能改写工具，支持降重改写、去AI痕迹、学术润色、口语化等多种改写模式，一键提升文本质量。', keywords: 'AI改写,文本降重,去AI痕迹,学术润色,文本人性化,AI降重工具' },
+  translation: { title: 'AI智能翻译 - AI效率助手', description: 'AI智能翻译工具，支持中英日韩法德西俄阿葡多语言互译，提供文本翻译、文档翻译、批量翻译、润色翻译四种模式。', keywords: 'AI翻译,多语言翻译,智能翻译,文档翻译,批量翻译,翻译工具' },
+  'doc-analysis': { title: 'AI文档分析 - AI效率助手', description: 'AI文档分析工具，支持智能摘要、关键信息提取、文档问答、文档对比等多种分析模式，快速洞察文档内容。', keywords: 'AI文档分析,文档摘要,信息提取,文档问答,文档对比,AI分析工具' },
+  mindmap: { title: 'AI思维导图 - AI效率助手', description: 'AI智能思维导图生成器，输入主题自动生成结构化思维导图，支持思维发散、流程图、SWOT分析等多种类型。', keywords: 'AI思维导图,思维导图生成器,脑图工具,SWOT分析,知识框架,项目规划,AI导图' },
 
   // 游乐场
   playground: { title: 'AI游乐场 - AI效率助手', description: 'AI角色扮演互动体验，修仙、三国、荒岛求生等多种世界观等你探索' },

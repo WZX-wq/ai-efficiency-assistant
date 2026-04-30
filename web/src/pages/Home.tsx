@@ -86,6 +86,47 @@ const features: FeatureCard[] = [
     bgColor: 'bg-amber-50',
   },
   {
+    id: 'docAnalysis',
+    title: '文档分析',
+    description: '上传文档智能分析，提取摘要、关键信息、支持文档问答',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3m-3 3h3m-3 3h3" />
+      </svg>
+    ),
+    color: 'from-rose-500 to-pink-600',
+    textColor: 'text-rose-600',
+    bgColor: 'bg-rose-50 dark:bg-rose-950/30',
+  },
+  {
+    id: 'translation',
+    title: '智能翻译',
+    description: '11种语言互译，支持批量翻译、润色翻译、文档翻译',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A8.966 8.966 0 013 12c0-1.264.26-2.466.732-3.559" />
+      </svg>
+    ),
+    color: 'from-cyan-500 to-teal-600',
+    textColor: 'text-cyan-600',
+    bgColor: 'bg-cyan-50 dark:bg-cyan-950/30',
+  },
+  {
+    id: 'mindmap',
+    title: '思维导图',
+    description: 'AI生成可视化思维导图，支持发散、流程、SWOT等多种模式',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 3.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM3.75 12a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM12.75 12a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM12 20.25a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 7.5l3 4.5M16.5 7.5l-3 4.5M7.5 16.5l3-4.5M16.5 16.5l-3-4.5" />
+      </svg>
+    ),
+    color: 'from-amber-500 to-orange-600',
+    textColor: 'text-amber-600',
+    bgColor: 'bg-amber-50 dark:bg-amber-950/30',
+  },
+  {
     id: 'creative',
     title: '创意灵感',
     description: 'AI 生成视觉创意方案、拍摄建议和配色推荐',
@@ -417,7 +458,7 @@ export default function Home() {
           name: 'AI效率助手是什么？能帮我做什么？',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等18+种内容创作任务，大幅提升你的写作效率。',
+            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等21+种内容创作任务，大幅提升你的写作效率。',
           },
         },
         {
@@ -543,7 +584,7 @@ export default function Home() {
 
             {/* Business Value Badges (replacing tech badges) */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 animate-fade-in">
-              {['18+ 核心工具', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
+              {['21+ 核心工具', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
                 <span key={badge} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700">
                   {badge}
                 </span>
@@ -622,7 +663,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
-              十八大核心功能
+              二十一大核心功能
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               覆盖内容创作与运营全流程，AI 全程陪伴
@@ -827,7 +868,7 @@ export default function Home() {
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">适合内容创作者</p>
               <ul className="mt-6 space-y-3">
-                {['无限 AI 调用', '全部 18+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
+                {['无限 AI 调用', '全部 21+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <svg className="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     {f}
@@ -925,7 +966,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
             {[
-              { step: '01', title: '选择工具', description: '从十八大 AI 工具中选择适合你需求的工具，打开即用。' },
+              { step: '01', title: '选择工具', description: '从二十一大 AI 工具中选择适合你需求的工具，打开即用。' },
               { step: '02', title: '输入需求', description: '在富文本编辑器中填写信息，或使用 AI 助手对话。' },
               { step: '03', title: 'AI 即刻生成', description: 'AI 流式生成专业结果，支持复制、导出、继续编辑。' },
             ].map((item) => (
@@ -977,6 +1018,7 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             {[
+              { version: 'v2.8', date: '2025-04', title: '功能大扩展', desc: '新增AI文档分析、智能翻译、思维导图三大工具，工具总数达21+', tag: '新功能', tagColor: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
               { version: 'v2.7', date: '2025-04', title: '竞争力大升级', desc: '新增AI长文写作、智能改写、续写扩写三大核心工具，补齐与笔灵AI的功能差距', tag: '新功能', tagColor: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
               { version: 'v2.6', date: '2025-04', title: 'AI游乐场上线', desc: '新增AI角色扮演互动体验模块，支持9大世界观、沉浸式聊天、角色卡创建与分享', tag: '新功能', tagColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
               { version: 'v2.5', date: '2025-01', title: '富文本编辑器全面升级', desc: '新增 Slash 命令面板、表格编辑、待办事项、图片上传', tag: '新功能', tagColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
@@ -1018,7 +1060,7 @@ export default function Home() {
             {[
               {
                 q: 'AI效率助手是什么？能帮我做什么？',
-                a: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等18+种内容创作任务，大幅提升你的写作效率。',
+                a: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等21+种内容创作任务，大幅提升你的写作效率。',
               },
               {
                 q: '支持哪些 AI 模型？',

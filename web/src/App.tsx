@@ -48,6 +48,9 @@ const PolishTool = lazy(() => import('./pages/tools/PolishTool'));
 const SummarizerTool = lazy(() => import('./pages/tools/SummarizerTool'));
 const RewriteTool = lazy(() => import('./pages/tools/RewriteTool'));
 const ContinueTool = lazy(() => import('./pages/tools/ContinueTool'));
+const TranslationTool = lazy(() => import('./pages/tools/TranslationTool'));
+const DocAnalysisTool = lazy(() => import('./pages/tools/DocAnalysisTool'));
+const MindMapTool = lazy(() => import('./pages/tools/MindMapTool'));
 const LongFormTool = lazy(() => import('./pages/tools/LongFormTool'));
 const Playground = lazy(() => import('./pages/Playground'));
 const RolePlayChat = lazy(() => import('./pages/RolePlayChat'));
@@ -175,6 +178,9 @@ function AppContent() {
                 <Route path="/workspace/summarizer" element={<ErrorBoundary><Suspense fallback={LazyFallback}><SummarizerTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/rewrite" element={<ErrorBoundary><Suspense fallback={LazyFallback}><RewriteTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/continue" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ContinueTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/translation" element={<ErrorBoundary><Suspense fallback={LazyFallback}><TranslationTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/doc-analysis" element={<ErrorBoundary><Suspense fallback={LazyFallback}><DocAnalysisTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/mindmap" element={<ErrorBoundary><Suspense fallback={LazyFallback}><MindMapTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/longform" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LongFormTool /></Suspense></ErrorBoundary>} />
                 <Route path="/playground" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Playground /></Suspense></ErrorBoundary>} />
                 <Route path="/playground/:cardId" element={<ErrorBoundary><Suspense fallback={LazyFallback}><RolePlayChat /></Suspense></ErrorBoundary>} />

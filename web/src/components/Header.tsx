@@ -21,6 +21,9 @@ const toolLinkItems = [
   { to: '/workspace/summarizer', labelKey: 'header.summarizer', icon: '📝' },
   { to: '/workspace/longform', labelKey: 'header.longform', icon: '📖' },
   { to: '/workspace/continue', labelKey: 'header.continue', icon: '✍️' },
+  { to: '/workspace/translation', labelKey: 'header.translation', icon: '🌐' },
+  { to: '/workspace/doc-analysis', labelKey: 'header.docAnalysis', icon: '📄' },
+  { to: '/workspace/mindmap', labelKey: 'header.mindmap', icon: '🧠' },
 ];
 
 export default function Header() {

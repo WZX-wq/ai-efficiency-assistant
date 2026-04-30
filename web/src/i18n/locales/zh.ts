@@ -72,6 +72,9 @@ const zh: Record<string, string> = {
   'header.templates': '模板库',
   'header.brand': '品牌声音',
   'header.history': '历史记录',
+  'header.translation': '智能翻译',
+  'header.docAnalysis': '文档分析',
+  'header.mindmap': '思维导图',
 
   // ========== Footer ==========
   'footer.brandDesc': '企业级 AI 内容创作平台，助力企业数字化转型',
