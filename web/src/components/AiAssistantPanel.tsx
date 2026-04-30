@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/appStore';
 import { useChatStore } from '../store/chatStore';
 import { chatWithAiStream, chatWithAi } from '../services/aiChat';
@@ -39,6 +40,7 @@ export default function AiAssistantPanel() {
   const { aiPanelOpen, setAiPanelOpen } = useAppStore();
   const { toast } = useToast();
   const { sessions, createSession, clearMessages } = useChatStore();
+  const navigate = useNavigate();
 
   const [panelSessionId, setPanelSessionId] = useState<string>(() => {
     return localStorage.getItem('ai-panel-session-id') || '';
@@ -252,6 +254,15 @@ export default function AiAssistantPanel() {
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <button
+            onClick={() => { setAiPanelOpen(false); navigate('/chat'); }}
+            className="p-1.5 text-primary-500 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+            title="打开完整对话"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            </svg>
+          </button>
           <button
             onClick={handleClearChat}
             className="p-1.5 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"

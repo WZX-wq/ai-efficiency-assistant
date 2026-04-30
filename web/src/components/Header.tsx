@@ -33,6 +33,8 @@ const toolLinkItems = [
   { to: '/workspace/fiction', labelKey: 'header.fiction', icon: '📖' },
   { to: '/workspace/ppt-generator', labelKey: 'header.pptGenerator', icon: '📊' },
   { to: '/workspace/data-analysis', labelKey: 'header.dataAnalysis', icon: '📈' },
+  { to: '/workflows', labelKey: 'header.workflows', icon: '⚡' },
+  { to: '/workflow-dashboard', labelKey: 'header.workflowDashboard', icon: '📊' },
 ];
 
 export default function Header() {
@@ -55,6 +57,7 @@ export default function Header() {
 
   const navLinks = useMemo(() => [
     { to: '/', label: t('header.home') },
+    { to: '/chat', label: t('header.aiChat') },
     { to: '/templates', label: t('header.templateMarket') },
     { to: '/services', label: t('header.services') },
     { to: '/playground', label: t('header.playground') },

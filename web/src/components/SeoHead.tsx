@@ -118,6 +118,11 @@ const BREADCRUMB_NAMES: Record<string, string> = {
   'theme-settings': '主题设置',
   accessibility: '无障碍设置',
   plugins: 'AI插件市场',
+  knowledge: '知识库',
+  chat: 'AI对话',
+  'chat-history': '对话历史',
+  workflows: '自动化工作流',
+  'workflow-dashboard': '工作流面板',
 }
 
 // ============================================================
@@ -749,5 +754,48 @@ export const PAGE_SEO = {
     keywords:
       'AI插件,插件市场,插件商店,AI扩展,效率工具,写作增强,AI效率助手',
     canonicalUrl: '/plugins',
+  },
+  chat: {
+    title: 'AI 对话 - AI效率助手',
+    description:
+      '与 AI 进行深度对话，支持多轮对话、斜杠指令、对话模板等功能，提升你的工作和学习效率。',
+    keywords:
+      'AI对话,智能聊天,AI助手,对话模板,斜杠指令,AI效率助手',
+    canonicalUrl: '/chat',
+  },
+  'chat-history': {
+    title: '对话历史 - AI效率助手',
+    description:
+      '查看和管理你的所有 AI 对话记录，支持搜索、筛选、批量操作和导入导出。',
+    keywords:
+      'AI对话历史,对话记录,聊天记录管理,AI效率助手',
+    canonicalUrl: '/chat-history',
+  },
+
+  knowledge: {
+    title: '知识库 - AI效率助手',
+    description:
+      'AI效率助手知识库，管理笔记、文章、代码片段、书签和参考资料，构建你的个人知识体系。',
+    keywords:
+      '知识库,笔记管理,知识管理,AI效率助手,个人知识体系',
+    canonicalUrl: '/knowledge',
+  },
+
+  workflows: {
+    title: '自动化工作流 - AI效率助手',
+    description:
+      '创建和管理自动化工作流，连接多个AI处理步骤，实现内容创作的自动化流水线。',
+    keywords:
+      'AI工作流,自动化,流水线,AI自动化,内容创作自动化,AI效率助手',
+    canonicalUrl: '/workflows',
+  },
+
+  'workflow-dashboard': {
+    title: '工作流数据面板 - AI效率助手',
+    description:
+      '查看自动化工作流的运行统计、成功率分析和最近运行记录。',
+    keywords:
+      'AI工作流,自动化统计,工作流面板,AI效率助手',
+    canonicalUrl: '/workflow-dashboard',
   },
 } as const

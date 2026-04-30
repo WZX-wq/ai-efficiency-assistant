@@ -78,6 +78,11 @@ const TemplateMarket = lazy(() => import('./pages/TemplateMarket'));
 const ThemeSettings = lazy(() => import('./pages/ThemeSettings'));
 const PluginStore = lazy(() => import('./pages/PluginStore'));
 const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
+const KnowledgeBase = lazy(() => import('./pages/KnowledgeBase'));
+const EnhancedChat = lazy(() => import('./components/EnhancedChat'));
+const ChatHistory = lazy(() => import('./pages/ChatHistory'));
+const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'));
+const WorkflowDashboard = lazy(() => import('./pages/WorkflowDashboard'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -226,6 +231,11 @@ function AppContent() {
                 <Route path="/theme-settings" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ThemeSettings /></Suspense></ErrorBoundary>} />
                 <Route path="/accessibility" element={<ErrorBoundary><Suspense fallback={LazyFallback}><AccessibilityPage /></Suspense></ErrorBoundary>} />
                 <Route path="/plugins" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PluginStore /></Suspense></ErrorBoundary>} />
+                <Route path="/chat" element={<ErrorBoundary><Suspense fallback={LazyFallback}><EnhancedChat /></Suspense></ErrorBoundary>} />
+                <Route path="/chat-history" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ChatHistory /></Suspense></ErrorBoundary>} />
+                <Route path="/knowledge" element={<ErrorBoundary><Suspense fallback={LazyFallback}><KnowledgeBase /></Suspense></ErrorBoundary>} />
+                <Route path="/workflows" element={<ErrorBoundary><Suspense fallback={LazyFallback}><WorkflowBuilder /></Suspense></ErrorBoundary>} />
+                <Route path="/workflow-dashboard" element={<ErrorBoundary><Suspense fallback={LazyFallback}><WorkflowDashboard /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>

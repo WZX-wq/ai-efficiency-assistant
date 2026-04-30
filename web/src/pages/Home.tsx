@@ -456,6 +456,47 @@ const features: FeatureCard[] = [
     textColor: 'text-teal-600',
     bgColor: 'bg-teal-50 dark:bg-teal-950/30',
   },
+  {
+    id: 'aiChat',
+    title: 'AI对话',
+    description: '全屏多轮对话，会话管理，斜杠指令，6种对话模板',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+      </svg>
+    ),
+    color: 'from-blue-500 to-indigo-600',
+    textColor: 'text-blue-600',
+    bgColor: 'bg-blue-50 dark:bg-blue-950/30',
+  },
+  {
+    id: 'knowledgeBase',
+    title: '知识库',
+    description: '个人知识管理，笔记/文章/代码片段，标签分类与全文搜索',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3m-3 3h3m-3 3h3" />
+      </svg>
+    ),
+    color: 'from-amber-500 to-yellow-600',
+    textColor: 'text-amber-600',
+    bgColor: 'bg-amber-50 dark:bg-amber-950/30',
+  },
+  {
+    id: 'workflow',
+    title: '自动化工作流',
+    description: '可视化流程编排，8种步骤类型，定时触发，模板工作流',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 7.5h3m-3 9h3" />
+      </svg>
+    ),
+    color: 'from-rose-500 to-red-600',
+    textColor: 'text-rose-600',
+    bgColor: 'bg-rose-50 dark:bg-rose-950/30',
+  },
 ];
 
 const stats = [
@@ -649,7 +690,7 @@ export default function Home() {
           name: 'AI效率助手是什么？能帮我做什么？',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等35+种内容创作任务，大幅提升你的写作效率。',
+            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等38+种内容创作任务，大幅提升你的写作效率。',
           },
         },
         {
@@ -775,7 +816,7 @@ export default function Home() {
 
             {/* Business Value Badges (replacing tech badges) */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 animate-fade-in">
-              {['35+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
+              {['38+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
                 <span key={badge} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700">
                   {badge}
                 </span>
@@ -854,7 +895,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
-              三十五核心功能
+              三十八核心功能
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               覆盖内容创作与运营全流程，AI 全程陪伴
@@ -1059,7 +1100,7 @@ export default function Home() {
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">适合内容创作者</p>
               <ul className="mt-6 space-y-3">
-                {['无限 AI 调用', '全部 35+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
+                {['无限 AI 调用', '全部 38+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <svg className="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     {f}
@@ -1157,7 +1198,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
             {[
-              { step: '01', title: '选择工具', description: '从三十五 AI 工具中选择适合你需求的工具，打开即用。' },
+              { step: '01', title: '选择工具', description: '从三十八 AI 工具中选择适合你需求的工具，打开即用。' },
               { step: '02', title: '输入需求', description: '在富文本编辑器中填写信息，或使用 AI 助手对话。' },
               { step: '03', title: 'AI 即刻生成', description: 'AI 流式生成专业结果，支持复制、导出、继续编辑。' },
             ].map((item) => (
@@ -1209,6 +1250,7 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             {[
+              { version: 'v3.6', date: '2025-05', title: 'AI对话与知识管理', desc: '全屏AI对话(多轮/指令/模板)、知识库(笔记/标签/搜索)、自动化工作流(可视化编排/触发器)', tag: '新功能', tagColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
               { version: 'v3.5', date: '2025-05', title: '插件系统与智能推荐', desc: 'AI插件市场(16插件/创建插件)、智能推荐引擎、欢迎回来弹窗、WCAG无障碍访问', tag: '新功能', tagColor: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
               { version: 'v3.4', date: '2025-05', title: '模板市场与主题系统', desc: 'AI模板市场(24模板/10分类)、协作工具栏(分享/版本/评论)、8种预设主题+自定义编辑器', tag: '新功能', tagColor: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
               { version: 'v3.3', date: '2025-05', title: 'SEO与性能全面优化', desc: 'SEO结构化数据/sitemap/robots.txt，性能优化(代码分割/PWA缓存)，数据面板与错误追踪', tag: '优化', tagColor: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' },

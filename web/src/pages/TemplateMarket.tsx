@@ -561,7 +561,7 @@ function getCategoryCount(category: string): number {
 // ============================================================
 
 export default function TemplateMarket() {
-  const { t } = useTranslation();
+  useTranslation();
   const navigate = useNavigate();
   useSeo('templateMarket');
 
