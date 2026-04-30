@@ -62,6 +62,7 @@ const RolePlayChat = lazy(() => import('./pages/RolePlayChat'));
 const CharacterCreator = lazy(() => import('./pages/CharacterCreator'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const ApiPlatform = lazy(() => import('./pages/ApiPlatform'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -201,6 +202,7 @@ function AppContent() {
                 <Route path="/terms" element={<ErrorBoundary><Suspense fallback={LazyFallback}><TermsOfService /></Suspense></ErrorBoundary>} />
                 <Route path="/login" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LoginPage /></Suspense></ErrorBoundary>} />
                 <Route path="/profile" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ProfilePage /></Suspense></ErrorBoundary>} />
+                <Route path="/api-platform" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ApiPlatform /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>

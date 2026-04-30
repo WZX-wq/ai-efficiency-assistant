@@ -301,7 +301,7 @@ export default function CodeAssistantTool() {
 
       {/* Mode Selection */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto flex-nowrap scrollbar-hide pb-1">
           {CODE_MODES.map((mode) => (
             <button
               key={mode.key}
@@ -314,7 +314,7 @@ export default function CodeAssistantTool() {
             >
               <span>{mode.icon}</span>
               <span>{mode.label}</span>
-              <span className={`hidden sm:inline text-xs ${activeMode === mode.key ? 'text-slate-300' : 'text-gray-400 dark:text-gray-500'}`}>
+              <span className={`shrink-0 text-xs ${activeMode === mode.key ? 'text-slate-300' : 'text-gray-400 dark:text-gray-500'}`}>
                 {mode.description}
               </span>
             </button>

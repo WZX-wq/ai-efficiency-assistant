@@ -412,6 +412,20 @@ html.theme-transitioning *::after {
   display: none;
 }
 
+/* ─── Mobile touch improvements ─────────────────────────── */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text selection on interactive elements */
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+}
+
 /* 打印样式 */
 @media print {
   /* 隐藏不需要打印的元素 */

@@ -2,12 +2,25 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import zh from './locales/zh';
 import en from './locales/en';
+import ja from './locales/ja';
+import ko from './locales/ko';
 
 /** 支持的语言 */
-export type Locale = 'zh' | 'en';
+export type Locale = 'zh' | 'en' | 'ja' | 'ko';
+
+/** 语言标签映射 */
+export const localeLabels: Record<Locale, string> = {
+  zh: '中文',
+  en: 'English',
+  ja: '日本語',
+  ko: '한국어',
+};
+
+/** 支持的语言列表 */
+export const supportedLocales: Locale[] = ['zh', 'en', 'ja', 'ko'];
 
 /** 翻译资源映射 */
-const messages: Record<Locale, Record<string, string>> = { zh, en };
+const messages: Record<Locale, Record<string, string>> = { zh, en, ja, ko };
 
 /** i18n Store 状态定义 */
 interface I18nState {
@@ -72,5 +85,5 @@ export function useTranslation() {
   };
 }
 
-export { zh, en };
+export { zh, en, ja, ko };
 export default useTranslation;

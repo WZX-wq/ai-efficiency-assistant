@@ -363,6 +363,20 @@ const features: FeatureCard[] = [
     textColor: 'text-violet-600',
     bgColor: 'bg-violet-50 dark:bg-violet-950/30',
   },
+  {
+    id: 'apiPlatform',
+    title: 'API 平台',
+    description: '开放API接口，8大端点，4种SDK，快速集成AI能力',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-1.242-7.244l4.5-4.5a4.5 4.5 0 016.364 6.364l-1.757 1.757" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 7.5h.01M7.5 12h.01M7.5 16.5h.01" />
+      </svg>
+    ),
+    color: 'from-blue-500 to-indigo-600',
+    textColor: 'text-blue-600',
+    bgColor: 'bg-blue-50 dark:bg-blue-950/30',
+  },
 ];
 
 const stats = [
@@ -485,6 +499,7 @@ export default function Home() {
   const { t } = useTranslation();
   const featuresRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
+  const demoRef = useRef<HTMLDivElement>(null);
   const enterpriseRef = useRef<HTMLDivElement>(null);
   const howItWorksRef = useRef<HTMLDivElement>(null);
   const testimonialsRef = useRef<HTMLDivElement>(null);
@@ -518,7 +533,7 @@ export default function Home() {
 
   useEffect(() => {
     const refs = [
-      featuresRef, statsRef, enterpriseRef,
+      featuresRef, statsRef, demoRef, enterpriseRef,
       howItWorksRef, testimonialsRef, trustRef, ctaRef,
     ];
 
@@ -555,7 +570,7 @@ export default function Home() {
           name: 'AI效率助手是什么？能帮我做什么？',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等28+种内容创作任务，大幅提升你的写作效率。',
+            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等29+种内容创作任务，大幅提升你的写作效率。',
           },
         },
         {
@@ -642,14 +657,14 @@ export default function Home() {
           <div className="absolute bottom-10 left-10 w-96 h-96 bg-indigo-400/15 dark:bg-indigo-600/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-full text-sm text-primary-700 dark:text-primary-300 font-medium mb-8 animate-fade-in">
               <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
               {t('home.hero.badge')}
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight animate-slide-up animate-gradient-text">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight animate-slide-up animate-gradient-text">
               {t('home.hero.title')}
               <br />
               <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 bg-clip-text text-transparent">
@@ -681,7 +696,7 @@ export default function Home() {
 
             {/* Business Value Badges (replacing tech badges) */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 animate-fade-in">
-              {['28+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
+              {['29+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
                 <span key={badge} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700">
                   {badge}
                 </span>
@@ -760,14 +775,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
-              二十八核心功能
+              二十九核心功能
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               覆盖内容创作与运营全流程，AI 全程陪伴
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-children">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
             {features.map((feature) =>
               feature.to ? (
                 <Link
@@ -809,7 +824,7 @@ export default function Home() {
       </section>
 
       {/* Product Demo Section */}
-      <section id="demo" className="py-12 sm:py-16 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
+      <section id="demo" ref={demoRef} className="scroll-reveal py-12 sm:py-16 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 scroll-reveal">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
@@ -965,7 +980,7 @@ export default function Home() {
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">适合内容创作者</p>
               <ul className="mt-6 space-y-3">
-                {['无限 AI 调用', '全部 28+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
+                {['无限 AI 调用', '全部 29+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <svg className="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     {f}
@@ -1063,7 +1078,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
             {[
-              { step: '01', title: '选择工具', description: '从二十八 AI 工具中选择适合你需求的工具，打开即用。' },
+              { step: '01', title: '选择工具', description: '从二十九 AI 工具中选择适合你需求的工具，打开即用。' },
               { step: '02', title: '输入需求', description: '在富文本编辑器中填写信息，或使用 AI 助手对话。' },
               { step: '03', title: 'AI 即刻生成', description: 'AI 流式生成专业结果，支持复制、导出、继续编辑。' },
             ].map((item) => (
@@ -1115,6 +1130,7 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             {[
+              { version: 'v3.2', date: '2025-05', title: '平台能力大升级', desc: '新增API开放平台、移动端优化、四语言国际化(中/英/日/韩)，修复产品演示', tag: '重大更新', tagColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
               { version: 'v3.1', date: '2025-05', title: '效率与娱乐双升级', desc: '新增PPT生成器、数据分析、营销文案、互动小说四大工具，工具总数达28+', tag: '新功能', tagColor: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
               { version: 'v3.0', date: '2025-05', title: '平台全面升级', desc: '新增用户系统、AI代码助手、AI学习助手、AI生活助手、社区精选，工具总数达24+', tag: '重大更新', tagColor: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' },
               { version: 'v2.8', date: '2025-04', title: '功能大扩展', desc: '新增AI文档分析、智能翻译、思维导图三大工具，工具总数达24+', tag: '新功能', tagColor: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
@@ -1222,7 +1238,7 @@ export default function Home() {
       {/* CTA Section */}
       <section ref={ctaRef} className="scroll-reveal py-20 sm:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-3xl px-8 py-16 sm:px-16 sm:py-20 text-center">
+          <div className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-3xl px-6 py-12 sm:px-16 sm:py-20 text-center">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
 

@@ -370,4 +370,13 @@ export const PAGE_SEO = {
     keywords: '个人中心,用户资料,使用统计,账户设置,会员管理',
     canonicalUrl: '/profile',
   },
+
+  'api-platform': {
+    title: 'API 开放平台 - AI效率助手',
+    description:
+      'AI效率助手 API 开放平台，提供多模型 AI 能力接入，包括对话生成、文本翻译、内容摘要、代码生成等 RESTful API，支持 JavaScript、Python、Go、Java 等多语言 SDK。',
+    keywords:
+      'AI API,开放平台,RESTful API,AI接口,文本生成API,翻译API,代码生成,SDK,开发者工具',
+    canonicalUrl: '/api-platform',
+  },
 } as const

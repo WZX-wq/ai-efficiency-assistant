@@ -714,7 +714,7 @@ export default function MarketingTool() {
       <section className="pb-20 sm:pb-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Platform Tabs */}
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="flex gap-2 overflow-x-auto flex-nowrap scrollbar-hide pb-1 mb-8">
             {PLATFORMS.map((platform) => (
               <button
                 key={platform.key}
