@@ -17,7 +17,10 @@ const toolLinkItems = [
   { to: '/workspace/templates', labelKey: 'header.templates', icon: '📑' },
   { to: '/workspace/humanize', labelKey: 'header.humanize', icon: '🧑' },
   { to: '/workspace/polish', labelKey: 'header.polish', icon: '✨' },
+  { to: '/workspace/rewrite', labelKey: 'header.rewrite', icon: '🔄' },
   { to: '/workspace/summarizer', labelKey: 'header.summarizer', icon: '📝' },
+  { to: '/workspace/longform', labelKey: 'header.longform', icon: '📖' },
+  { to: '/workspace/continue', labelKey: 'header.continue', icon: '✍️' },
 ];
 
 export default function Header() {

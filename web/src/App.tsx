@@ -46,6 +46,9 @@ const Templates = lazy(() => import('./pages/tools/Templates'));
 const HumanizeTool = lazy(() => import('./pages/tools/HumanizeTool'));
 const PolishTool = lazy(() => import('./pages/tools/PolishTool'));
 const SummarizerTool = lazy(() => import('./pages/tools/SummarizerTool'));
+const RewriteTool = lazy(() => import('./pages/tools/RewriteTool'));
+const ContinueTool = lazy(() => import('./pages/tools/ContinueTool'));
+const LongFormTool = lazy(() => import('./pages/tools/LongFormTool'));
 const Playground = lazy(() => import('./pages/Playground'));
 const RolePlayChat = lazy(() => import('./pages/RolePlayChat'));
 const CharacterCreator = lazy(() => import('./pages/CharacterCreator'));
@@ -170,6 +173,9 @@ function AppContent() {
                 <Route path="/workspace/humanize" element={<ErrorBoundary><Suspense fallback={LazyFallback}><HumanizeTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/polish" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PolishTool /></Suspense></ErrorBoundary>} />
                 <Route path="/workspace/summarizer" element={<ErrorBoundary><Suspense fallback={LazyFallback}><SummarizerTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/rewrite" element={<ErrorBoundary><Suspense fallback={LazyFallback}><RewriteTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/continue" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ContinueTool /></Suspense></ErrorBoundary>} />
+                <Route path="/workspace/longform" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LongFormTool /></Suspense></ErrorBoundary>} />
                 <Route path="/playground" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Playground /></Suspense></ErrorBoundary>} />
                 <Route path="/playground/:cardId" element={<ErrorBoundary><Suspense fallback={LazyFallback}><RolePlayChat /></Suspense></ErrorBoundary>} />
                 <Route path="/playground/create" element={<ErrorBoundary><Suspense fallback={LazyFallback}><CharacterCreator /></Suspense></ErrorBoundary>} />

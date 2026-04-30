@@ -330,6 +330,9 @@ export const PAGE_SEO = {
   humanize: { title: '人性化改写 - AI效率助手', description: 'AI人性化改写工具，让AI生成的内容更自然、更有温度' },
   polish: { title: '文章润色 - AI效率助手', description: 'AI文章润色工具，智能优化文笔、修正语法和提升表达' },
   summarizer: { title: '内容总结 - AI效率助手', description: 'AI内容总结工具，快速提取长文核心要点和关键信息' },
+  longform: { title: 'AI长文写作 - AI效率助手', description: 'AI长文写作工具，支持大纲规划与分段生成，轻松创作万字论文、报告、小说、教程等专业长文内容。', keywords: 'AI长文写作,万字论文生成,大纲规划,分段写作,长文生成器,AI写作助手' },
+  continue: { title: 'AI续写扩写 - AI效率助手', description: 'AI续写扩写工具，智能理解上下文，一键续写文章、扩写段落、生成结尾，支持多版本对比选择。', keywords: 'AI续写,文章扩写,智能续写,结尾生成,标题生成,AI写作助手' },
+  rewrite: { title: 'AI智能改写 - AI效率助手', description: 'AI智能改写工具，支持降重改写、去AI痕迹、学术润色、口语化等多种改写模式，一键提升文本质量。', keywords: 'AI改写,文本降重,去AI痕迹,学术润色,文本人性化,AI降重工具' },
 
   // 游乐场
   playground: { title: 'AI游乐场 - AI效率助手', description: 'AI角色扮演互动体验，修仙、三国、荒岛求生等多种世界观等你探索' },
