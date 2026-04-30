@@ -107,6 +107,7 @@ const en: Record<string, string> = {
   'header.learning': 'Learning Assistant',
   'header.marketing': 'Marketing Copy',
   'header.fiction': 'Interactive Fiction',
+  'header.dashboard': 'Dashboard',
 
   // ========== Footer ==========
   'footer.brandDesc': 'Enterprise-grade AI content creation platform',
@@ -517,6 +518,29 @@ const en: Record<string, string> = {
   'lang.en': 'English',
   'lang.ja': '日本語',
   'lang.ko': '한국어',
+
+  // ========== Dashboard ==========
+  'dashboard.title': 'Dashboard',
+  'dashboard.subtitle': 'View usage statistics and error tracking data',
+  'dashboard.totalPageViews': 'Total Page Views',
+  'dashboard.totalToolUses': 'Tool Uses',
+  'dashboard.totalErrors': 'Errors',
+  'dashboard.activeDays': 'Active Days',
+  'dashboard.toolUsage': 'Tool Usage Ranking',
+  'dashboard.dailyActivity': 'Last 7 Days Activity',
+  'dashboard.recentActivity': 'Recent Activity',
+  'dashboard.errorLog': 'Error Log',
+  'dashboard.errorRate': 'Error Rate',
+  'dashboard.noErrors': 'No errors recorded. Everything looks good!',
+  'dashboard.exportData': 'Export Data',
+  'dashboard.clearData': 'Clear Data',
+  'dashboard.clearConfirm': 'Are you sure you want to clear all analytics data? This action cannot be undone.',
+  'dashboard.refresh': 'Refresh',
+  'dashboard.colTime': 'Time',
+  'dashboard.colType': 'Type',
+  'dashboard.colName': 'Name',
+  'dashboard.colDetails': 'Details',
+  'dashboard.privacyNote': 'All data is stored locally in your browser and is never sent to any server.',
 };
 
 export default en;

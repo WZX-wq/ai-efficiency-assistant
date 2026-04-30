@@ -58,6 +58,7 @@ export default function Header() {
     { to: '/services', label: t('header.services') },
     { to: '/playground', label: t('header.playground') },
     { to: '/api-platform', label: t('header.apiPlatform') },
+    { to: '/dashboard', label: t('header.dashboard') },
     { to: '/pricing', label: t('header.pricing') },
   ], [t]);
 

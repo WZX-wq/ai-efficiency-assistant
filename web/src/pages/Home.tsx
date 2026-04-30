@@ -377,6 +377,20 @@ const features: FeatureCard[] = [
     textColor: 'text-blue-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/30',
   },
+  {
+    id: 'dashboard',
+    title: '数据面板',
+    description: '本地数据分析仪表盘，追踪使用情况与错误日志',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+      </svg>
+    ),
+    color: 'from-sky-500 to-blue-600',
+    textColor: 'text-sky-600',
+    bgColor: 'bg-sky-50 dark:bg-sky-950/30',
+  },
 ];
 
 const stats = [
@@ -570,7 +584,7 @@ export default function Home() {
           name: 'AI效率助手是什么？能帮我做什么？',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等29+种内容创作任务，大幅提升你的写作效率。',
+            text: 'AI效率助手是一款基于先进 AI 大模型的智能内容创作平台。它可以帮助你进行文案撰写、智能改写、多语言翻译、内容总结、SEO优化等30+种内容创作任务，大幅提升你的写作效率。',
           },
         },
         {
@@ -696,7 +710,7 @@ export default function Home() {
 
             {/* Business Value Badges (replacing tech badges) */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 animate-fade-in">
-              {['29+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
+              {['30+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
                 <span key={badge} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700">
                   {badge}
                 </span>
@@ -775,7 +789,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
-              二十九核心功能
+              三十核心功能
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               覆盖内容创作与运营全流程，AI 全程陪伴
@@ -980,7 +994,7 @@ export default function Home() {
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">适合内容创作者</p>
               <ul className="mt-6 space-y-3">
-                {['无限 AI 调用', '全部 29+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
+                {['无限 AI 调用', '全部 30+ AI 工具', '所有 AI 角色', '高级编辑器功能', '优先响应速度', '邮件支持'].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <svg className="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     {f}
@@ -1078,7 +1092,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
             {[
-              { step: '01', title: '选择工具', description: '从二十九 AI 工具中选择适合你需求的工具，打开即用。' },
+              { step: '01', title: '选择工具', description: '从三十 AI 工具中选择适合你需求的工具，打开即用。' },
               { step: '02', title: '输入需求', description: '在富文本编辑器中填写信息，或使用 AI 助手对话。' },
               { step: '03', title: 'AI 即刻生成', description: 'AI 流式生成专业结果，支持复制、导出、继续编辑。' },
             ].map((item) => (
@@ -1130,6 +1144,7 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             {[
+              { version: 'v3.3', date: '2025-05', title: 'SEO与性能全面优化', desc: 'SEO结构化数据/sitemap/robots.txt，性能优化(代码分割/PWA缓存)，数据面板与错误追踪', tag: '优化', tagColor: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' },
               { version: 'v3.2', date: '2025-05', title: '平台能力大升级', desc: '新增API开放平台、移动端优化、四语言国际化(中/英/日/韩)，修复产品演示', tag: '重大更新', tagColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
               { version: 'v3.1', date: '2025-05', title: '效率与娱乐双升级', desc: '新增PPT生成器、数据分析、营销文案、互动小说四大工具，工具总数达28+', tag: '新功能', tagColor: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
               { version: 'v3.0', date: '2025-05', title: '平台全面升级', desc: '新增用户系统、AI代码助手、AI学习助手、AI生活助手、社区精选，工具总数达24+', tag: '重大更新', tagColor: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' },

@@ -9,8 +9,8 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 
-// 性能监控
-import { reportWebVitals } from './utils/reportWebVitals';
+// 性能监控 — Core Web Vitals + Long Tasks
+import { reportWebVitals } from './utils/performance';
 reportWebVitals();
 
 // 注册 Service Worker

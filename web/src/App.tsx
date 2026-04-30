@@ -14,6 +14,14 @@ import BackToTop from './components/BackToTop';
 import PageTransition from './components/PageTransition';
 import { ToolPageSkeleton } from './components/Skeleton';
 import { useAppStore } from './store/appStore';
+import { analytics } from './utils/analytics';
+
+/** 轻量级页面加载 spinner — 用于非主要路由组件 */
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600" />
+  </div>
+);
 
 // 大型组件懒加载 — 减少首屏 bundle 体积
 const AiAssistantPanel = lazy(() => import('./components/AiAssistantPanel'));
@@ -63,6 +71,7 @@ const CharacterCreator = lazy(() => import('./pages/CharacterCreator'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const ApiPlatform = lazy(() => import('./pages/ApiPlatform'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -99,11 +108,12 @@ function ThemeInitializer() {
   return null;
 }
 
-/** 滚动到顶部组件 */
+/** 滚动到顶部 + 路由追踪组件 */
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
+    analytics.trackPageView(pathname);
   }, [pathname]);
   return null;
 }
@@ -203,6 +213,7 @@ function AppContent() {
                 <Route path="/login" element={<ErrorBoundary><Suspense fallback={LazyFallback}><LoginPage /></Suspense></ErrorBoundary>} />
                 <Route path="/profile" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ProfilePage /></Suspense></ErrorBoundary>} />
                 <Route path="/api-platform" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ApiPlatform /></Suspense></ErrorBoundary>} />
+                <Route path="/dashboard" element={<ErrorBoundary><Suspense fallback={LazyFallback}><Dashboard /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>
@@ -212,7 +223,7 @@ function AppContent() {
         <BackToTop />
         <Footer />
       </div>
-      <Suspense fallback={null}>
+      <Suspense fallback={<PageLoader />}>
         <AiAssistantPanel />
       </Suspense>
       <Suspense fallback={null}>

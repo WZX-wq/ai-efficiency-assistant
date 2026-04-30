@@ -108,6 +108,7 @@ const zh: Record<string, string> = {
   'header.marketing': '营销文案',
   'header.fiction': '互动小说',
   'header.apiPlatform': 'API 平台',
+  'header.dashboard': '数据面板',
 
   // ========== Footer ==========
   'footer.brandDesc': '企业级 AI 内容创作平台，助力企业数字化转型',
@@ -518,6 +519,29 @@ const zh: Record<string, string> = {
   'lang.en': 'English',
   'lang.ja': '日本語',
   'lang.ko': '한국어',
+
+  // ========== Dashboard ==========
+  'dashboard.title': '数据面板',
+  'dashboard.subtitle': '查看使用统计和错误追踪数据',
+  'dashboard.totalPageViews': '总页面浏览量',
+  'dashboard.totalToolUses': '工具使用次数',
+  'dashboard.totalErrors': '错误次数',
+  'dashboard.activeDays': '活跃天数',
+  'dashboard.toolUsage': '工具使用排行',
+  'dashboard.dailyActivity': '近 7 天活动',
+  'dashboard.recentActivity': '最近活动',
+  'dashboard.errorLog': '错误日志',
+  'dashboard.errorRate': '错误率',
+  'dashboard.noErrors': '暂无错误记录，一切正常',
+  'dashboard.exportData': '导出数据',
+  'dashboard.clearData': '清除数据',
+  'dashboard.clearConfirm': '确定要清除所有分析数据吗？此操作不可撤销。',
+  'dashboard.refresh': '刷新',
+  'dashboard.colTime': '时间',
+  'dashboard.colType': '类型',
+  'dashboard.colName': '名称',
+  'dashboard.colDetails': '详情',
+  'dashboard.privacyNote': '所有数据仅存储在本地浏览器中，不会上传到任何服务器。',
 };
 
 export default zh;

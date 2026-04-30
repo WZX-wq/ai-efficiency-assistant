@@ -8,6 +8,7 @@ interface ErrorBoundaryProps {
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
+  errorInfo: ErrorInfo | null;
   showDetails: boolean;
   retryKey: number;
 }
@@ -27,10 +28,42 @@ const ERROR_SUGGESTIONS: Record<ErrorCategory, string> = {
   '未知错误': '发生了意外错误，请尝试刷新页面或返回首页。',
 };
 
+const ERROR_STORAGE_KEY = 'ai-assistant-errors';
+
+/** 将错误信息保存到 localStorage 供后续分析 */
+function reportError(error: Error, errorInfo?: ErrorInfo): void {
+  const record = {
+    message: error.message,
+    stack: error.stack,
+    componentStack: errorInfo?.componentStack || null,
+    timestamp: Date.now(),
+    url: window.location.href,
+  };
+
+  try {
+    const raw = localStorage.getItem(ERROR_STORAGE_KEY);
+    const existing: unknown[] = raw ? JSON.parse(raw) : [];
+    existing.push(record);
+    // 只保留最近 50 条错误记录
+    localStorage.setItem(ERROR_STORAGE_KEY, JSON.stringify(existing.slice(-50)));
+  } catch {
+    // 存储失败，忽略
+  }
+
+  // 尝试通过 analytics 追踪错误（使用动态 import 避免 require 问题）
+  try {
+    import('../utils/analytics').then(({ analytics }) => {
+      analytics.trackError(error, 'ErrorBoundary');
+    }).catch(() => {});
+  } catch {
+    // analytics 不可用，忽略
+  }
+}
+
 export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, error: null, showDetails: false, retryKey: 0 };
+    this.state = { hasError: false, error: null, errorInfo: null, showDetails: false, retryKey: 0 };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
@@ -39,18 +72,17 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('[ErrorBoundary] 捕获到渲染错误:', error, info.componentStack);
-
-    // TODO: 在此集成 Sentry 等错误上报服务
-    // 例如: Sentry.captureException(error, { extra: { componentStack: info.componentStack } });
+    this.setState({ errorInfo: info });
+    reportError(error, info);
   }
 
   private handleGoHome = () => {
-    this.setState({ hasError: false, error: null, showDetails: false, retryKey: 0 });
+    this.setState({ hasError: false, error: null, errorInfo: null, showDetails: false, retryKey: 0 });
     window.location.href = '/';
   };
 
   private handleReload = () => {
-    this.setState({ hasError: false, error: null, showDetails: false, retryKey: 0 });
+    this.setState({ hasError: false, error: null, errorInfo: null, showDetails: false, retryKey: 0 });
     window.location.reload();
   };
 
@@ -58,6 +90,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
     this.setState((prev) => ({
       hasError: false,
       error: null,
+      errorInfo: null,
       showDetails: false,
       retryKey: prev.retryKey + 1,
     }));
@@ -73,11 +106,12 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 
       const category = this.state.error ? classifyError(this.state.error) : '未知错误';
       const suggestion = ERROR_SUGGESTIONS[category];
+      const isDev = import.meta.env.DEV;
 
       return (
         <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
           <div className="max-w-md w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 dark:border-gray-700 p-8 text-center">
-            {/* 错误图标 - larger */}
+            {/* 错误图标 */}
             <div className="mx-auto w-20 h-20 flex items-center justify-center rounded-full bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900/40 dark:to-orange-900/40 mb-6 shadow-inner">
               <svg
                 className="w-10 h-10 text-red-500 dark:text-red-400"
@@ -96,7 +130,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 
             {/* 标题 */}
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              页面加载出错
+              页面出错了
             </h2>
 
             {/* 错误分类标签 */}
@@ -114,8 +148,8 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
               {suggestion}
             </p>
 
-            {/* 查看详情 toggle */}
-            {this.state.error?.stack && (
+            {/* 开发模式下的错误详情 */}
+            {isDev && (this.state.error?.stack || this.state.errorInfo?.componentStack) && (
               <div className="mb-6">
                 <button
                   onClick={this.toggleDetails}
@@ -124,9 +158,20 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
                   {this.state.showDetails ? '收起详情 ▲' : '查看详情 ▼'}
                 </button>
                 {this.state.showDetails && (
-                  <pre className="mt-2 p-3 text-left text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/50 rounded-lg overflow-auto max-h-40 break-all whitespace-pre-wrap">
-                    {this.state.error.stack}
-                  </pre>
+                  <div className="mt-2 space-y-2">
+                    {this.state.error?.stack && (
+                      <pre className="p-3 text-left text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/50 rounded-lg overflow-auto max-h-40 break-all whitespace-pre-wrap">
+                        <span className="font-semibold text-gray-600 dark:text-gray-300">Error Stack:</span>{'\n'}
+                        {this.state.error.stack}
+                      </pre>
+                    )}
+                    {this.state.errorInfo?.componentStack && (
+                      <pre className="p-3 text-left text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/50 rounded-lg overflow-auto max-h-40 break-all whitespace-pre-wrap">
+                        <span className="font-semibold text-gray-600 dark:text-gray-300">Component Stack:</span>{'\n'}
+                        {this.state.errorInfo.componentStack}
+                      </pre>
+                    )}
+                  </div>
                 )}
               </div>
             )}

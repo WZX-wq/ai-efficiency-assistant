@@ -31,6 +31,91 @@ const DEFAULT_DESCRIPTION =
 const DEFAULT_KEYWORDS =
   'AI写作,AI内容创作,智能写作助手,文案生成,AI效率工具,内容优化,写作平台'
 
+const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`
+
+const SITE_NAME = 'AI效率助手'
+
+const SUPPORTED_LOCALES = [
+  { lang: 'zh', locale: 'zh_CN' },
+  { lang: 'en', locale: 'en_US' },
+  { lang: 'ja', locale: 'ja_JP' },
+  { lang: 'ko', locale: 'ko_KR' },
+] as const
+
+// ============================================================
+// 工具页面路径映射 (用于 JSON-LD 结构化数据)
+// ============================================================
+
+const TOOL_PAGE_PATTERNS: RegExp[] = [
+  /^\/workspace\/writing$/,
+  /^\/workspace\/rewrite$/,
+  /^\/workspace\/continue$/,
+  /^\/workspace\/summarize$/,
+  /^\/workspace\/translate$/,
+  /^\/workspace\/document-analysis$/,
+  /^\/workspace\/mind-map$/,
+  /^\/workspace\/code-assistant$/,
+  /^\/workspace\/learning$/,
+  /^\/workspace\/life-assistant$/,
+  /^\/workspace\/ppt-generator$/,
+  /^\/workspace\/data-analysis$/,
+  /^\/workspace\/marketing$/,
+  /^\/workspace\/fiction$/,
+]
+
+function isToolPage(pathname: string): boolean {
+  return TOOL_PAGE_PATTERNS.some((pattern) => pattern.test(pathname))
+}
+
+// ============================================================
+// 面包屑名称映射
+// ============================================================
+
+const BREADCRUMB_NAMES: Record<string, string> = {
+  '': '首页',
+  workspace: 'AI创作工作台',
+  writing: 'AI写作',
+  rewrite: 'AI智能改写',
+  continue: 'AI续写扩写',
+  summarize: '内容总结',
+  translate: 'AI智能翻译',
+  'document-analysis': 'AI文档分析',
+  'mind-map': 'AI思维导图',
+  'code-assistant': 'AI代码助手',
+  learning: 'AI学习助手',
+  'life-assistant': 'AI生活助手',
+  'ppt-generator': 'AI PPT生成器',
+  'data-analysis': 'AI数据分析',
+  marketing: 'AI营销文案',
+  fiction: 'AI互动小说',
+  playground: 'AI游乐场',
+  pricing: '定价方案',
+  'api-platform': 'API开放平台',
+  login: '登录 / 注册',
+  services: 'AI服务介绍',
+  settings: '个人设置',
+  privacy: '隐私政策',
+  terms: '服务条款',
+  profile: '个人中心',
+  video: '短视频制作',
+  'group-buy': '社区团购运营',
+  'private-domain': '私域运营',
+  'ai-cs': 'AI智能客服',
+  'live-stream': '直播运营',
+  creative: '创意灵感',
+  calendar: '营销日历',
+  scripts: 'AI话术库',
+  copywriting: '文案生成器',
+  history: '历史记录',
+  brand: '品牌声音',
+  seo: 'SEO优化',
+  templates: '模板库',
+  humanize: '人性化改写',
+  polish: '文章润色',
+  summarizer: '内容总结',
+  longform: 'AI长文写作',
+}
+
 // ============================================================
 // 工具函数
 // ============================================================
@@ -60,43 +145,60 @@ function getOrCreateCanonical(): HTMLLinkElement {
   return el
 }
 
+/** 获取或创建 <link rel="alternate" hreflang="..."> */
+function getOrCreateHreflang(lang: string): HTMLLinkElement {
+  let el = document.querySelector<HTMLLinkElement>(
+    `link[rel="alternate"][hreflang="${lang}"]`,
+  )
+  if (!el) {
+    el = document.createElement('link')
+    el.setAttribute('rel', 'alternate')
+    el.setAttribute('hreflang', lang)
+    document.head.appendChild(el)
+  }
+  return el
+}
+
 /** 快照当前 head 中的 SEO 相关状态，用于卸载时还原 */
 function snapshotHead() {
+  const queryMeta = (attr: string, key: string) =>
+    document.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`)
+      ?.content ?? ''
+
+  const queryLink = (rel: string, extra?: string) => {
+    if (extra) {
+      return (
+        document.querySelector<HTMLLinkElement>(
+          `link[rel="${rel}"][${extra}]`,
+        )?.href ?? ''
+      )
+    }
+    return (
+      document.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`)?.href ?? ''
+    )
+  }
+
   return {
     title: document.title,
-    description:
-      document.querySelector<HTMLMetaElement>('meta[name="description"]')
-        ?.content ?? '',
-    keywords:
-      document.querySelector<HTMLMetaElement>('meta[name="keywords"]')
-        ?.content ?? '',
-    ogTitle:
-      document.querySelector<HTMLMetaElement>('meta[property="og:title"]')
-        ?.content ?? '',
-    ogDescription:
-      document.querySelector<HTMLMetaElement>('meta[property="og:description"]')
-        ?.content ?? '',
-    ogType:
-      document.querySelector<HTMLMetaElement>('meta[property="og:type"]')
-        ?.content ?? '',
-    ogImage:
-      document.querySelector<HTMLMetaElement>('meta[property="og:image"]')
-        ?.content ?? '',
-    ogUrl:
-      document.querySelector<HTMLMetaElement>('meta[property="og:url"]')
-        ?.content ?? '',
-    twitterCard:
-      document.querySelector<HTMLMetaElement>('meta[name="twitter:card"]')
-        ?.content ?? '',
-    twitterTitle:
-      document.querySelector<HTMLMetaElement>('meta[name="twitter:title"]')
-        ?.content ?? '',
-    twitterDescription:
-      document.querySelector<HTMLMetaElement>('meta[name="twitter:description"]')
-        ?.content ?? '',
-    canonical:
-      document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
-        ?.href ?? '',
+    description: queryMeta('name', 'description'),
+    keywords: queryMeta('name', 'keywords'),
+    ogTitle: queryMeta('property', 'og:title'),
+    ogDescription: queryMeta('property', 'og:description'),
+    ogType: queryMeta('property', 'og:type'),
+    ogImage: queryMeta('property', 'og:image'),
+    ogUrl: queryMeta('property', 'og:url'),
+    ogSiteName: queryMeta('property', 'og:site_name'),
+    ogLocale: queryMeta('property', 'og:locale'),
+    ogLocaleAlternate: queryMeta('property', 'og:locale:alternate'),
+    twitterCard: queryMeta('name', 'twitter:card'),
+    twitterTitle: queryMeta('name', 'twitter:title'),
+    twitterDescription: queryMeta('name', 'twitter:description'),
+    twitterImage: queryMeta('name', 'twitter:image'),
+    canonical: queryLink('canonical'),
+    hreflangs: SUPPORTED_LOCALES.map((l) => ({
+      lang: l.lang,
+      href: queryLink('alternate', `hreflang="${l.lang}"`),
+    })),
   }
 }
 
@@ -124,9 +226,13 @@ function restoreHead(prev: ReturnType<typeof snapshotHead>) {
   setMeta('property', 'og:type', prev.ogType)
   setMeta('property', 'og:image', prev.ogImage)
   setMeta('property', 'og:url', prev.ogUrl)
+  setMeta('property', 'og:site_name', prev.ogSiteName)
+  setMeta('property', 'og:locale', prev.ogLocale)
+  setMeta('property', 'og:locale:alternate', prev.ogLocaleAlternate)
   setMeta('name', 'twitter:card', prev.twitterCard)
   setMeta('name', 'twitter:title', prev.twitterTitle)
   setMeta('name', 'twitter:description', prev.twitterDescription)
+  setMeta('name', 'twitter:image', prev.twitterImage)
 
   const canonicalEl = document.querySelector<HTMLLinkElement>(
     'link[rel="canonical"]',
@@ -137,6 +243,105 @@ function restoreHead(prev: ReturnType<typeof snapshotHead>) {
     } else {
       canonicalEl.remove()
     }
+  }
+
+  // 还原 hreflang 标签
+  for (const { lang, href } of prev.hreflangs) {
+    const el = document.querySelector<HTMLLinkElement>(
+      `link[rel="alternate"][hreflang="${lang}"]`,
+    )
+    if (el) {
+      if (href) {
+        el.setAttribute('href', href)
+      } else {
+        el.remove()
+      }
+    }
+  }
+}
+
+// ============================================================
+// JSON-LD 生成函数
+// ============================================================
+
+/** 生成 WebApplication 结构化数据 */
+function generateWebApplicationSchema(
+  title: string,
+  description: string,
+  url: string,
+): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: title,
+    url: url,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'CNY',
+    },
+    description: description,
+    inLanguage: ['zh', 'en', 'ja', 'ko'],
+  }
+}
+
+/** 生成 WebSite 结构化数据 (首页) */
+function generateWebSiteSchema(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: BASE_URL,
+    description: DEFAULT_DESCRIPTION,
+    inLanguage: ['zh', 'en', 'ja', 'ko'],
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${BASE_URL}/workspace?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  }
+}
+
+/** 生成 BreadcrumbList 结构化数据 */
+function generateBreadcrumbSchema(pathname: string): Record<string, unknown> {
+  const segments = pathname
+    .replace(/^\/+|\/+$/g, '')
+    .split('/')
+    .filter(Boolean)
+
+  const items: { '@type': string; name: string; item: string }[] = [
+    {
+      '@type': 'ListItem',
+      name: '首页',
+      item: BASE_URL,
+    },
+  ]
+
+  let accumulatedPath = ''
+  for (const segment of segments) {
+    accumulatedPath += `/${segment}`
+    const name =
+      BREADCRUMB_NAMES[segment] ||
+      segment
+        .split(/[-_]/)
+        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(' ')
+    items.push({
+      '@type': 'ListItem',
+      name,
+      item: `${BASE_URL}${accumulatedPath}`,
+    })
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      ...item,
+      position: index + 1,
+    })),
   }
 }
 
@@ -149,9 +354,11 @@ function restoreHead(prev: ReturnType<typeof snapshotHead>) {
  *
  * - 设置 document.title
  * - 管理 meta description / keywords
- * - 管理 Open Graph 标签
- * - 管理 Twitter Card 标签
+ * - 管理 Open Graph 标签 (含 og:site_name, og:locale, og:locale:alternate)
+ * - 管理 Twitter Card 标签 (含 twitter:image)
  * - 设置 canonical 链接
+ * - 设置 hreflang 多语言标签 (zh/en/ja/ko)
+ * - 注入 JSON-LD 结构化数据 (WebApplication / BreadcrumbList)
  * - 组件卸载时自动还原
  */
 export function useSeo(optionsOrKey: SeoOptions | string): void {
@@ -169,13 +376,32 @@ export function useSeo(optionsOrKey: SeoOptions | string): void {
       canonicalUrl,
     } = options
 
+    const pathname = window.location.pathname.replace(
+      /^\/ai-efficiency-assistant/,
+      '',
+    ) || '/'
+
+    const resolvedTitle = title || DEFAULT_TITLE
+    const resolvedDescription = description || DEFAULT_DESCRIPTION
+    const resolvedOgImage = ogImage
+      ? ogImage.startsWith('http')
+        ? ogImage
+        : `${BASE_URL}${ogImage}`
+      : DEFAULT_OG_IMAGE
+
+    const resolvedUrl = canonicalUrl
+      ? canonicalUrl.startsWith('http')
+        ? canonicalUrl
+        : `${BASE_URL}${canonicalUrl}`
+      : `${BASE_URL}${pathname}`
+
     // 1. 设置页面标题
-    document.title = title || DEFAULT_TITLE
+    document.title = resolvedTitle
 
     // 2. 设置 meta description
     getOrCreateMeta('name', 'description').setAttribute(
       'content',
-      description || DEFAULT_DESCRIPTION,
+      resolvedDescription,
     )
 
     // 3. 设置 meta keywords
@@ -184,28 +410,58 @@ export function useSeo(optionsOrKey: SeoOptions | string): void {
     // 4. 设置 Open Graph 标签
     getOrCreateMeta('property', 'og:title').setAttribute(
       'content',
-      title || DEFAULT_TITLE,
+      resolvedTitle,
     )
     getOrCreateMeta('property', 'og:description').setAttribute(
       'content',
-      description || DEFAULT_DESCRIPTION,
+      resolvedDescription,
     )
     getOrCreateMeta('property', 'og:type').setAttribute('content', 'website')
-
-    if (ogImage) {
-      getOrCreateMeta('property', 'og:image').setAttribute(
-        'content',
-        ogImage.startsWith('http') ? ogImage : `${BASE_URL}${ogImage}`,
-      )
-    }
-
-    const resolvedUrl = canonicalUrl
-      ? canonicalUrl.startsWith('http')
-        ? canonicalUrl
-        : `${BASE_URL}${canonicalUrl}`
-      : BASE_URL
-
+    getOrCreateMeta('property', 'og:image').setAttribute(
+      'content',
+      resolvedOgImage,
+    )
     getOrCreateMeta('property', 'og:url').setAttribute('content', resolvedUrl)
+    getOrCreateMeta('property', 'og:site_name').setAttribute(
+      'content',
+      SITE_NAME,
+    )
+    getOrCreateMeta('property', 'og:locale').setAttribute(
+      'content',
+      'zh_CN',
+    )
+
+    // 设置 og:locale:alternate (en_US, ja_JP, ko_KR)
+    const alternateLocales = SUPPORTED_LOCALES.filter(
+      (l) => l.locale !== 'zh_CN',
+    )
+    alternateLocales.forEach((l, index) => {
+      const el = document.querySelector<HTMLMetaElement>(
+        `meta[property="og:locale:alternate"]`,
+      )
+      if (index === 0) {
+        // 第一个 alternate locale，创建或更新
+        const metaEl =
+          el ||
+          document.createElement('meta') as HTMLMetaElement
+        if (!el) {
+          metaEl.setAttribute('property', 'og:locale:alternate')
+          document.head.appendChild(metaEl)
+        }
+        metaEl.setAttribute('content', l.locale)
+      } else {
+        // 额外的 alternate locale
+        let extraEl = document.querySelector<HTMLMetaElement>(
+          `meta[property="og:locale:alternate"][content="${l.locale}"]`,
+        )
+        if (!extraEl) {
+          extraEl = document.createElement('meta')
+          extraEl.setAttribute('property', 'og:locale:alternate')
+          document.head.appendChild(extraEl)
+        }
+        extraEl.setAttribute('content', l.locale)
+      }
+    })
 
     // 5. 设置 Twitter Card 标签
     getOrCreateMeta('name', 'twitter:card').setAttribute(
@@ -214,24 +470,91 @@ export function useSeo(optionsOrKey: SeoOptions | string): void {
     )
     getOrCreateMeta('name', 'twitter:title').setAttribute(
       'content',
-      title || DEFAULT_TITLE,
+      resolvedTitle,
     )
     getOrCreateMeta('name', 'twitter:description').setAttribute(
       'content',
-      description || DEFAULT_DESCRIPTION,
+      resolvedDescription,
+    )
+    getOrCreateMeta('name', 'twitter:image').setAttribute(
+      'content',
+      resolvedOgImage,
     )
 
     // 6. 设置 canonical 链接
-    if (canonicalUrl) {
-      getOrCreateCanonical().setAttribute('href', resolvedUrl)
-    }
+    getOrCreateCanonical().setAttribute('href', resolvedUrl)
+
+    // 7. 设置 hreflang 多语言标签
+    SUPPORTED_LOCALES.forEach((l) => {
+      const el = getOrCreateHreflang(l.lang)
+      const href =
+        l.lang === 'zh'
+          ? resolvedUrl
+          : `${resolvedUrl}${resolvedUrl.includes('?') ? '&' : '?'}lang=${l.lang}`
+      el.setAttribute('href', href)
+    })
+
+    // 8. 注入 JSON-LD 结构化数据
+    injectJsonLd(pathname, resolvedTitle, resolvedDescription, resolvedUrl)
   }, [options])
 
   useEffect(() => {
     const prev = snapshotHead()
     applySeo()
-    return () => restoreHead(prev)
+    return () => {
+      restoreHead(prev)
+      // 清理 JSON-LD
+      document
+        .querySelectorAll('script[data-jsonld="true"]')
+        .forEach((el) => el.remove())
+    }
   }, [applySeo])
+}
+
+// ============================================================
+// JSON-LD 注入
+// ============================================================
+
+function injectJsonLd(
+  pathname: string,
+  title: string,
+  description: string,
+  url: string,
+): void {
+  // 清理已有的 JSON-LD
+  document
+    .querySelectorAll('script[data-jsonld="true"]')
+    .forEach((el) => el.remove())
+
+  const schemas: Record<string, unknown>[] = []
+
+  // 首页: WebSite schema
+  if (pathname === '/' || pathname === '') {
+    schemas.push(generateWebSiteSchema())
+  }
+
+  // 工具页面: WebApplication schema
+  if (isToolPage(pathname)) {
+    schemas.push(
+      generateWebApplicationSchema(
+        title,
+        description,
+        url,
+      ),
+    )
+  }
+
+  // 所有页面: BreadcrumbList schema
+  schemas.push(generateBreadcrumbSchema(pathname))
+
+  // 注入所有 schema
+  schemas.forEach((schema) => {
+    const script = document.createElement('script')
+    script.type = 'application/ld+json'
+    script.textContent = JSON.stringify(schema)
+    script.setAttribute('data-jsonld', 'true')
+    document.head.appendChild(script)
+  })
 }
 
 // ============================================================
@@ -335,7 +658,7 @@ export const PAGE_SEO = {
   rewrite: { title: 'AI智能改写 - AI效率助手', description: 'AI智能改写工具，支持降重改写、去AI痕迹、学术润色、口语化等多种改写模式，一键提升文本质量。', keywords: 'AI改写,文本降重,去AI痕迹,学术润色,文本人性化,AI降重工具' },
   translation: { title: 'AI智能翻译 - AI效率助手', description: 'AI智能翻译工具，支持中英日韩法德西俄阿葡多语言互译，提供文本翻译、文档翻译、批量翻译、润色翻译四种模式。', keywords: 'AI翻译,多语言翻译,智能翻译,文档翻译,批量翻译,翻译工具' },
   'doc-analysis': { title: 'AI文档分析 - AI效率助手', description: 'AI文档分析工具，支持智能摘要、关键信息提取、文档问答、文档对比等多种分析模式，快速洞察文档内容。', keywords: 'AI文档分析,文档摘要,信息提取,文档问答,文档对比,AI分析工具' },
- mindmap: { title: 'AI思维导图 - AI效率助手', description: 'AI智能思维导图生成器，输入主题自动生成结构化思维导图，支持思维发散、流程图、SWOT分析等多种类型。', keywords: 'AI思维导图,思维导图生成器,脑图工具,SWOT分析,知识框架,项目规划,AI导图' },
+  mindmap: { title: 'AI思维导图 - AI效率助手', description: 'AI智能思维导图生成器，输入主题自动生成结构化思维导图，支持思维发散、流程图、SWOT分析等多种类型。', keywords: 'AI思维导图,思维导图生成器,脑图工具,SWOT分析,知识框架,项目规划,AI导图' },
 
   // 生活助手
   'life-assistant': { title: 'AI生活助手 - AI效率助手', description: 'AI生活助手提供旅行规划、美食推荐、健康顾问、职业规划、情感倾听等智能生活服务，让AI成为你的全方位生活助手。', keywords: 'AI生活助手,旅行规划,美食推荐,健康顾问,职业规划,情感倾听,AI助手' },
@@ -378,5 +701,14 @@ export const PAGE_SEO = {
     keywords:
       'AI API,开放平台,RESTful API,AI接口,文本生成API,翻译API,代码生成,SDK,开发者工具',
     canonicalUrl: '/api-platform',
+  },
+
+  dashboard: {
+    title: '数据面板 - AI效率助手',
+    description:
+      '查看AI效率助手的使用统计数据，包括页面浏览量、工具使用次数、错误追踪和每日活跃度分析。',
+    keywords:
+      '数据分析,使用统计,错误追踪,数据面板,使用报告',
+    canonicalUrl: '/dashboard',
   },
 } as const
