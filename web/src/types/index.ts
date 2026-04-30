@@ -51,6 +51,7 @@ export interface FeatureCard {
   color: string;
   bgColor: string;
   textColor: string;
+  to?: string;
 }
 
 /** useAi Hook 返回类型 */

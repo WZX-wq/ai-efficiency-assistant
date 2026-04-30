@@ -32,6 +32,7 @@ const COMMANDS: CommandItem[] = [
   { id: 'templates', title: '模板库', icon: '📑', path: '/workspace/templates', category: '工具', description: '常用内容模板集合' },
   { id: 'brand', title: '品牌声音', icon: '🎨', path: '/workspace/brand', category: '工具', description: '定义品牌语言风格' },
   { id: 'history', title: '历史记录', icon: '📋', path: '/workspace/history', category: '工具', description: '查看历史操作记录' },
+  { id: 'playground', title: 'AI游乐场', icon: '🎮', path: '/playground', category: '工具', description: '沉浸式AI角色扮演体验' },
   // 服务
   { id: 'video', title: '短视频制作', icon: '🎬', path: '/services/video', category: '服务' },
   { id: 'group-buy', title: '团购运营', icon: '🛒', path: '/services/group-buy', category: '服务' },

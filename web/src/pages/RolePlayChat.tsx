@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { chatWithAiStream } from '../services/aiChat';
 import { roleplayStore } from '../store/roleplayStore';
 import {
@@ -35,6 +35,22 @@ function stripStatusCommands(text: string): string {
 /** 从 greeting 中解析初始状态 */
 function parseInitialStatus(greeting: string): Record<string, string> {
   return parseStatusUpdates(greeting);
+}
+
+/** 格式化时间戳 */
+function formatTime(ts: number): string {
+  const d = new Date(ts);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHour = Math.floor(diffMs / 3600000);
+  const diffDay = Math.floor(diffMs / 86400000);
+
+  if (diffMin < 1) return '刚刚';
+  if (diffMin < 60) return `${diffMin} 分钟前`;
+  if (diffHour < 24) return `${diffHour} 小时前`;
+  if (diffDay < 7) return `${diffDay} 天前`;
+  return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
 // ============================================================
@@ -88,6 +104,156 @@ function SettingsPanel({
         </button>
       </div>
     </motion.div>
+  );
+}
+
+/** 会话侧边栏 */
+function SessionSidebar({
+  cardId,
+  cardName,
+  cardAvatar,
+  isOpen,
+  onClose,
+  onSwitchSession,
+  onNewGame,
+  onDeleteSession,
+  currentSessionId,
+}: {
+  cardId: string;
+  cardName: string;
+  cardAvatar: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onSwitchSession: (session: { id: string; messages: RolePlayMessage[]; statusValues: Record<string, string> }) => void;
+  onNewGame: () => void;
+  onDeleteSession: (sessionId: string) => void;
+  currentSessionId: string | null;
+}) {
+  const sessions = roleplayStore((s) => s.sessions);
+  const cardSessions = useMemo(
+    () => sessions.filter((s) => s.cardId === cardId).sort((a, b) => b.updatedAt - a.updatedAt),
+    [sessions, cardId],
+  );
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* 遮罩层（移动端全屏覆盖 + 桌面端半透明遮罩） */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/50 z-40 md:bg-black/30"
+            onClick={onClose}
+          />
+
+          {/* 侧边栏 */}
+          <motion.aside
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed top-0 left-0 bottom-0 w-[280px] max-w-[85vw] bg-gray-900/95 backdrop-blur-xl
+                       border-r border-white/10 z-50 flex flex-col shadow-2xl"
+          >
+            {/* 头部 */}
+            <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">{cardAvatar}</span>
+                <h2 className="text-lg font-bold text-white">游戏记录</h2>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                aria-label="关闭侧边栏"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* 新建游戏按钮 */}
+            <div className="px-3 py-3">
+              <button
+                onClick={() => { onNewGame(); onClose(); }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+                           bg-white/10 hover:bg-white/15 border border-white/15
+                           text-white text-sm font-medium transition-all duration-200"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                新建游戏
+              </button>
+            </div>
+
+            {/* 会话列表 */}
+            <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-1 scrollbar-thin">
+              {cardSessions.length === 0 ? (
+                <div className="text-center py-8 text-gray-500 text-sm">
+                  <p>暂无游戏记录</p>
+                  <p className="mt-1 text-xs">点击上方按钮开始新游戏</p>
+                </div>
+              ) : (
+                cardSessions.map((session) => {
+                  const isActive = session.id === currentSessionId;
+                  const messageCount = session.messages.length;
+                  return (
+                    <motion.div
+                      key={session.id}
+                      whileHover={{ x: 2 }}
+                      className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${
+                        isActive
+                          ? 'bg-white/15 border border-white/20'
+                          : 'hover:bg-white/8 border border-transparent'
+                      }`}
+                      onClick={() => {
+                        onSwitchSession({
+                          id: session.id,
+                          messages: session.messages,
+                          statusValues: session.statusValues,
+                        });
+                        onClose();
+                      }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-white truncate">{cardName}</span>
+                          {isActive && (
+                            <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-green-400" />
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs text-gray-400">{formatTime(session.updatedAt)}</span>
+                          <span className="text-xs text-gray-500">{messageCount} 条消息</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteSession(session.id);
+                        }}
+                        className="flex-shrink-0 p-1.5 rounded-lg opacity-0 group-hover:opacity-100
+                                   hover:bg-red-500/20 text-gray-500 hover:text-red-400
+                                   transition-all duration-200"
+                        aria-label="删除会话"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </motion.div>
+                  );
+                })
+              )}
+            </div>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -168,6 +334,8 @@ export default function RolePlayChat() {
   const createSession = roleplayStore((s) => s.createSession);
   const saveSession = roleplayStore((s) => s.saveSession);
   const exportSession = roleplayStore((s) => s.exportSession);
+  const deleteSession = roleplayStore((s) => s.deleteSession);
+  const setActiveSession = roleplayStore((s) => s.setActiveSession);
   const activeSessionId = roleplayStore((s) => s.activeSessionId);
 
   // ---- 查找角色卡 ----
@@ -200,6 +368,7 @@ export default function RolePlayChat() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(activeSessionId);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -240,10 +409,60 @@ export default function RolePlayChat() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [showSettings]);
 
+  // ---- ESC 键关闭侧边栏 ----
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape' && sidebarOpen) {
+        setSidebarOpen(false);
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [sidebarOpen]);
+
   // ---- 自动滚动到底部 ----
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // ---- 切换会话 ----
+  const handleSwitchSession = useCallback(
+    (sessionData: { id: string; messages: RolePlayMessage[]; statusValues: Record<string, string> }) => {
+      setSessionId(sessionData.id);
+      setActiveSession(sessionData.id);
+      setMessages(sessionData.messages);
+      setStatusValues(sessionData.statusValues);
+    },
+    [setActiveSession],
+  );
+
+  // ---- 新建游戏 ----
+  const handleNewGame = useCallback(() => {
+    if (!card) return;
+    const initialStatus = parseInitialStatus(card.greeting);
+    setStatusValues(initialStatus);
+    const sid = createSession(card.id, initialStatus);
+    setSessionId(sid);
+    setMessages([
+      {
+        role: 'assistant',
+        content: card.greeting,
+        timestamp: Date.now(),
+      },
+    ]);
+  }, [card, createSession]);
+
+  // ---- 删除会话 ----
+  const handleDeleteSession = useCallback(
+    (targetSessionId: string) => {
+      deleteSession(targetSessionId);
+      // 如果删除的是当前会话，新建一个
+      if (targetSessionId === sessionId && card) {
+        handleNewGame();
+      }
+    },
+    [deleteSession, sessionId, card, handleNewGame],
+  );
 
   // ---- 发送消息 ----
   const sendMessage = useCallback(
@@ -439,6 +658,19 @@ export default function RolePlayChat() {
     <div
       className={`h-screen flex flex-col bg-gradient-to-b ${theme.gradient} text-white overflow-hidden`}
     >
+      {/* ====== 会话侧边栏 ====== */}
+      <SessionSidebar
+        cardId={card.id}
+        cardName={card.name}
+        cardAvatar={card.avatar}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onSwitchSession={handleSwitchSession}
+        onNewGame={handleNewGame}
+        onDeleteSession={handleDeleteSession}
+        currentSessionId={sessionId}
+      />
+
       {/* ====== 顶部栏 ====== */}
       <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 bg-black/20 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-3">
@@ -458,6 +690,18 @@ export default function RolePlayChat() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* 历史记录按钮 */}
+          <button
+            onClick={() => setSidebarOpen((prev) => !prev)}
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            aria-label="游戏记录"
+            title="游戏记录"
+          >
+            <span className="text-lg" role="img" aria-label="历史记录">
+              📋
+            </span>
+          </button>
+
           {/* 存档按钮 */}
           <button
             onClick={() => {

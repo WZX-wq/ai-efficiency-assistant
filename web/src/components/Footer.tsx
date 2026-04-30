@@ -75,6 +75,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{t('footer.product')}</h3>
             <ul className="space-y-3">
               <li><Link to="/workspace" className="text-sm text-gray-400 hover:text-white transition-colors">AI工作台</Link></li>
+              <li><Link to="/playground" className="text-sm text-gray-400 hover:text-white transition-colors">AI游乐场</Link></li>
               <li><Link to="/workspace/templates" className="text-sm text-gray-400 hover:text-white transition-colors">模板库</Link></li>
               <li><Link to="/workspace/brand" className="text-sm text-gray-400 hover:text-white transition-colors">品牌声音</Link></li>
               <li><Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors">定价方案</Link></li>
