@@ -798,4 +798,13 @@ export const PAGE_SEO = {
       'AI工作流,自动化统计,工作流面板,AI效率助手',
     canonicalUrl: '/workflow-dashboard',
   },
+
+  videoScript: {
+    title: 'AI视频脚本生成器 - AI效率助手',
+    description:
+      'AI视频脚本生成器，支持抖音、快手、B站、YouTube、小红书、视频号等多平台脚本创作，智能生成专业视频脚本。',
+    keywords:
+      'AI视频脚本,短视频脚本,抖音脚本,小红书脚本,视频文案,脚本生成器,AI效率助手',
+    canonicalUrl: '/workspace/video-script',
+  },
 } as const

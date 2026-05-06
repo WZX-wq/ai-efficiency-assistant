@@ -91,6 +91,7 @@ const DataViz = lazy(() => import('./pages/DataViz'));
 const ImageGenerator = lazy(() => import('./pages/ImageGenerator'));
 const SpreadsheetEditor = lazy(() => import('./pages/SpreadsheetEditor'));
 const ExtensionFramework = lazy(() => import('./pages/ExtensionFramework'));
+const VideoScriptTool = lazy(() => import('./pages/VideoScriptTool'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -252,6 +253,9 @@ function AppContent() {
                 <Route path="/images" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ImageGenerator /></Suspense></ErrorBoundary>} />
                 <Route path="/spreadsheet" element={<ErrorBoundary><Suspense fallback={LazyFallback}><SpreadsheetEditor /></Suspense></ErrorBoundary>} />
                 <Route path="/extensions" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ExtensionFramework /></Suspense></ErrorBoundary>} />
+                <Route path="/video-script" element={<ErrorBoundary><Suspense fallback={LazyFallback}><VideoScriptTool /></Suspense></ErrorBoundary>} />
+                <Route path="/customer-service" element={<ErrorBoundary><Suspense fallback={LazyFallback}><AiCustomerService /></Suspense></ErrorBoundary>} />
+                <Route path="/private-domain" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PrivateDomain /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>
