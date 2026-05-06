@@ -88,6 +88,9 @@ const TeamHub = lazy(() => import('./pages/TeamHub'));
 const VoiceAssistant = lazy(() => import('./pages/VoiceAssistant'));
 const FileManager = lazy(() => import('./pages/FileManager'));
 const DataViz = lazy(() => import('./pages/DataViz'));
+const ImageGenerator = lazy(() => import('./pages/ImageGenerator'));
+const SpreadsheetEditor = lazy(() => import('./pages/SpreadsheetEditor'));
+const ExtensionFramework = lazy(() => import('./pages/ExtensionFramework'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -246,6 +249,9 @@ function AppContent() {
                 <Route path="/voice" element={<ErrorBoundary><Suspense fallback={LazyFallback}><VoiceAssistant /></Suspense></ErrorBoundary>} />
                 <Route path="/files" element={<ErrorBoundary><Suspense fallback={LazyFallback}><FileManager /></Suspense></ErrorBoundary>} />
                 <Route path="/dataviz" element={<ErrorBoundary><Suspense fallback={LazyFallback}><DataViz /></Suspense></ErrorBoundary>} />
+                <Route path="/images" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ImageGenerator /></Suspense></ErrorBoundary>} />
+                <Route path="/spreadsheet" element={<ErrorBoundary><Suspense fallback={LazyFallback}><SpreadsheetEditor /></Suspense></ErrorBoundary>} />
+                <Route path="/extensions" element={<ErrorBoundary><Suspense fallback={LazyFallback}><ExtensionFramework /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>
