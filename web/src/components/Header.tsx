@@ -35,6 +35,8 @@ const toolLinkItems = [
   { to: '/workspace/data-analysis', labelKey: 'header.dataAnalysis', icon: '📈' },
   { to: '/workflows', labelKey: 'header.workflows', icon: '⚡' },
   { to: '/workflow-dashboard', labelKey: 'header.workflowDashboard', icon: '📊' },
+  { to: '/canvas', labelKey: 'header.canvas', icon: '🎨' },
+  { to: '/team', labelKey: 'header.team', icon: '👥' },
 ];
 
 export default function Header() {

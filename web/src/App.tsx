@@ -83,6 +83,8 @@ const EnhancedChat = lazy(() => import('./components/EnhancedChat'));
 const ChatHistory = lazy(() => import('./pages/ChatHistory'));
 const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'));
 const WorkflowDashboard = lazy(() => import('./pages/WorkflowDashboard'));
+const AiCanvas = lazy(() => import('./pages/AiCanvas'));
+const TeamHub = lazy(() => import('./pages/TeamHub'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -236,6 +238,8 @@ function AppContent() {
                 <Route path="/knowledge" element={<ErrorBoundary><Suspense fallback={LazyFallback}><KnowledgeBase /></Suspense></ErrorBoundary>} />
                 <Route path="/workflows" element={<ErrorBoundary><Suspense fallback={LazyFallback}><WorkflowBuilder /></Suspense></ErrorBoundary>} />
                 <Route path="/workflow-dashboard" element={<ErrorBoundary><Suspense fallback={LazyFallback}><WorkflowDashboard /></Suspense></ErrorBoundary>} />
+                <Route path="/canvas" element={<ErrorBoundary><Suspense fallback={LazyFallback}><AiCanvas /></Suspense></ErrorBoundary>} />
+                <Route path="/team" element={<ErrorBoundary><Suspense fallback={LazyFallback}><TeamHub /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>
