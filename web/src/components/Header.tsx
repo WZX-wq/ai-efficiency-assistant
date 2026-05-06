@@ -37,6 +37,9 @@ const toolLinkItems = [
   { to: '/workflow-dashboard', labelKey: 'header.workflowDashboard', icon: '📊' },
   { to: '/canvas', labelKey: 'header.canvas', icon: '🎨' },
   { to: '/team', labelKey: 'header.team', icon: '👥' },
+  { to: '/voice', labelKey: 'header.voice', icon: '🎤' },
+  { to: '/files', labelKey: 'header.files', icon: '📁' },
+  { to: '/dataviz', labelKey: 'header.dataviz', icon: '📊' },
 ];
 
 export default function Header() {
