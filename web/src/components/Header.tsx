@@ -46,6 +46,9 @@ const toolLinkItems = [
   { to: '/video-script', labelKey: 'header.videoScript', icon: '🎬' },
   { to: '/customer-service', labelKey: 'header.customerService', icon: '🎧' },
   { to: '/private-domain', labelKey: 'header.privateDomain', icon: '👥' },
+  { to: '/code-assistant', labelKey: 'header.codeAssistant', icon: '💻' },
+  { to: '/database', labelKey: 'header.database', icon: '🗄️' },
+  { to: '/monitor', labelKey: 'header.monitor', icon: '📊' },
 ];
 
 export default function Header() {
