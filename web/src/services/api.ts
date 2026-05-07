@@ -1,5 +1,8 @@
 import type { AiProcessRequest, AiProcessResponse } from '../types';
 
+/** 后端 API 基础地址 */
+const BACKEND_API_URL = import.meta.env.VITE_API_URL || 'https://ai-efficiency-assistant-1.onrender.com/api';
+
 /** 白山智算 API 地址（直连，国内可访问） */
 const DEFAULT_API_URL = 'https://api.edgefn.net/v1/chat/completions';
 /** 默认 API Key 从环境变量读取，不再硬编码 */
@@ -40,14 +43,56 @@ const ACTION_PROMPTS: Record<string, string> = {
 };
 
 /**
- * 调用 AI API（直连白山智算）
+ * 通过后端代理调用 AI API（推荐方式，API Key 安全存储在后端）
+ */
+async function callViaBackend(
+  request: AiProcessRequest,
+  signal?: AbortSignal
+): Promise<AiProcessResponse> {
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/ai/process`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+      signal: signal || AbortSignal.timeout(60000),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      return {
+        success: false,
+        error: errorData?.error || `后端请求失败，状态码: ${response.status}`,
+      };
+    }
+
+    const data = await response.json();
+    return data as AiProcessResponse;
+  } catch (err) {
+    const message = err instanceof DOMException && err.name === 'TimeoutError'
+      ? '请求超时，请稍后重试或缩短输入内容'
+      : err instanceof Error ? err.message : '网络请求失败，请检查网络连接';
+    return { success: false, error: message };
+  }
+}
+
+/**
+ * 调用 AI API（优先通过后端代理，失败时回退到直连）
  */
 export async function callBaishanDirect(
   request: AiProcessRequest,
   signal?: AbortSignal
 ): Promise<AiProcessResponse> {
+  // 优先通过后端代理调用
+  const result = await callViaBackend(request, signal);
+  if (result.success) return result;
+
+  // 后端失败时，回退到直连白山智算
   const systemPrompt = ACTION_PROMPTS[request.action] || ACTION_PROMPTS.rewrite;
   const { baseUrl, apiKey, model } = getModelConfig();
+
+  if (!apiKey) {
+    return { success: false, error: '请先在设置中配置 API Key' };
+  }
 
   try {
     const response = await fetch(baseUrl, {
@@ -107,7 +152,7 @@ export interface AiProcessStreamResponse {
 }
 
 /**
- * 流式 AI 文本处理接口
+ * 流式 AI 文本处理接口（通过后端代理）
  */
 export async function processAiTextStream(
   request: AiProcessRequest,
@@ -115,6 +160,58 @@ export async function processAiTextStream(
 ): Promise<AiProcessStreamResponse> {
   const systemPrompt = ACTION_PROMPTS[request.action] || ACTION_PROMPTS.rewrite;
   const { baseUrl, apiKey, model } = getModelConfig();
+
+  // 优先通过后端代理
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/ai/process/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+      signal: signal || AbortSignal.timeout(60000),
+    });
+
+    if (response.ok && response.body) {
+      const { readable, writable } = new TransformStream<string, string>();
+      const writer = writable.getWriter();
+      const decoder = new TextDecoder();
+
+      (async () => {
+        const reader = response.body!.getReader();
+        let buffer = '';
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || !trimmed.startsWith('data: ')) continue;
+              const data = trimmed.slice(6);
+              if (data === '[DONE]') break;
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) await writer.write(content);
+              } catch { /* ignore */ }
+            }
+          }
+        } catch (err) {
+          console.error('SSE 流读取错误:', err);
+        } finally {
+          await writer.close();
+        }
+      })();
+
+      return { success: true, stream: readable };
+    }
+  } catch { /* fallback to direct */ }
+
+  // 回退到直连
+  if (!apiKey) {
+    return { success: false, stream: null, error: '请先在设置中配置 API Key' };
+  }
 
   try {
     const response = await fetch(baseUrl, {
@@ -192,7 +289,15 @@ export async function processAiTextStream(
 }
 
 export async function checkApiHealth(): Promise<boolean> {
+  // 优先检查后端
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/health`);
+    if (response.ok) return true;
+  } catch { /* fallback */ }
+
+  // 回退检查直连
   const { baseUrl, apiKey, model } = getModelConfig();
+  if (!apiKey) return false;
   try {
     const response = await fetch(baseUrl, {
       method: 'POST',
