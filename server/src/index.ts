@@ -78,11 +78,17 @@ app.use('/uploads', express.static('uploads'));
 const connectDB = async () => {
   try {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-assistant';
+    if (!mongoUri || mongoUri.includes('localhost')) {
+      logger.warn('MongoDB URI not configured, running without database');
+      return false;
+    }
     await mongoose.connect(mongoUri);
     logger.info('MongoDB connected successfully');
+    return true;
   } catch (error) {
-    logger.error('MongoDB connection error', { error: String(error) });
-    process.exit(1);
+    logger.error('MongoDB connection error, continuing without database', { error: String(error) });
+    // 不退出进程，让服务器继续运行（部分功能可能不可用）
+    return false;
   }
 };
 
