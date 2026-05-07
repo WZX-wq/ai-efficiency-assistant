@@ -95,6 +95,11 @@ const VideoScriptTool = lazy(() => import('./pages/VideoScriptTool'));
 const CodeAssistant = lazy(() => import('./pages/CodeAssistant'));
 const DatabaseManager = lazy(() => import('./pages/DatabaseManager'));
 const SystemMonitor = lazy(() => import('./pages/SystemMonitor'));
+const AiPainter = lazy(() => import('./pages/AiPainter'));
+const VideoGenerator = lazy(() => import('./pages/VideoGenerator'));
+const PptGenerator = lazy(() => import('./pages/PptGenerator'));
+const CustomerServiceBot = lazy(() => import('./pages/CustomerServiceBot'));
+const DataAnalysisPage = lazy(() => import('./pages/DataAnalysisPage'));
 
 const LazyFallback = <ToolPageSkeleton />;
 
@@ -262,6 +267,11 @@ function AppContent() {
                 <Route path="/code-assistant" element={<ErrorBoundary><Suspense fallback={LazyFallback}><CodeAssistant /></Suspense></ErrorBoundary>} />
                 <Route path="/database" element={<ErrorBoundary><Suspense fallback={LazyFallback}><DatabaseManager /></Suspense></ErrorBoundary>} />
                 <Route path="/monitor" element={<ErrorBoundary><Suspense fallback={LazyFallback}><SystemMonitor /></Suspense></ErrorBoundary>} />
+                <Route path="/painter" element={<ErrorBoundary><Suspense fallback={LazyFallback}><AiPainter /></Suspense></ErrorBoundary>} />
+                <Route path="/video-generator" element={<ErrorBoundary><Suspense fallback={LazyFallback}><VideoGenerator /></Suspense></ErrorBoundary>} />
+                <Route path="/ppt-generator" element={<ErrorBoundary><Suspense fallback={LazyFallback}><PptGenerator /></Suspense></ErrorBoundary>} />
+                <Route path="/chatbot" element={<ErrorBoundary><Suspense fallback={LazyFallback}><CustomerServiceBot /></Suspense></ErrorBoundary>} />
+                <Route path="/data-analysis" element={<ErrorBoundary><Suspense fallback={LazyFallback}><DataAnalysisPage /></Suspense></ErrorBoundary>} />
                 <Route path="*" element={<ErrorBoundary><Suspense fallback={LazyFallback}><NotFound /></Suspense></ErrorBoundary>} />
               </Routes>
             </PageTransition>

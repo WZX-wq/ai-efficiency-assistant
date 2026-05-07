@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Sparkles, Monitor, Lock } from 'lucide-react';
 import type { FeatureCard } from '../types';
 import { ACTION_DESCRIPTIONS } from '../types';
 import { useSeo, JsonLd, PAGE_SEO } from '../components/SeoHead';
@@ -979,64 +980,188 @@ export default function Home() {
         name: 'AI效率助手',
         url: 'https://wzx-wq.github.io/ai-efficiency-assistant',
       }} />
-      {/* Hero Section */}
+      {/* Hero Section - Ultra Modern with Dynamic Background */}
       <section className="relative overflow-hidden pt-32 pb-10 sm:pt-40 sm:pb-14">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-950 animate-gradient" style={{ backgroundSize: '200% 200%' }}>
-          <div className="absolute top-20 right-10 w-72 h-72 bg-primary-400/20 dark:bg-primary-600/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-10 left-10 w-96 h-96 bg-indigo-400/15 dark:bg-indigo-600/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+        {/* Dynamic Mesh Gradient Background */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          {/* Base gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-slate-900" />
+          
+          {/* Animated gradient orbs */}
+          <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-blue-400/30 via-indigo-400/20 to-purple-400/30 dark:from-blue-600/20 dark:via-indigo-600/15 dark:to-purple-600/20 rounded-full blur-[120px] animate-float-slow" />
+          <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-violet-400/25 via-fuchsia-400/15 to-pink-400/25 dark:from-violet-600/15 dark:via-fuchsia-600/10 dark:to-pink-600/15 rounded-full blur-[100px] animate-float-slow-reverse" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-gradient-to-r from-cyan-400/10 via-blue-400/10 to-indigo-400/10 dark:from-cyan-600/5 dark:via-blue-600/5 dark:to-indigo-600/5 rounded-full blur-[150px] animate-pulse-slow" />
+          
+          {/* Grid pattern overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)]" />
+          
+          {/* Radial gradient overlay for depth */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-20%,rgba(99,102,241,0.15),transparent)] dark:bg-[radial-gradient(circle_800px_at_50%_-20%,rgba(99,102,241,0.1),transparent)]" />
+        </div>
+
+        {/* Floating particles */}
+        <div className="absolute inset-0 -z-5 overflow-hidden pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-primary-400/40 dark:bg-primary-500/30 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                opacity: [0.2, 0.8, 0.2],
+                scale: [1, 1.5, 1],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-full text-sm text-primary-700 dark:text-primary-300 font-medium mb-8 animate-fade-in">
-              <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
-              {t('home.hero.badge')}
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight animate-slide-up animate-gradient-text">
-              {t('home.hero.title')}
-              <br />
-              <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 bg-clip-text text-transparent">
-                {t('home.hero.titleHighlight')}
+            {/* Animated badge with glow and border animation */}
+            <motion.div 
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium mb-8 relative overflow-hidden group"
+              style={{
+                background: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.1) 100%)',
+                border: '1px solid rgba(99,102,241,0.2)',
+              }}
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              {/* Animated border */}
+              <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.4), transparent)',
+                  animation: 'shimmer 2s infinite',
+                }}
+              />
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-500"></span>
               </span>
-            </h1>
+              <span className="relative text-primary-700 dark:text-primary-300">{t('home.hero.badge')}</span>
+            </motion.div>
 
-            <p className="mt-6 text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto animate-slide-up">
+            {/* Main headline with enhanced gradient animation */}
+            <motion.h1 
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <span className="block">{t('home.hero.title')}</span>
+              <motion.span 
+                className="block mt-2 bg-gradient-to-r from-primary-600 via-violet-600 to-primary-600 bg-clip-text text-transparent"
+                style={{
+                  backgroundSize: '200% auto',
+                  animation: 'gradient-shift 3s ease infinite',
+                }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                {t('home.hero.titleHighlight')}
+              </motion.span>
+            </motion.h1>
+
+            <motion.p 
+              className="mt-8 text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               {t('home.hero.subtitle')}
-            </p>
+            </motion.p>
 
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
-              <Link
-                to="/workspace"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-primary-600 text-white text-base font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 hover:-translate-y-0.5"
+            {/* CTA Buttons with enhanced 3D effects */}
+            <motion.div 
+              className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <motion.div 
+                whileHover={{ scale: 1.05, y: -2 }} 
+                whileTap={{ scale: 0.98 }}
+                className="relative group"
               >
-                {t('home.hero.cta')}
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
-              <Link
-                to="/pricing"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-base font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:-translate-y-0.5"
+                {/* Glow effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary-600 to-violet-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-500 group-hover:duration-200" />
+                <Link
+                  to="/workspace"
+                  className="relative inline-flex items-center gap-2 px-8 py-4 text-white text-base font-semibold rounded-xl overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%)',
+                    backgroundSize: '200% 200%',
+                    animation: 'gradient-shift 3s ease infinite',
+                  }}
+                >
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                  <span className="relative z-10">{t('home.hero.cta')}</span>
+                  <svg className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+              </motion.div>
+              
+              <motion.div 
+                whileHover={{ scale: 1.05, y: -2 }} 
+                whileTap={{ scale: 0.98 }}
+                className="relative group"
               >
-                {t('home.hero.ctaSecondary')}
-              </Link>
-            </div>
+                <Link
+                  to="/pricing"
+                  className="inline-flex items-center gap-2 px-8 py-4 text-gray-700 dark:text-gray-200 text-base font-semibold rounded-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-lg hover:shadow-primary-500/10 dark:hover:shadow-primary-500/5"
+                  style={{
+                    background: 'rgba(255,255,255,0.8)',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                >
+                  {t('home.hero.ctaSecondary')}
+                  <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                  </svg>
+                </Link>
+              </motion.div>
+            </motion.div>
 
-            {/* Business Value Badges (replacing tech badges) */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 animate-fade-in">
-              {['53+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge) => (
-                <span key={badge} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700">
+            {/* Business Value Badges with enhanced styling */}
+            <motion.div 
+              className="mt-8 flex flex-wrap items-center justify-center gap-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              {['53+ 核心功能', '6 大专业服务', 'SSE 流式输出', '数据本地存储', '7天免费试用'].map((badge, index) => (
+                <motion.span 
+                  key={badge} 
+                  className="px-4 py-1.5 glass-card text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                >
                   {badge}
-                </span>
+                </motion.span>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* 锚点导航 */}
-      <nav className="sticky top-16 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800">
+      {/* 锚点导航 - Enhanced with glassmorphism */}
+      <nav className="sticky top-16 z-30 glass border-b border-gray-100/50 dark:border-gray-800/50">
         <div className="max-w-7xl mx-auto px-4 flex items-center gap-6 overflow-x-auto scrollbar-hide py-2">
           {[
             { id: 'features', label: '核心功能' },
@@ -1099,86 +1224,229 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" ref={featuresRef} className="scroll-reveal py-12 sm:py-16" style={{ scrollMarginTop: '80px' }}>
+      {/* Features Section - Enhanced with gradient background */}
+      <section id="features" ref={featuresRef} className="scroll-reveal py-16 sm:py-24 relative overflow-hidden" style={{ scrollMarginTop: '80px' }}>
+        {/* Background decorations */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
+          <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-gradient-to-br from-primary-400/5 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-gradient-to-br from-violet-400/5 to-transparent rounded-full blur-3xl" />
+        </div>
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
-              五十三核心功能
+          <motion.div 
+            className="text-center max-w-3xl mx-auto mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* Badge */}
+            <motion.div
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-6"
+              style={{
+                background: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.1) 100%)',
+                border: '1px solid rgba(99,102,241,0.2)',
+              }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Sparkles className="w-4 h-4 text-primary-500" />
+              <span className="text-primary-700 dark:text-primary-300">全功能覆盖</span>
+            </motion.div>
+            
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+              <span className="bg-gradient-to-r from-primary-600 via-violet-600 to-primary-600 bg-clip-text text-transparent"
+                style={{ backgroundSize: '200% auto', animation: 'gradient-shift 4s ease infinite' }}>
+                53+ 核心功能
+              </span>
+              <br />
+              <span className="text-gray-700 dark:text-gray-200">一站式 AI 创作平台</span>
             </h2>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-              覆盖内容创作与运营全流程，AI 全程陪伴
+            <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+              从内容创作到数据分析，从团队协作到智能客服，AI 全程陪伴您的每一个工作场景
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
-            {features.map((feature) =>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" style={{ perspective: '1000px' }}>
+            {features.map((feature, index) =>
               feature.to ? (
-                <Link
+                <motion.div
                   key={feature.id}
-                  to={feature.to}
-                  className="group relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 hover:shadow-xl hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  whileHover={{ 
+                    y: -8, 
+                    scale: 1.02,
+                    transition: { type: 'spring', stiffness: 300, damping: 20 }
+                  }}
                 >
-                  <div className={`w-14 h-14 ${feature.bgColor} rounded-2xl flex items-center justify-center ${feature.textColor} mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    {feature.description}
-                  </p>
-                  <div className={`absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                </Link>
+                  <Link
+                    to={feature.to}
+                    className="group relative glass-card rounded-2xl p-6 block h-full interactive-card overflow-hidden"
+                  >
+                    {/* Glow effect on hover */}
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"
+                      style={{ background: `linear-gradient(135deg, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[0]}20, transparent)` }}
+                    />
+                    
+                    <div className="relative z-10">
+                      <div 
+                        className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 card-icon`}
+                        style={{ 
+                          background: `linear-gradient(135deg, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[0]}20, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[1] || feature.color.replace('from-', '').replace('to-', '').split(' ')[0]}10)`,
+                          color: feature.color.replace('from-', '').replace('to-', '').split(' ')[0].replace('500', '600').replace('600', '600')
+                        }}
+                      >
+                        {feature.icon}
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                    
+                    {/* Bottom gradient line */}
+                    <div 
+                      className="absolute bottom-0 left-6 right-6 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100"
+                      style={{ background: `linear-gradient(90deg, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[0]}, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[1] || feature.color.replace('from-', '').replace('to-', '').split(' ')[0]})` }}
+                    />
+                    
+                    {/* Arrow indicator */}
+                    <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </Link>
+                </motion.div>
               ) : (
-                <div
+                <motion.div
                   key={feature.id}
-                  className="group relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 hover:shadow-xl hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  whileHover={{ 
+                    y: -8, 
+                    scale: 1.02,
+                    transition: { type: 'spring', stiffness: 300, damping: 20 }
+                  }}
                 >
-                  <div className={`w-14 h-14 ${feature.bgColor} rounded-2xl flex items-center justify-center ${feature.textColor} mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                    {feature.icon}
+                  <div
+                    className="group relative glass-card rounded-2xl p-6 block h-full interactive-card overflow-hidden"
+                  >
+                    {/* Glow effect on hover */}
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"
+                      style={{ background: `linear-gradient(135deg, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[0]}20, transparent)` }}
+                    />
+                    
+                    <div className="relative z-10">
+                      <div 
+                        className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 card-icon`}
+                        style={{ 
+                          background: `linear-gradient(135deg, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[0]}20, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[1] || feature.color.replace('from-', '').replace('to-', '').split(' ')[0]}10)`,
+                          color: feature.color.replace('from-', '').replace('to-', '').split(' ')[0].replace('500', '600').replace('600', '600')
+                        }}
+                      >
+                        {feature.icon}
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                    
+                    {/* Bottom gradient line */}
+                    <div 
+                      className="absolute bottom-0 left-6 right-6 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100"
+                      style={{ background: `linear-gradient(90deg, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[0]}, ${feature.color.replace('from-', '').replace('to-', '').split(' ')[1] || feature.color.replace('from-', '').replace('to-', '').split(' ')[0]})` }}
+                    />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    {feature.description}
-                  </p>
-                  <div className={`absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                </div>
+                </motion.div>
               )
             )}
           </div>
         </div>
       </section>
 
-      {/* Product Demo Section */}
-      <section id="demo" ref={demoRef} className="scroll-reveal py-12 sm:py-16 bg-gray-50 dark:bg-gray-900" style={{ scrollMarginTop: '80px' }}>
+      {/* Product Demo Section - Enhanced with floating effect */}
+      <section id="demo" ref={demoRef} className="scroll-reveal py-16 sm:py-24 relative overflow-hidden" style={{ scrollMarginTop: '80px' }}>
+        {/* Background gradient */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800" />
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-10 scroll-reveal">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
-              直观高效的工作台
+          <motion.div 
+            className="text-center max-w-3xl mx-auto mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* Badge */}
+            <motion.div
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-6"
+              style={{
+                background: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.1) 100%)',
+                border: '1px solid rgba(99,102,241,0.2)',
+              }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Monitor className="w-4 h-4 text-primary-500" />
+              <span className="text-primary-700 dark:text-primary-300">产品演示</span>
+            </motion.div>
+            
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+              <span className="bg-gradient-to-r from-primary-600 via-violet-600 to-primary-600 bg-clip-text text-transparent"
+                style={{ backgroundSize: '200% auto', animation: 'gradient-shift 4s ease infinite' }}>
+                直观高效
+              </span>
+              <br />
+              <span className="text-gray-700 dark:text-gray-200">的工作台体验</span>
             </h2>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-              简洁现代的界面设计，让你专注于创作本身
+            <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+              简洁现代的界面设计，让你专注于创作本身。AI 助手随时待命，一键调用，高效协作
             </p>
-          </div>
+          </motion.div>
 
-          <div className="scroll-reveal">
-            <div className="relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-2xl overflow-hidden">
-              {/* Mock browser chrome */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                  <div className="w-3 h-3 rounded-full bg-green-400" />
-                </div>
-                <div className="flex-1 mx-4">
-                  <div className="max-w-md mx-auto px-4 py-1.5 bg-white dark:bg-gray-800 rounded-lg text-xs text-gray-400 text-center border border-gray-200 dark:border-gray-600">
-                    ai-assistant.app/workspace
+          <motion.div 
+            className="scroll-reveal"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="relative group">
+              {/* Glow effect behind the mockup */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary-500/20 via-violet-500/20 to-primary-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              
+              <div className="relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-2xl shadow-gray-500/10 dark:shadow-gray-900/50 overflow-hidden">
+                {/* Enhanced mock browser chrome */}
+                <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-400 hover:bg-red-500 transition-colors" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-400 hover:bg-yellow-500 transition-colors" />
+                    <div className="w-3 h-3 rounded-full bg-green-400 hover:bg-green-500 transition-colors" />
+                  </div>
+                  <div className="flex-1 mx-4">
+                    <div className="max-w-md mx-auto px-4 py-1.5 bg-white/80 dark:bg-gray-800/80 rounded-lg text-xs text-gray-500 dark:text-gray-400 text-center border border-gray-200/50 dark:border-gray-600/50 backdrop-blur-sm flex items-center justify-center gap-2">
+                      <Lock className="w-3 h-3" />
+                      ai-assistant.app/workspace
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700" />
+                    <div className="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700" />
                   </div>
                 </div>
-              </div>
               {/* Mock workspace content */}
               <div className="p-6 sm:p-8 min-h-[400px]">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1233,6 +1501,7 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </motion.div>
         </div>
       </section>
 

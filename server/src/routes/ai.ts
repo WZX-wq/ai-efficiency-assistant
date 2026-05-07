@@ -5,8 +5,39 @@ import { processText, callDeepSeek } from '../services/deepseek';
 const router = Router();
 
 /**
- * POST /api/ai/process - 统一的 AI 处理接口
- * 支持 rewrite（改写）、expand（扩写）、translate（翻译）、summarize（摘要）
+ * @swagger
+ * /api/ai/process:
+ *   post:
+ *     summary: 统一 AI 文本处理
+ *     description: 支持改写(rewrite)、扩写(expand)、翻译(translate)、摘要(summarize)四种操作
+ *     tags: [AI]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [text, action]
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 maxLength: 50000
+ *                 example: 这是一段需要处理的文本
+ *               action:
+ *                 type: string
+ *                 enum: [rewrite, expand, translate, summarize]
+ *                 example: rewrite
+ *               targetLang:
+ *                 type: string
+ *                 description: 翻译目标语言（action 为 translate 时必填）
+ *                 example: english
+ *     responses:
+ *       200:
+ *         description: AI 处理成功
+ *       400:
+ *         description: 参数错误
+ *       500:
+ *         description: AI 处理失败
  */
 router.post(
   '/process',
@@ -65,8 +96,45 @@ router.post(
 );
 
 /**
- * POST /api/ai/chat - 流式对话接口（SSE）
- * 接收 messages 数组，通过 Server-Sent Events 流式返回 AI 回复
+ * @swagger
+ * /api/ai/chat:
+ *   post:
+ *     summary: AI 流式对话
+ *     description: 通过 Server-Sent Events (SSE) 流式返回 AI 回复
+ *     tags: [AI]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [messages]
+ *             properties:
+ *               messages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required: [role, content]
+ *                   properties:
+ *                     role:
+ *                       type: string
+ *                       enum: [system, user, assistant]
+ *                     content:
+ *                       type: string
+ *                 example:
+ *                   - role: user
+ *                     content: 你好，请介绍一下你自己
+ *     responses:
+ *       200:
+ *         description: SSE 流式响应
+ *         content:
+ *           text/event-stream:
+ *             schema:
+ *               type: string
+ *       400:
+ *         description: 参数错误
+ *       500:
+ *         description: 对话处理失败
  */
 router.post(
   '/chat',

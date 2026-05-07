@@ -125,18 +125,27 @@ export default function Header() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800 transition-shadow duration-300 ${scrolled ? 'header-scrolled' : ''}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 glass border-b border-gray-100/50 dark:border-gray-800/50 transition-all duration-300 ${scrolled ? 'header-scrolled' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <motion.div 
+                className="w-9 h-9 rounded-xl flex items-center justify-center relative overflow-hidden"
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500 via-violet-500 to-primary-600 animate-gradient" style={{ backgroundSize: '200% 200%' }} />
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity" />
+                {/* Icon */}
+                <svg className="w-5 h-5 text-white relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-              </div>
+              </motion.div>
               <span className="text-lg font-bold text-gray-900 dark:text-white">
-                AI<span className="text-primary-600">效率助手</span>
+                AI<span className="text-gradient-animated">效率助手</span>
               </span>
             </Link>
 
@@ -380,15 +389,22 @@ export default function Header() {
                   {t('theme.themeTooltip')} (右键打开)
                 </div>
               </div>
-              <Link
-                to="/workspace"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors shadow-sm hover:shadow-md"
-              >
-                {t('header.startFree')}
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  to="/workspace"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl relative overflow-hidden group magnetic-btn"
+                >
+                  {/* Animated gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-600 via-violet-600 to-primary-600 animate-gradient" style={{ backgroundSize: '200% 100%' }} />
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-primary-400/20 to-violet-400/20 blur-xl" />
+                  {/* Content */}
+                  <span className="relative z-10">{t('header.startFree')}</span>
+                  <svg className="w-4 h-4 relative z-10 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+              </motion.div>
             </div>
 
             {/* Mobile Menu Button */}

@@ -591,7 +591,7 @@ export default function Playground() {
   const handleStartAdventure = useCallback(
     (card: CharacterCard) => {
       setPreviewCard(null);
-      navigate(`/playground/chat/${card.id}`);
+      navigate(`/playground/${card.id}`);
     },
     [navigate],
   );
