@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://wzx-wq.github.io/ai-efficiency-assistant/sitemap.xml

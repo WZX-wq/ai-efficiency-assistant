@@ -1,0 +1,37 @@
+{
+  "name": "AI效率助手",
+  "short_name": "AI助手",
+  "description": "企业级 AI 内容创作平台",
+  "start_url": "/ai-efficiency-assistant/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/ai-efficiency-assistant/",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/ai-efficiency-assistant/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/ai-efficiency-assistant/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/ai-efficiency-assistant/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/ai-efficiency-assistant/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"]
+}
