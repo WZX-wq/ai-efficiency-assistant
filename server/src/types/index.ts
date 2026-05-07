@@ -403,9 +403,18 @@ export interface IJwtPayload {
 }
 
 /** 认证请求 */
-export interface IAuthRequest extends Request {
-  user?: IUserDocument;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface IAuthRequest extends Record<string, any> {
+  user?: any;
   token?: string;
+  body?: any;
+  params?: any;
+  query?: any;
+  headers?: any;
+  file?: any;
+  team?: any;
+  membership?: any;
+  members?: any;
 }
 
 /** API 响应 */

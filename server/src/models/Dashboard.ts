@@ -238,7 +238,7 @@ const ApiDataSourceConfigSchema = new Schema<ApiDataSourceConfig>({
 const DatabaseDataSourceConfigSchema = new Schema<DatabaseDataSourceConfig>({
   connectionId: { type: String, required: true },
   query: { type: String, required: true },
-  parameters: { type: [Schema.Types.Mixed], default: [] }
+  parameters: { type: [Schema.Types.Mixed] as any, default: [] }
 }, { _id: false });
 
 // WebSocket 数据源配置子模式

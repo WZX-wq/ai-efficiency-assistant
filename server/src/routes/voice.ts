@@ -37,7 +37,7 @@ const storage = multer.diskStorage({
 });
 
 // 文件过滤
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (req: any, file: any, cb: any) => {
   const allowedMimes = [
     'audio/mpeg',
     'audio/mp3',

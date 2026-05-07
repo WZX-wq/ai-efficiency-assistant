@@ -112,7 +112,7 @@ const mockCloudStorage = multer.memoryStorage();
 /**
  * 文件类型验证
  */
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback): void => {
+const fileFilter = (req: any, file: any, cb: any): void => {
   const ext = path.extname(file.originalname).toLowerCase();
 
   // 检查禁止的扩展名
@@ -166,7 +166,7 @@ const cloudUpload = multer({
  * 模拟云存储上传（实际项目中替换为真实的云存储 SDK）
  */
 async function uploadToMockCloud(
-  file: Express.Multer.File
+  file: any
 ): Promise<{ url: string; storedName: string }> {
   // 模拟上传到云存储的延迟
   await new Promise((resolve) => setTimeout(resolve, 100));
