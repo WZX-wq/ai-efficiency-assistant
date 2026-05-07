@@ -1,0 +1,65 @@
+# Render.com 部署配置
+# 此文件用于在 Render 上一键部署 AI 效率助手
+
+services:
+  # 后端 API 服务
+  - type: web
+    name: ai-efficiency-api
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: BAISHAN_API_KEY
+        sync: false  # 需要在 Render 控制台手动设置
+      - key: MONGODB_URI
+        sync: false  # 需要在 Render 控制台手动设置
+      - key: JWT_SECRET
+        sync: false  # 需要在 Render 控制台手动设置
+      - key: MODEL_CHAT
+        value: DeepSeek-V3.2
+      - key: MODEL_REWRITE
+        value: DeepSeek-V3.2
+      - key: MODEL_EXPAND
+        value: DeepSeek-V3.2
+      - key: MODEL_TRANSLATE
+        value: DeepSeek-V3.2
+      - key: MODEL_SUMMARIZE
+        value: DeepSeek-V3.2
+      - key: MODEL_CODE
+        value: Qwen3-Coder-480B-A35B-Instruct
+      - key: MODEL_REASONING
+        value: DeepSeek-R1-0528
+      - key: MODEL_LIGHTWEIGHT
+        value: DeepSeek-R1-0528-Qwen3-8B
+      - key: MODEL_PAINTING
+        value: DeepSeek-V3.2
+      - key: MODEL_VIDEO
+        value: DeepSeek-V3.2
+      - key: MODEL_PPT
+        value: DeepSeek-V3.2
+      - key: MODEL_CUSTOMER_SERVICE
+        value: DeepSeek-V3.2
+      - key: MODEL_DATA_ANALYSIS
+        value: DeepSeek-R1-0528
+
+  # 前端静态网站
+  - type: static
+    name: ai-efficiency-web
+    runtime: static
+    plan: free
+    buildCommand: cd web && npm install && npm run build
+    staticPublishPath: ./web/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://ai-efficiency-api.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
