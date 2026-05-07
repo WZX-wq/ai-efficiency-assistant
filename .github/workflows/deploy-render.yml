@@ -1,0 +1,53 @@
+name: Deploy to Render
+
+on:
+  workflow_dispatch:
+    inputs:
+      render_api_key:
+        description: 'Render API Key'
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Deploy to Render
+        env:
+          RENDER_API_KEY: ${{ inputs.render_api_key }}
+        run: |
+          # Create backend service
+          echo "🚀 Deploying backend API..."
+          curl -X POST "https://api.render.com/v1/services" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "service": {
+                "name": "ai-efficiency-api",
+                "region": "singapore",
+                "runtime": "node",
+                "repo": "WZX-wq/ai-efficiency-assistant",
+                "branch": "main",
+                "buildCommand": "cd server && npm install && npm run build",
+                "startCommand": "cd server && npm start",
+                "healthCheckPath": "/api/health",
+                "plan": "free",
+                "envVars": {
+                  "NODE_ENV": "production",
+                  "BAISHAN_API_KEY": "sk-jOvwoQc8LmiyPDrZ4c3fB5Fd117f49FcA41f7f0aDa223dB1",
+                  "MONGODB_URI": "mongodb+srv://wzx:1160012403wzx@cluster0.akucmla.mongodb.net/?appName=Cluster0",
+                  "JWT_SECRET": "'$(openssl rand -hex 32)'"
+                }
+              }
+            }'
+          
+          echo "✅ Backend deployment initiated!"
