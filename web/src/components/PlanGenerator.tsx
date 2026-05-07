@@ -154,7 +154,7 @@ export default function PlanGenerator({
 
       // 优先通过后端代理调用（流式）
       try {
-        const backendResp = await fetch(`${BACKEND_API_URL}/ai/chat/stream`, {
+        const backendResp = await fetch(`${BACKEND_API_URL}/ai/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(requestBody),

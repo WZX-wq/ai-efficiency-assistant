@@ -136,7 +136,7 @@ export async function chatWithAiStream(
 
   // 优先通过后端代理调用
   try {
-    const response = await fetch(`${BACKEND_API_URL}/ai/chat/stream`, {
+    const response = await fetch(`${BACKEND_API_URL}/ai/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

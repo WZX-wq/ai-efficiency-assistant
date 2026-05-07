@@ -164,7 +164,7 @@ export async function processAiTextStream(
   // 优先通过后端代理（使用 /ai/chat 端点，将 action 转换为 system prompt）
   try {
     const systemPrompt = ACTION_PROMPTS[request.action] || ACTION_PROMPTS.rewrite;
-    const response = await fetch(`${BACKEND_API_URL}/ai/chat/stream`, {
+    const response = await fetch(`${BACKEND_API_URL}/ai/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
