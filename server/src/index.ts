@@ -216,6 +216,16 @@ app.delete('/api/alerts', (req, res) => {
   }
 });
 
+// Root path - for health check and welcome
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'AI 效率助手 API 服务运行中',
+    timestamp: new Date().toISOString(),
+    version: '2.0.0'
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({
