@@ -51,7 +51,7 @@ export async function chatWithAi(
     max_tokens: request.maxTokens ?? 2048,
   };
 
-  // 优先通过后端代理调用
+  // 优先通过后端代理调用（/ai/chat 是流式端点，需要读取 SSE）
   try {
     const response = await fetch(`${BACKEND_API_URL}/ai/chat`, {
       method: 'POST',
@@ -62,11 +62,32 @@ export async function chatWithAi(
       signal: signal || AbortSignal.timeout(60000),
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
-      if (content) {
-        return { success: true, result: content.trim() };
+    if (response.ok && response.body) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let result = '';
+      let buffer = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith('data: ')) continue;
+          const data = trimmed.slice(6);
+          if (data === '[DONE]') break;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.content) result += parsed.content;
+          } catch { /* ignore */ }
+        }
+      }
+      
+      if (result) {
+        return { success: true, result: result.trim() };
       }
     }
     // 后端失败，继续回退到直连
