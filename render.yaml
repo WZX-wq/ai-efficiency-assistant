@@ -17,11 +17,11 @@ services:
       - key: PORT
         value: 10000
       - key: BAISHAN_API_KEY
-        sync: false  # 需要在 Render 控制台手动设置
+        sync: false
       - key: MONGODB_URI
-        sync: false  # 需要在 Render 控制台手动设置
+        sync: false
       - key: JWT_SECRET
-        sync: false  # 需要在 Render 控制台手动设置
+        sync: false
       - key: MODEL_CHAT
         value: DeepSeek-V3.2
       - key: MODEL_REWRITE
