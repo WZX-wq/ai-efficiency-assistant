@@ -4,6 +4,8 @@ import { useAppStore } from '../store/appStore';
 import { getModelConfig } from '../services/api';
 import MarkdownRenderer from './MarkdownRenderer';
 
+const BACKEND_API_URL = import.meta.env.VITE_API_URL || 'https://ai-efficiency-assistant-1.onrender.com/api';
+
 interface Field {
   name: string;
   label: string;
@@ -138,20 +140,42 @@ export default function PlanGenerator({
 
       const { baseUrl, apiKey, model } = getModelConfig();
 
-      const resp = await fetch(baseUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: 'system', content: systemMessage },
-            { role: 'user', content: userContent },
-          ],
-          stream: true,
-          max_tokens: maxTokens,
-        }),
-        signal: controller.signal,
-      });
+      const requestBody = {
+        model,
+        messages: [
+          { role: 'system', content: systemMessage },
+          { role: 'user', content: userContent },
+        ],
+        stream: true,
+        max_tokens: maxTokens,
+      };
+
+      let resp: Response | null = null;
+
+      // 优先通过后端代理调用（流式）
+      try {
+        const backendResp = await fetch(`${BACKEND_API_URL}/ai/chat/stream`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+          signal: controller.signal,
+        });
+        if (backendResp.ok) {
+          resp = backendResp;
+        }
+      } catch {
+        // 后端不可用，继续回退到直连
+      }
+
+      // 直连回退（流式）
+      if (!resp) {
+        resp = await fetch(baseUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+          body: JSON.stringify(requestBody),
+          signal: controller.signal,
+        });
+      }
 
       if (!resp.ok) throw new Error(`API 请求失败 (${resp.status})`);
 
@@ -181,23 +205,48 @@ export default function PlanGenerator({
       }
 
       if (!accumulated) {
-        // 非流式回退
-        const fallbackResp = await fetch(baseUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-          body: JSON.stringify({
-            model,
-            messages: [
-              { role: 'system', content: systemMessage },
-              { role: 'user', content: userContent },
-            ],
-            max_tokens: maxTokens,
-          }),
-          signal: controller.signal,
-        });
-        const fallbackJson = await fallbackResp.json();
-        accumulated = fallbackJson.choices?.[0]?.message?.content || '未生成有效内容';
-        setResult(accumulated);
+        // 非流式回退：优先通过后端代理
+        const fallbackBody = {
+          model,
+          messages: [
+            { role: 'system', content: systemMessage },
+            { role: 'user', content: userContent },
+          ],
+          max_tokens: maxTokens,
+        };
+
+        let fallbackOk = false;
+        try {
+          const fallbackResp = await fetch(`${BACKEND_API_URL}/ai/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(fallbackBody),
+            signal: controller.signal,
+          });
+          if (fallbackResp.ok) {
+            const fallbackJson = await fallbackResp.json();
+            accumulated = fallbackJson.choices?.[0]?.message?.content || '';
+            if (accumulated) {
+              setResult(accumulated);
+              fallbackOk = true;
+            }
+          }
+        } catch {
+          // 后端不可用，继续回退到直连
+        }
+
+        // 直连回退（非流式）
+        if (!fallbackOk) {
+          const fallbackResp = await fetch(baseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+            body: JSON.stringify(fallbackBody),
+            signal: controller.signal,
+          });
+          const fallbackJson = await fallbackResp.json();
+          accumulated = fallbackJson.choices?.[0]?.message?.content || '未生成有效内容';
+          setResult(accumulated);
+        }
       }
 
       addWordsGenerated(accumulated.length);

@@ -1,5 +1,7 @@
 import { getModelConfig } from './api';
 
+const BACKEND_API_URL = import.meta.env.VITE_API_URL || 'https://ai-efficiency-assistant-1.onrender.com/api';
+
 /** 聊天消息 */
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -42,6 +44,37 @@ export async function chatWithAi(
   messages.push(...request.messages);
   const { baseUrl, apiKey, model } = getModelConfig();
 
+  const requestBody = {
+    model,
+    messages,
+    temperature: request.temperature ?? 0.7,
+    max_tokens: request.maxTokens ?? 2048,
+  };
+
+  // 优先通过后端代理调用
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/ai/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+      signal: signal || AbortSignal.timeout(60000),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content;
+      if (content) {
+        return { success: true, result: content.trim() };
+      }
+    }
+    // 后端失败，继续回退到直连
+  } catch {
+    // 后端不可用，继续回退到直连
+  }
+
+  // 直连回退
   try {
     const response = await fetch(baseUrl, {
       method: 'POST',
@@ -49,12 +82,7 @@ export async function chatWithAi(
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: request.temperature ?? 0.7,
-        max_tokens: request.maxTokens ?? 2048,
-      }),
+      body: JSON.stringify(requestBody),
       signal: signal || AbortSignal.timeout(60000),
     });
 
@@ -98,6 +126,67 @@ export async function chatWithAiStream(
   messages.push(...request.messages);
   const { baseUrl, apiKey, model } = getModelConfig();
 
+  const requestBody = {
+    model,
+    messages,
+    temperature: request.temperature ?? 0.7,
+    max_tokens: request.maxTokens ?? 2048,
+    stream: true,
+  };
+
+  // 优先通过后端代理调用
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/ai/chat/stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+      signal: signal || AbortSignal.timeout(60000),
+    });
+
+    if (response.ok && response.body) {
+      const { readable, writable } = new TransformStream<string, string>();
+      const writer = writable.getWriter();
+      const decoder = new TextDecoder();
+
+      (async () => {
+        const reader = response.body!.getReader();
+        let buffer = '';
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || !trimmed.startsWith('data: ')) continue;
+              const data = trimmed.slice(6);
+              if (data === '[DONE]') break;
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) await writer.write(content);
+              } catch { /* ignore */ }
+            }
+          }
+        } catch (err) {
+          console.error('SSE 流读取错误:', err);
+        } finally {
+          await writer.close();
+        }
+      })();
+
+      return { success: true, stream: readable };
+    }
+    // 后端失败，继续回退到直连
+  } catch {
+    // 后端不可用，继续回退到直连
+  }
+
+  // 直连回退
   try {
     const response = await fetch(baseUrl, {
       method: 'POST',
@@ -105,13 +194,7 @@ export async function chatWithAiStream(
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: request.temperature ?? 0.7,
-        max_tokens: request.maxTokens ?? 2048,
-        stream: true,
-      }),
+      body: JSON.stringify(requestBody),
       signal: signal || AbortSignal.timeout(60000),
     });
 
