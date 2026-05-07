@@ -1,8 +1,8 @@
 # Render.com 部署配置
 # 此文件用于在 Render 上一键部署 AI 效率助手
 
+# 后端 API 服务
 services:
-  # 后端 API 服务
   - type: web
     name: ai-efficiency-api
     runtime: node
@@ -49,8 +49,8 @@ services:
       - key: MODEL_DATA_ANALYSIS
         value: DeepSeek-R1-0528
 
-  # 前端静态网站
-  - type: static
+# 前端静态网站（使用 web 类型，static 运行时）
+  - type: web
     name: ai-efficiency-web
     runtime: static
     plan: free
